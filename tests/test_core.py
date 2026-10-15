@@ -195,6 +195,12 @@ class PersistenceContract(unittest.TestCase):
             self.assertEqual(
                 client.post("/api/runs", json={"budget": 999}).status_code, 422
             )
+            for invalid in ("NaN", "Infinity", "-Infinity"):
+                response = client.post("/api/camera-comparison/analyze",
+                                       content=f'{{"api_timeout_s":{invalid}}}',
+                                       headers={"Content-Type": "application/json"})
+                self.assertEqual(response.status_code, 422)
+                self.assertNotIn("input", response.json()["detail"][0])
             self.assertEqual(
                 client.post("/api/experiments/99/apply", json={}).status_code, 409
             )

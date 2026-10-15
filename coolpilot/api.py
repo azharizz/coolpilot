@@ -1,17 +1,21 @@
 """Loopback-only web API. One coordinator protects benchmark comparability."""
 
 import asyncio
+import json
+import logging
 import os
 import sqlite3
 from contextlib import asynccontextmanager
 from pathlib import Path
+from threading import Event, Lock
 from typing import Literal
 from urllib.parse import urlparse
 
 from dotenv import dotenv_values, load_dotenv
-from pydantic import BaseModel, Field
+from pydantic import Field, model_validator
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
@@ -19,9 +23,10 @@ from . import store
 from .agent import execute
 from .benchmark import environment
 from .dataset import DATASET, manifest, prepare
-from .models import RunRequest, pareto_frontier
+from .models import CameraConfiguration, Contract, RunRequest, pareto_frontier
 from . import camera_dataset
-from . import camera_comparison, decisions
+from . import decisions
+from .simulation import camera_comparison
 
 _app_env = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(_app_env)
@@ -32,11 +37,27 @@ for _key in ("AGENT_PROVIDER_API_KEY", "AGENT_PROVIDER_MODEL"):
 
 tasks: dict[str, asyncio.Task] = {}
 dataset_state = {"status": "preparing", "error": None}
+comparison_active = False
 
 
-class CameraCompareRequest(BaseModel):
-    sample_time_s: float = Field(default=4.0, ge=0.0, le=60.0)
-    request_decision: bool = False
+class CameraCompareRequest(Contract):
+    faults: dict[Literal["left", "centre", "right"],
+                 Literal["random", "reference", "blur", "underexposure", "glare", "obstruction", "blackout", "freeze",
+                         "interruption", "jitter", "decode_failure", "timestamp_fault", "processing_delay", "resolution"]] = Field(
+                     default_factory=lambda: dict.fromkeys(camera_comparison.CAMERAS, "random"),
+                     min_length=3, max_length=3)
+    seed: int = Field(default=42, ge=0, le=2147483647, strict=True)
+    mode: Literal["local", "scheduled", "hybrid"] = "local"
+    review_interval_s: Literal[1, 2, 5] = 5
+    review_limit: int = Field(default=4, ge=1, le=10)
+    api_timeout_s: float = Field(default=5, ge=1, le=20)
+    allow_image_requests: bool = False
+
+    @model_validator(mode="after")
+    def image_consent(self):
+        if self.mode != "local" and not self.allow_image_requests:
+            raise ValueError("Remote review requires explicit image-upload consent.")
+        return self
 
 
 async def load_dataset():
@@ -67,6 +88,13 @@ app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=["localhost", "127.0.0.1", "[::1]", "testserver"],
 )
+
+@app.exception_handler(RequestValidationError)
+async def invalid_request(_request: Request, error: RequestValidationError):
+    # Do not echo inputs: non-finite JSON values cannot be serialized, and inputs can contain secrets.
+    return JSONResponse(status_code=422, content={"detail": [
+        {key: item[key] for key in ("loc", "msg", "type")} for item in error.errors()
+    ]})
 
 
 @app.middleware("http")
@@ -150,6 +178,8 @@ async def start_run(request: RunRequest):
             await asyncio.to_thread(camera_dataset.checked, request.camera)
         except (ValueError, KeyError, TypeError, OSError):
             raise HTTPException(422, "Camera dataset or frozen replay contract is invalid.") from None
+    if comparison_active:
+        raise HTTPException(409, "A three-camera comparison is active. Wait for it to finish.")
     try:
         identifier = store.create_run(request.model_dump())
     except sqlite3.IntegrityError:
@@ -227,6 +257,7 @@ def camera_comparison_sources():
             for camera, info in camera_comparison.CAMERAS.items()
         ],
         "decision_configured": decisions.configured(),
+        "faults": ("random", "reference", *camera_comparison.STREAM_FAULTS),
         **environment(),
     }
 
@@ -240,13 +271,61 @@ def camera_comparison_video(camera: str):
 
 
 @app.post("/api/camera-comparison/analyze")
-def analyze_camera_comparison(request: CameraCompareRequest):
-    try:
-        return camera_comparison.compare(request.sample_time_s, request.request_decision)
-    except FileNotFoundError:
-        raise HTTPException(404, "Camera comparison videos are not available.") from None
-    except ValueError as error:
-        raise HTTPException(422, str(error)) from None
+async def analyze_camera_comparison(request: CameraCompareRequest):
+    global comparison_active
+    if comparison_active or tasks:
+        raise HTTPException(409, "Another measurement is active. Wait for it to finish.")
+    if request.mode != "local" and not decisions.configured():
+        raise HTTPException(422, "The Decisions model/key is not configured. Local replay remains available.")
+    comparison_active = True
+    cancel, lock = Event(), Lock()
+    latest = {}
+
+    def emit(message):
+        # Bounded latest state per camera: a slow browser never stalls image analysis.
+        with lock:
+            latest[message.get("camera", "ready")] = message
+
+    async def measure():
+        global comparison_active
+        try:
+            config = CameraConfiguration(width=320, mode=request.mode, review_interval_s=request.review_interval_s)
+            return await asyncio.to_thread(camera_comparison.compare, request.faults, config,
+                                           request.review_limit, request.api_timeout_s, emit, cancel, request.seed)
+        finally:
+            comparison_active = False
+
+    worker = asyncio.create_task(measure())
+
+    async def stream():
+        try:
+            while True:
+                with lock:
+                    messages = list(latest.values())
+                    latest.clear()
+                for message in messages:
+                    yield json.dumps(message, allow_nan=False) + "\n"
+                if worker.done():
+                    # Drain again: the worker can publish between the preceding drain and done().
+                    with lock:
+                        messages = list(latest.values())
+                        latest.clear()
+                    for message in messages:
+                        yield json.dumps(message, allow_nan=False) + "\n"
+                    yield json.dumps(await worker, allow_nan=False) + "\n"
+                    break
+                await asyncio.sleep(0.1)
+        except Exception as error:
+            logging.getLogger(__name__).exception("Three-camera replay failed")
+            yield json.dumps({"type": "error", "error": f"Replay failed ({type(error).__name__}). Check local service logs."}) + "\n"
+        finally:
+            cancel.set()
+            # Do not release the coordinator until the actual worker and outstanding reviews exit.
+            # Retrieve failures even if the browser disconnected before the result.
+            worker.add_done_callback(lambda task: task.exception() if not task.cancelled() else None)
+
+    return StreamingResponse(stream(), media_type="application/x-ndjson",
+                             headers={"X-Accel-Buffering": "no"})
 
 
 @app.get("/api/frames/{split}/{index}")

@@ -1288,17 +1288,65 @@ code {
 
 .camera-comparison { max-width: 1480px; }
 .camera-comparison-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.camera-comparison-card { min-width: 0; border: 1px solid var(--border); padding: 14px; }
+.camera-comparison-card { min-width: 0; border: 1px solid var(--line); padding: 14px; }
 .camera-comparison-card h2 { margin: 0 0 10px; }
-.camera-comparison-card video { aspect-ratio: 4 / 3; max-height: none; object-fit: contain; background: var(--surface); }
-.camera-pick { display: flex !important; align-items: center; gap: 8px; }
+.camera-comparison-card video, .camera-replay-image { display: block; width: 100%; aspect-ratio: 4 / 3; max-height: none; object-fit: contain; background: var(--surface); margin-top: 12px; }
+.camera-comparison-card select { width: 100%; }
+.camera-replay-empty { display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--surface); margin-top: 12px; }
+.camera-frame-caption { color: var(--muted); font-size: 12px; }
+.camera-replay-settings { border: 1px solid var(--line); padding: 12px; }
+.camera-replay-settings input[type="number"] { width: 80px; }
+.camera-replay-settings #camera-replay-seed { width: 150px; }
+.camera-state { display: inline-block; font-size: 12px; padding: 2px 6px; background: var(--surface); color: var(--muted); }
+.camera-state-healthy, .camera-state-no_issue_detected { color: var(--green); }
+.camera-state-degraded, .camera-state-unavailable, .camera-state-suspected { color: var(--red); }
+.camera-final-report { border-top: 1px solid var(--line); margin-top: 12px; }
 .camera-comparison-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 20px 0; }
 .camera-comparison-controls label { margin: 0; }
 .camera-comparison-controls input[type="range"] { display: block; width: min(600px, 60vw); }
 .camera-decision-consent { flex: 1 1 100%; }
-.camera-runtime-note { padding: 12px; border: 1px solid var(--border); }
-.camera-comparison td, .camera-comparison th { white-space: nowrap; }
+.camera-runtime-note { padding: 12px; border: 1px solid var(--line); }
+.camera-comparison td, .camera-comparison th { white-space: normal; }
+.camera-health-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+.camera-health-channel { border: 1px solid var(--line); border-top: 4px solid currentColor; padding: 10px; min-width: 0; }
+.camera-health-channel h3 { margin: 0 0 6px; font-size: 12px; color: var(--muted); }
+.camera-health-channel strong { display: block; font-size: 18px; text-transform: capitalize; }
+.camera-health-channel small { display: block; margin-top: 6px; color: var(--muted); overflow-wrap: anywhere; }
+.camera-state-unknown { color: var(--muted); }
+.camera-history-row { display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 8px; margin: 8px 0; font-size: 11px; }
+.camera-history-track { position: relative; height: 14px; background: var(--surface); overflow: hidden; border: 1px solid var(--line); }
+.camera-history-elapsed, .camera-history-segment { position: absolute; height: 100%; top: 0; }
+.camera-history-elapsed, .camera-history-segment.camera-state-unknown { background: repeating-linear-gradient(135deg, var(--line) 0 3px, var(--surface) 3px 6px); }
+.camera-history-segment:not(.camera-state-unknown) { background: currentColor; }
+.camera-comparison-card > details, .camera-run-notes { margin: 12px 0; font-size: 12px; }
+.camera-comparison summary { cursor: pointer; }
+.camera-chart-controls { display: flex; flex-wrap: wrap; gap: 16px; }
+.camera-chart-controls label { flex: 1 1 180px; min-width: 0; font-size: 12px; }
+.camera-chart-controls select { display: block; width: 100%; margin-top: 6px; }
+.camera-metric-plots { margin: 14px 0; }
+.camera-metric-plot { padding: 10px 0; border-top: 1px solid var(--line); }
+.camera-metric-plot figcaption { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
+.camera-metric-plot figcaption strong { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.camera-metric-plot svg { display: block; width: 100%; color: var(--blue); }
+.camera-metric-plot text { font-size: 10px; fill: var(--muted); }
+.camera-plot-axis { fill: none; stroke: var(--line); }
+.camera-plot-line { fill: none; stroke: currentColor; stroke-width: 1.5; }
+.camera-plot-limit { fill: none; stroke: var(--red); stroke-dasharray: 4 3; }
+.camera-metric-plot circle { fill: currentColor; fill-opacity: 0; }
+.camera-metric-plot circle:hover { fill-opacity: 1; r: 4; }
+.camera-region-map { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; aspect-ratio: 4 / 3; max-width: 180px; margin: 10px auto; }
+.camera-region-map > div { display: grid; place-items: center; background: var(--surface); border: 1px solid var(--line); font-size: 10px; }
+.camera-region-map span { background: var(--surface); color: var(--muted); padding: 0 3px; }
+.camera-review-bars label { display: grid; grid-template-columns: 1fr 2fr auto; gap: 8px; align-items: center; }
+.camera-review-bars meter { width: 100%; }
 
 @media (max-width: 800px) {
+  body:has(.camera-comparison) { min-width: 320px; }
+  body:has(.camera-comparison) .header-inner { flex-wrap: wrap; gap: 16px; padding: 16px; }
+  body:has(.camera-comparison) .site-header nav { flex-wrap: wrap; gap: 14px; margin-left: 0; }
+  body:has(.camera-comparison) .workspace { padding: 20px 16px; }
+  body:has(.camera-comparison) .site-footer { flex-wrap: wrap; padding: 16px; }
+  .camera-comparison .section-heading { display: block; }
+  .camera-comparison fieldset { min-width: 0; }
   .camera-comparison-grid { grid-template-columns: 1fr; }
 }

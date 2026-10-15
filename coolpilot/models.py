@@ -73,7 +73,6 @@ class CameraThresholds(Contract):
     freeze_s: float = Field(default=1, gt=0, le=30)
     feed_timeout_s: float = Field(default=1, gt=0, le=30)
     backlog_s: float = Field(default=0.5, gt=0, le=30)
-    decision_probability: float = Field(default=0.9, ge=0, le=1)
 
 
 class ReplayInterval(Contract):

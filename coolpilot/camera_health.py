@@ -23,6 +23,24 @@ def analyze(frame, width: int) -> dict:
             "thumbnail": cv2.resize(gray, (80, 60), interpolation=cv2.INTER_AREA)}
 
 
+def assess_health(*, unavailable: bool, stale: bool, delivery_conditions: set[str],
+                  visual_conditions: set[str]) -> dict:
+    """Source-independent health channels; no injection labels or remote scores.
+
+    Pipeline health describes delivery/processing only. Visual rules are unvalidated
+    suspicions, not camera-failure diagnoses or evidence that a scene is safe.
+    Stale evidence cannot establish current image quality; retain prior suspicions.
+    """
+    return {
+        "pipeline_status": "unavailable" if unavailable else "unknown" if stale else
+                           "degraded" if delivery_conditions else "healthy",
+        "quality_status": "unknown" if unavailable or stale else
+                          "suspected" if visual_conditions else "no_issue_detected",
+        "delivery_conditions": sorted(delivery_conditions),
+        "visual_conditions": sorted(visual_conditions),
+    }
+
+
 class Monitor:
     def __init__(self, thresholds: CameraThresholds):
         self.thresholds = thresholds
@@ -154,6 +172,7 @@ def gate(metrics: dict, goals) -> dict:
             add(prefix + kind + " recovery seconds", values["recovery_s"], "<=", limit.max_recovery_s)
             add(prefix + kind + " premature/uncleared", values["bad_recovery"], "<=", 0)
         add(prefix + "maximum source-schedule-to-result age seconds", row["max_age_s"], "<=", goals.max_age_s)
+        add(prefix + "unknown evidence fraction", row["unknown_fraction"], "<=", goals.max_unknown_fraction)
         if row["review_required"]:
             add(prefix + "image-review coverage", row["review_coverage"], ">=",
                 1 - goals.max_api_failure_fraction)

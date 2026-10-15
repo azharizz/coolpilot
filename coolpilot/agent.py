@@ -163,7 +163,7 @@ async def measure(
     if request.camera:
         request_path = folder / "request.json"
         request_path.write_text(request.model_dump_json())
-        args = [sys.executable, "-m", "coolpilot.camera_benchmark", "--request", str(request_path),
+        args = [sys.executable, "-m", "coolpilot.simulation.camera_benchmark", "--request", str(request_path),
                 "--config", str(config_path), "--split", "validation" if kind.endswith("validation") else "tuning"]
     environment_variables = {
         k: v for k, v in os.environ.items()
