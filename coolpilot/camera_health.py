@@ -1,8 +1,18 @@
 """Image measurements and temporal episodes; no annotations enter this module."""
+import math
 import cv2
 import numpy as np
 
 from .models import CameraThresholds
+
+OBSERVATIONS = {
+    "blur": "low spatial detail",
+    "underexposure": "low brightness",
+    "glare": "highlight clipping",
+    "obstruction": "regional detail loss",
+    "blackout": "near-black imagery",
+    "freeze": "repeated imagery",
+}
 
 
 def analyze(frame, width: int) -> dict:
@@ -38,6 +48,7 @@ def assess_health(*, unavailable: bool, stale: bool, delivery_conditions: set[st
                           "suspected" if visual_conditions else "no_issue_detected",
         "delivery_conditions": sorted(delivery_conditions),
         "visual_conditions": sorted(visual_conditions),
+        "visual_observations": [OBSERVATIONS[k] for k in sorted(visual_conditions)],
     }
 
 
@@ -46,6 +57,7 @@ class Monitor:
         self.thresholds = thresholds
         self.previous = None
         self.reference_detail = None
+        self.reference_time_s = None
         self.unchanged_since = None
         self.pending = {}
         self.clearing = {}
@@ -54,8 +66,12 @@ class Monitor:
 
     def appearance(self, measurements: dict, time_s: float) -> tuple[set[str], list[dict]]:
         t = self.thresholds
+        if not math.isfinite(time_s) or time_s < 0 or (
+            self.reference_time_s is not None and time_s <= self.reference_time_s
+        ):
+            raise ValueError("Appearance requires finite, increasing source timestamps.")
         regions = measurements["regions"]
-        detail = np.array([r["detail"] for r in regions])
+        detail = np.array([r["detail"] for r in regions], dtype=float)
         means = np.array([r["mean"] for r in regions])
         conditions = set()
         if measurements["black_fraction"] >= t.black_fraction:
@@ -67,15 +83,18 @@ class Monitor:
         if np.mean(detail < t.blur_variance) >= 0.75:
             conditions.add("blur")
         if self.reference_detail is not None:
+            elapsed = time_s - self.reference_time_s
+            self.reference_detail *= math.exp(-elapsed / t.reference_decay_s)
             affected = detail < self.reference_detail * t.obstruction_ratio
             # Regional loss is suspicion only; scenes and shadows can produce the same evidence.
             if 1 <= int(affected.sum()) <= 10:
                 conditions.add("obstruction")
             for region, changed in zip(regions, affected):
                 region["suspected_obstruction"] = bool(changed)
-            self.reference_detail = np.maximum(self.reference_detail * 0.999, detail)
+            self.reference_detail = np.maximum(self.reference_detail, detail)
         else:
             self.reference_detail = detail.copy()
+        self.reference_time_s = time_s
         image = measurements["thumbnail"]
         if self.previous is not None:
             difference = float(cv2.absdiff(image, self.previous).mean())
@@ -95,7 +114,8 @@ class Monitor:
                 self.clearing.pop(kind, None)
                 self.pending.setdefault(kind, time_s)
                 if kind not in self.active and time_s - self.pending[kind] >= self.thresholds.persistence_s:
-                    episode = {"type": kind, "start_s": time_s, "end_s": None, "evidence": evidence}
+                    episode = {"type": kind, "observation": OBSERVATIONS.get(kind, kind),
+                               "start_s": time_s, "end_s": None, "evidence": evidence}
                     self.episodes.append(episode)
                     self.active[kind] = episode
             else:

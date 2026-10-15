@@ -7,16 +7,17 @@ type Sources = {
   sources: { id: CameraId; label: string; video_url: string }[];
   faults: string[]; decision_configured: boolean; distribution: string; opencv_version: string;
 };
-type Episode = { type: string; start_s: number; end_s: number | null };
+type Episode = { type: string; observation: string; start_s: number; end_s: number | null };
 type Injection = { kind: string; start_s: number; end_s: number; delay_ms?: number; max_delay_ms?: number; analysis_width_multiplier?: number };
 type Review = {
   status: string; pts_s?: number; requested_s?: number; received_s?: number;
   attempted?: boolean; probabilities?: Record<string, number>; cost?: number | null;
   error?: string; latency_s?: number; late?: boolean;
+  expires_s?: number | null; valid_on_arrival?: boolean;
 };
 type Frame = {
   type: "frame"; camera: CameraId; time_s: number; pipeline_status: string; quality_status: string;
-  delivery_conditions: string[]; visual_conditions: string[];
+  delivery_conditions: string[]; visual_conditions: string[]; visual_observations: string[];
   image: string | null; evidence_age_s: number | null;
   evidence: { frame?: number; pts_s?: number; analysis_ms?: number; decode_ms?: number;
     compute_ms?: number; injected_delay_ms?: number; analysis_width?: number;
@@ -24,7 +25,7 @@ type Frame = {
   processed: number; delivered: number; dropped: number; interrupted: number; rejected: number; queue_depth: number; processed_fps: number;
   analysis_p95_ms: number | null; injection_p95_ms: number | null;
   injection: { kind: string; current: string; strength: number }; episodes: Episode[];
-  review_pending: Review | null; review_slot: Review | null; review_result: Review | null;
+  review_pending: Review | null; review_slot: Review | null; review_result: Review | null; review_current: Review | null;
   review_attempts: number; review_cost: number; review_cost_complete: boolean;
 };
 type Ready = {
@@ -151,6 +152,11 @@ export function CameraCompare() {
         if (message.type === "ready") {
           setReady(message); setPhase("Live paced replay — previews and measurements come from the same analyzed frames.");
         } else if (message.type === "frame") {
+          if (!Array.isArray(message.visual_observations) ||
+              !message.visual_observations.every(value => typeof value === "string") ||
+              !Object.hasOwn(message, "review_current")) {
+            throw new Error("Incompatible replay response. Restart the backend with the current code, then reload this page.");
+          }
           history.current[message.camera].push(message);
           received.current[message.camera] = Date.now();
           setCursor(message.time_s); redraw(n => n + 1);
@@ -266,7 +272,12 @@ export function CameraCompare() {
         const profile = result?.profiles.find(p => p.camera === camera.id);
         const regions = snapshot?.evidence.regions ?? [];
         const review = snapshot?.review_result;
-        const reviewAge = review?.pts_s == null || !snapshot ? null : snapshot.time_s - review.pts_s + sinceReceipt;
+        const reviewTime = busy ? (snapshot?.time_s ?? 0) + sinceReceipt : cursor;
+        const reviewAge = review?.pts_s == null ? null : reviewTime - review.pts_s;
+        const advice = snapshot?.review_current;
+        const adviceValid = advice?.status === "ok" && advice.expires_s != null &&
+          reviewTime < advice.expires_s && !cameraErrors[camera.id];
+        const adviceStatus = advice?.status === "ok" && !adviceValid ? "expired" : advice?.status ?? "waiting";
         const runMode = ready?.configuration.mode ?? "local";
         const episodes = snapshot?.episodes ?? [];
         const finalReviews = profile?.trace?.reviews ?? [];
@@ -284,7 +295,7 @@ export function CameraCompare() {
             </section>
             <section className={`camera-health-channel camera-state-${quality}`} aria-label={`${camera.label} image status`}>
               <h3>Image</h3><strong>{quality === "suspected" ? "Check image" : quality === "no_issue_detected" ? "No flag detected" : "Unknown"}</strong>
-              <small>{quality === "suspected" ? snapshot?.visual_conditions.join(", ") : quality === "unknown" ? "No fresh assessment" : "Unvalidated visual checks"}</small>
+              <small>{quality === "suspected" ? snapshot?.visual_observations.join(", ") : quality === "unknown" ? "No fresh assessment" : "Unvalidated visual checks"}</small>
             </section>
           </div>
           <div className="camera-status-history" aria-label={`${camera.label} sampled status history`}>
@@ -343,26 +354,26 @@ export function CameraCompare() {
           </div>
           <p className="camera-frame-caption">Region {regionMetric === "mean" ? "brightness" : regionMetric} · light 0 → dark {number(regionMetric === "clipped" ? 100 : regionMax, 1)}{regionMetric === "clipped" ? "%" : ""} · displayed frame</p>
           <details className="camera-diagnostics"><summary>Diagnostics & event log</summary>
-          <p>Report {number(snapshot?.time_s, 3)} s · frame {snapshot?.evidence.frame ?? "—"} · injection at report: {snapshot?.injection.current ?? "none"} · displayed strength: {number(snapshot ? snapshot.injection.strength * 100 : null, 0)}%. Last visual flags: {snapshot?.visual_conditions.join(", ") || "none"}.</p>
+          <p>Report {number(snapshot?.time_s, 3)} s · frame {snapshot?.evidence.frame ?? "—"} · injection at report: {snapshot?.injection.current ?? "none"} · displayed strength: {number(snapshot ? snapshot.injection.strength * 100 : null, 0)}%. Last observations: {snapshot?.visual_observations.join(", ") || "none"}. Suspected causes (not diagnoses): {snapshot?.visual_conditions.join(", ") || "none"}.</p>
           </details>
-          {runMode !== "local" && <details><summary>Decisions · {snapshot?.review_pending ? "pending" : review?.status ?? "waiting"} · advisory</summary>
+          {runMode !== "local" && <details><summary>Decisions · {adviceStatus} {snapshot?.review_pending ? "· pending" : ""} · advisory</summary>
             <p>{snapshot?.review_pending ? `Pending at report time: frame PTS ${number(snapshot.review_pending.pts_s, 3)} s` : "No request pending at report time."}<br />Latest slot: {snapshot?.review_slot?.status ?? "waiting"} · attempts {snapshot?.review_attempts ?? 0}<br />Reported charges at report time: ${number(snapshot?.review_cost, 6)} {snapshot?.review_cost_complete ? "" : "(incomplete / pending)"}</p>
-            {review && <><p>Latest returned review: {review.status} · frame PTS {number(review.pts_s, 3)} s · age {number(reviewAge)} s{reviewAge != null && reviewAge > (ready?.configuration.review_interval_s ?? 5) ? " · older than review interval" : ""}<br />Latency {number(review.latency_s)} s{review.error && ` · ${review.error}`}</p>
-              {review.status === "ok" && <div className="camera-review-bars">{Object.entries(review.probabilities ?? {}).map(([kind, score]) => <label key={kind}>{kind} <meter min="0" max="1" value={score} /> {number(score * 100, 1)}%</label>)}</div>}</>}
-            <p>Single-frame review cannot establish freeze or feed interruption. Scores are not calibrated safety probabilities.</p>
+            {review && <><p>Historical response: {review.status} · valid on arrival: {review.valid_on_arrival ? "yes" : "no"} · frame PTS {number(review.pts_s, 3)} s · source age {number(reviewAge)} s<br />Advice at {busy ? "current" : "recorded"} time: {adviceStatus} · expires at {number(advice?.expires_s, 3)} s<br />Latency {number(review.latency_s)} s{review.error && ` · ${review.error}`}</p>
+              {adviceValid && <div className="camera-review-bars">{Object.entries(advice?.probabilities ?? {}).map(([kind, score]) => <label key={kind}>{kind} <meter min="0" max="1" value={score} /> {number(score * 100, 1)}%</label>)}</div>}</>}
+            <p>Advice expires at the local source-age limit, not the request timeout or review interval. Historical responses and charges remain in export. Single-frame review cannot establish freeze or feed interruption. Scores are not calibrated safety probabilities.</p>
           </details>}
           <details><summary>Injection & detection timeline</summary>
           <p>Scheduled injections are not proof of detection. Open episodes have not cleared.</p>
           <div className="table-scroll"><table><thead><tr><th>Signal</th><th>Onset s</th><th>End / cleared s</th></tr></thead><tbody>
             {ready?.schedule[camera.id].map((event, i) => <tr key={`injection-${i}`}><td>Injection: {event.kind}{event.delay_ms != null && ` (${event.delay_ms} ms wait)`}{event.max_delay_ms != null && ` (0–${event.max_delay_ms} ms)`}{event.analysis_width_multiplier != null && ` (${event.analysis_width_multiplier}× width)`}</td><td>{number(event.start_s, 3)}</td><td>{number(event.end_s, 3)}</td></tr>)}
-            {episodes.map((e, i) => <tr key={i}><td>{["interruption", "backlog"].includes(e.type) ? "Delivery alarm" : "Visual suspicion"}: {e.type}</td><td>{number(e.start_s, 3)}</td><td>{e.end_s == null ? "not cleared" : number(e.end_s, 3)}</td></tr>)}
+            {episodes.map((e, i) => <tr key={i}><td>{["interruption", "backlog"].includes(e.type) ? "Delivery alarm" : "Visual observation"}: {e.observation} {e.observation !== e.type && `(possible ${e.type})`}</td><td>{number(e.start_s, 3)}</td><td>{e.end_s == null ? "not cleared" : number(e.end_s, 3)}</td></tr>)}
             {!episodes.length && <tr><td colSpan={3}>No alarm or suspicion episodes by this report time.</td></tr>}
           </tbody></table></div>
           {profile && <section className="camera-final-report"><h3>Final camera report{profile.error ? " · failed" : ""}</h3>
             <p>{profile.error ?? `Processed ${profile.trace?.processed}/${profile.frames}; dropped ${profile.trace?.dropped}; interrupted ${profile.trace?.interrupted_frames}; rejected ${profile.trace?.rejected_frames}; unfinished ${profile.trace?.unfinished_frames}. Unknown ${number((profile.trace?.unknown_fraction ?? 1) * 100)}%; max age ${number(profile.trace?.max_age_s, 3)} s.`}</p>
             {runMode !== "local" && <>
-              <p>Completed attempts: {finalReviews.filter(r => r.attempted).length} · covered slots: {finalReviews.filter(r => r.status === "ok").length}/{profile.trace?.review_required ?? 0}. Late/unavailable results do not count as covered.</p>
-              <div className="table-scroll"><table><thead><tr><th>Reviewed PTS s</th><th>Outcome</th><th>Reported $</th></tr></thead><tbody>{finalReviews.map((r, i) => <tr key={i}><td>{number(r.pts_s, 3)}</td><td>{r.status}{r.late ? " · late" : ""}{r.error && <><br />{r.error}</>}</td><td>{r.attempted ? number(r.cost, 6) : "not attempted"}</td></tr>)}</tbody></table></div>
+              <p>Completed attempts: {finalReviews.filter(r => r.attempted).length} · covered slots: {finalReviews.filter(r => r.valid_on_arrival).length}/{profile.trace?.review_required ?? 0}. Expired/late/unavailable results do not count as covered.</p>
+              <div className="table-scroll"><table><thead><tr><th>Reviewed PTS s</th><th>Historical outcome</th><th>Reported $</th></tr></thead><tbody>{finalReviews.map((r, i) => <tr key={i}><td>{number(r.pts_s, 3)}</td><td>{r.status}{r.attempted && !r.valid_on_arrival ? " · not valid on arrival" : ""}{r.late ? " · late" : ""}{r.error && <><br />{r.error}</>}</td><td>{r.attempted ? number(r.cost, 6) : "not attempted"}</td></tr>)}</tbody></table></div>
             </>}
           </section>}
           </details>

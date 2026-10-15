@@ -161,3 +161,5 @@ web/dist/
 # Generated video exports
 video/*.mp4
 video/*.wav
+
+.DS_Store

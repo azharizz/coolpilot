@@ -68,6 +68,8 @@ class CameraThresholds(Contract):
     glare_fraction: float = Field(default=0.35, gt=0, le=1)
     obstruction_ratio: float = Field(default=0.25, gt=0, lt=1)
     freeze_difference: float = Field(default=0.3, ge=0, le=255)
+    # E-folding time: approximately the old 0.999 retention at 14 observations/s.
+    reference_decay_s: float = Field(default=71.4, gt=0, le=3600)
     persistence_s: float = Field(default=0.3, gt=0, le=10)
     recovery_s: float = Field(default=0.3, gt=0, le=10)
     freeze_s: float = Field(default=1, gt=0, le=30)

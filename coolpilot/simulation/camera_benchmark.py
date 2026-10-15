@@ -17,7 +17,7 @@ import numpy as np
 from ..benchmark import environment
 from ..camera_dataset import checked, public
 from ..camera_health import Monitor, analyze, assess_health, score
-from ..decisions import review
+from ..decisions import current_review, review
 from ..models import CameraConfiguration, ReplayScenario, RunRequest
 
 
@@ -208,6 +208,10 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
                     if result["status"] != "ok" or now - review_context["requested_s"] > settings.api_timeout_s:
                         reviews[-1]["status"] = "unavailable"
                         reviews[-1].pop("probabilities", None)
+                    reviews[-1]["valid_on_arrival"] = current_review(
+                        reviews[-1], now,
+                        min(settings.thresholds.feed_timeout_s, settings.thresholds.backlog_s),
+                    )["status"] == "ok"
                     review_future = None
                 if analysis_future is None:
                     try:
@@ -304,10 +308,14 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
                         "review_pending": review_context if review_future is not None else None,
                         "review_slot": reviews[-1] if reviews else None,
                         "review_result": attempted[-1] if attempted else None,
+                        "review_current": current_review(
+                            attempted[-1] if attempted else None, now,
+                            min(settings.thresholds.feed_timeout_s, settings.thresholds.backlog_s)),
                         "review_attempts": len(attempted) + int(review_future is not None),
                         "review_cost": sum(c for c in costs if c is not None),
                         "review_cost_complete": all(c is not None for c in costs) and review_future is None,
-                        "episodes": [{"type": e["type"], "start_s": e["start_s"], "end_s": e["end_s"]}
+                        "episodes": [{"type": e["type"], "observation": e["observation"],
+                                      "start_s": e["start_s"], "end_s": e["end_s"]}
                                      for e in visual_monitor.episodes + delivery_monitor.episodes],
                     }, display_frame)
                 previous_tick = now
@@ -317,7 +325,8 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
             if review_future:
                 result = review_future.result()
                 reviews.append({**review_context, **result, "status": "unavailable",
-                                "received_s": perf_counter() - clock, "late": True})
+                                "received_s": perf_counter() - clock, "late": True,
+                                "valid_on_arrival": False})
                 reviews[-1].pop("probabilities", None)
             producer.join()
     finally:
@@ -407,7 +416,7 @@ def benchmark(request: RunRequest, config: CameraConfiguration, split: str) -> d
                     if stream == 0:
                         counted[kind] = counted.get(kind, 0) + len(rows)
                 reviews = [r for r in result["reviews"] if r["attempted"]]
-                api_failures = sum(r["status"] != "ok" or r.get("late", False) for r in reviews)
+                api_failures = sum(not r["valid_on_arrival"] for r in reviews)
                 attempts = len(reviews)
                 successes = attempts - api_failures
                 row = {"clip": clip["id"], "repetition": repetition, "stream": stream, "by_fault": by_fault,

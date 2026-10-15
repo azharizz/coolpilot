@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
     && mkdir -p /app/data && chown coolpilot:coolpilot /app/data
 COPY coolpilot/ ./coolpilot/
 COPY tests/ ./tests/
+COPY experiments/ ./experiments/
 COPY scripts/ ./scripts/
 USER coolpilot
 

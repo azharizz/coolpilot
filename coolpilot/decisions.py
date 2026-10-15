@@ -40,6 +40,28 @@ def parse(payload: dict) -> dict:
     return {"status": "ok", "probabilities": probabilities, "cost": cost,
             "model": MODEL, "usage": {k: usage[k] for k in ("input_tokens", "output_tokens") if k in usage}}
 
+def current_review(result: dict | None, time_s: float, max_age_s: float) -> dict | None:
+    """Age advice from its source image, without mutating the historical response."""
+    if result is None:
+        return None
+    if not math.isfinite(time_s) or not math.isfinite(max_age_s) or max_age_s <= 0:
+        raise ValueError("Review validity requires a finite clock and positive age limit.")
+    current = dict(result)
+    pts = result.get("pts_s")
+    received = result.get("received_s")
+    valid_clock = (type(pts) in (int, float) and math.isfinite(pts) and pts >= 0
+                   and type(received) in (int, float) and math.isfinite(received)
+                   and pts <= received <= time_s)
+    current["expires_s"] = pts + max_age_s if valid_clock else None
+    current["source_age_s"] = time_s - pts if valid_clock else None
+    if result.get("status") == "ok":
+        current["status"] = ("unavailable" if not valid_clock or result.get("late") else
+                             "expired" if time_s >= pts + max_age_s else "ok")
+    if current.get("status") != "ok":
+        current.pop("probabilities", None)
+    return current
+
+
 def _post(payload: dict, timeout_s: float, start: float) -> tuple[dict | None, str | None]:
     async def send():
         remaining = timeout_s - (perf_counter() - start)

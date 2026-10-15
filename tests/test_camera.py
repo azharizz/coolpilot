@@ -8,7 +8,7 @@ import numpy as np
 from pydantic import ValidationError
 
 from coolpilot.camera_health import Monitor, analyze, assess_health, score
-from coolpilot.decisions import MODEL, QUESTIONS, parse, review
+from coolpilot.decisions import MODEL, QUESTIONS, current_review, parse, review
 from coolpilot.simulation.camera_comparison import video_path
 from coolpilot.models import CameraThresholds, ReplayInterval, RunRequest
 from coolpilot.api import CameraCompareRequest
@@ -83,6 +83,48 @@ class CameraChecks(unittest.TestCase):
                                 delivery_conditions=set(), visual_conditions=set())
         self.assertEqual(missing["quality_status"], "unknown")
         self.assertEqual(missing["pipeline_status"], "unknown")
+
+    def test_reference_decay_uses_source_time_not_sample_count(self):
+        references = []
+        for rate in (5, 14, 30):
+            monitor = Monitor(CameraThresholds(reference_decay_s=10))
+            for i in range(10 * rate + 1):
+                measured = {"regions": [{"detail": 1000.0 if i == 0 else 1.0,
+                                         "mean": 120.0, "clipped": 0.0} for _ in range(16)],
+                            "black_fraction": 0.0, "thumbnail": np.zeros((60, 80), np.uint8)}
+                monitor.appearance(measured, i / rate)
+            references.append(monitor.reference_detail.copy())
+            for invalid in (10, 9, float("nan"), float("inf"), -1):
+                with self.assertRaises(ValueError):
+                    monitor.appearance(measured, invalid)
+            np.testing.assert_allclose(monitor.reference_detail, references[-1])
+        for reference in references:
+            np.testing.assert_allclose(reference, np.full(16, 1000 / np.e), rtol=1e-12)
+        # Decay must precede comparison, including after an observation gap.
+        for region in measured["regions"]:
+            region["detail"] = 1000
+        measured["regions"][0]["detail"] = 50
+        conditions, _ = monitor.appearance(measured, 20)
+        self.assertNotIn("obstruction", conditions)
+
+    def test_advice_expires_from_source_time_and_preserves_history(self):
+        original = {"status": "ok", "pts_s": 2.0, "received_s": 2.25,
+                    "probabilities": {"blur": 0.9}, "cost": 0.01}
+        self.assertEqual(current_review(original, 2.49, 0.5)["probabilities"], {"blur": 0.9})
+        expired = current_review(original, 2.5, 0.5)
+        self.assertEqual(expired["status"], "expired")
+        self.assertNotIn("probabilities", expired)
+        self.assertEqual(expired["cost"], 0.01)
+        self.assertEqual(original["probabilities"], {"blur": 0.9})
+        self.assertEqual(original["status"], "ok")
+        delayed = {**original, "received_s": 3.0}
+        self.assertEqual(current_review(delayed, 3.0, 0.5)["status"], "expired")
+        for invalid in (None, True, float("nan"), -1, 4):
+            unavailable = current_review({**original, "pts_s": invalid}, 3, 0.5)
+            self.assertEqual(unavailable["status"], "unavailable")
+            self.assertNotIn("probabilities", unavailable)
+        self.assertEqual(current_review({**original, "status": "unavailable"}, 2.3, 0.5)["status"], "unavailable")
+        self.assertIsNone(current_review(None, 2.3, 0.5))
 
     def test_refusal_and_invalid_probabilities_fail_closed(self):
         payload = {"answers": {k: {"type": "noul", "noul": 0.1} for k in QUESTIONS}}
