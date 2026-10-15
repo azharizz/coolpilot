@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import { request, refresh, useResource } from "./api";
 import type { CameraConfig, CameraExperiment, CameraRunData, CameraSettings, CameraStream, RunRequest, System } from "./types";
-import { Notice, Status, defaultConfig, number } from "./ui";
+import { Notice, Status, number } from "./ui";
 
 const baseline: CameraConfig = { width: 640, sample_every: 1, threads: 1, queue_size: 2, mode: "local", review_interval_s: 2 };
 const proposedGoals: CameraSettings["goals"] = {
@@ -25,8 +25,7 @@ export function CameraForm({ system, busy, initial, onStart }: { system: System;
     try {
       const body: RunRequest = {
         workload: "camera_health", name: String(data.get("name")), strategy: String(data.get("strategy")) as RunRequest["strategy"],
-        budget: num("budget"), repetitions: num("repetitions"), seed: num("seed"), frames: 300,
-        baseline: defaultConfig, goals: {min_success: 0.95, max_corner_error_px: 4, max_p95_ms: 40},
+        budget: num("budget"), repetitions: num("repetitions"), seed: num("seed"),
         hourly_price: data.get("price") ? num("price") : null,
         camera: {
           dataset: dataset.id, dataset_sha256: dataset.sha256,
@@ -108,7 +107,7 @@ export function CameraRun({identifier, busy, onEdit, openRun}: {identifier: stri
       <a href={`/api/runs/${identifier}/export`}>Export full evidence</a>
       <button onClick={() => onEdit(run.request)}>Reuse contract</button>
       {running && <button disabled={acting} onClick={() => action(`/api/runs/${identifier}/cancel`)}>Cancel run</button>}
-      <button disabled={busy || acting || !run.recommendation || active.data?.experiment_id === run.recommendation} onClick={() => { if (window.confirm("Apply this held-out validated camera-health configuration? Tracking is unchanged.")) void action(`/api/experiments/${run.recommendation}/apply`); }}>Apply camera configuration</button>
+      <button disabled={busy || acting || !run.recommendation || active.data?.experiment_id === run.recommendation} onClick={() => { if (window.confirm("Apply this held-out validated camera-health configuration to the workbench? Physical cameras are unchanged.")) void action(`/api/experiments/${run.recommendation}/apply`); }}>Apply camera configuration</button>
       <button disabled={busy || acting || !active.data?.previous_id} onClick={() => { if (window.confirm("Restore the previous validated camera-health configuration?")) void action("/api/active/rollback?workload=camera_health"); }}>Rollback camera configuration</button>
       <button disabled={busy || acting || !active.data} onClick={() => action("/api/active/benchmark?workload=camera_health")}>Verify active configuration</button>
     </div>
@@ -146,7 +145,7 @@ function Playback({stream, dataset}: {stream: CameraStream; dataset: string}) {
   return <section>
     <h3>Recorded evidence playback</h3><p>{stream.session} · {stream.camera}. Video shows source PTS; status shows measured replay wall time. Not a live camera.</p>
     <video ref={video} controls preload="metadata" onTimeUpdate={e => setTime(e.currentTarget.currentTime)} src={`/api/camera/${encodeURIComponent(dataset)}/${encodeURIComponent(stream.clip)}/video`} aria-label="Recorded camera evidence" />
-    <p role="status">{number(time)} s · Delivery: {state?.delivery ?? "Not yet measured"} · {state?.unknown !== false ? "Unknown evidence coverage" : "Evidence available"} · {state?.conditions.length ? state.conditions.join(", ") : "No active alert"} · Queue age: {state ? `${number(state.queue_age_s, 3)} s` : "Unknown"}</p>
+    <p role="status">{number(time)} s · Pipeline: {state?.pipeline_status ?? "Not recorded"} · Image: {state?.quality_status ?? "Not recorded"} · {state?.unknown !== false ? "Unknown evidence coverage" : "Evidence available"} · {state?.visual_observations?.join(", ") || "No observation description recorded"} · Queue age: {state ? `${number(state.queue_age_s, 3)} s` : "Unknown"}</p>
     {observed && <><p>Latest analyzed frame PTS {number(observed.pts_s, 3)} s, arrival-to-result age {number(observed.arrival_age_s, 3)} s. Excludes upstream capture/network delay.</p><div className="camera-regions" aria-label="Four by four image measurement regions">{observed.regions.map((r, i) => <div key={i} className={r.suspected_obstruction ? "region-suspect" : ""}>Region {i + 1}<br />Intensity {number(r.mean, 0)}<br />Detail {number(r.detail, 0)}<br />Clipped {number(r.clipped * 100, 0)}%{r.suspected_obstruction && <strong> Suspected loss</strong>}</div>)}</div></>}
     <div className="table-scroll"><table><thead><tr><th>Annotation (evaluator only)</th><th>Onset / recovery</th><th>Provenance / severity</th></tr></thead><tbody>{stream.truth.map((e, i) => <tr key={i}><td>{e.type}</td><td><button onClick={() => { if (video.current) video.current.currentTime = e.start_s; }}>{number(e.start_s)} s</button> / {number(e.end_s)} s</td><td>{e.provenance} / {e.severity ?? "Unspecified"}</td></tr>)}</tbody></table></div>
     <details><summary>Detected episodes and image decisions</summary><pre>{JSON.stringify({episodes: stream.episodes, reviews: stream.reviews}, null, 2)}</pre></details>

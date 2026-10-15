@@ -14,7 +14,7 @@ from time import perf_counter, process_time
 import cv2
 import numpy as np
 
-from ..benchmark import environment
+from ..runtime import environment
 from ..camera_dataset import checked, public
 from ..camera_health import Monitor, analyze, assess_health, score
 from ..decisions import current_review, review

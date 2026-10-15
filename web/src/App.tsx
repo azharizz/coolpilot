@@ -1,11 +1,9 @@
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { refresh, useResource } from "./api";
-import type { Active, History, RunRequest, System } from "./types";
+import type { History, RunRequest, System } from "./types";
 import { Notice, Pagination, RunRows } from "./ui";
-import { RunForm } from "./RunForm";
-import { RunView } from "./RunView";
 import { Runtime } from "./Runtime";
-import { CameraForm } from "./Camera";
+import { CameraForm, CameraRun } from "./Camera";
 import { CameraCompare } from "./CameraCompare";
 
 const subscribeRoute = (listener: () => void) => {
@@ -23,7 +21,6 @@ export function App() {
   const route = useSyncExternalStore(subscribeRoute, getRoute);
   const system = useResource<System>("/api/system", 15000);
   const recent = useResource<History>("/api/history?page_size=3");
-  const active = useResource<Active>("/api/active");
   const [draft, setDraft] = useState<RunRequest | undefined>();
   const runId = route.startsWith("/runs/") ? route.slice(6) : null;
   const busy = Boolean(recent.data?.running_id);
@@ -33,7 +30,7 @@ export function App() {
   }
   function editRun(request: RunRequest) {
     setDraft({ ...request });
-    window.location.hash = request.camera ? "/camera" : "/";
+    window.location.hash = "/camera";
   }
   return (
     <>
@@ -66,9 +63,9 @@ export function App() {
               aria-current={route === "/" ? "page" : undefined}
               onClick={() => setDraft(undefined)}
             >
-              Optimize
+              Overview
             </a>
-            <a href="#/camera" aria-current={route === "/camera" ? "page" : undefined}>Camera health</a>
+            <a href="#/camera" aria-current={route === "/camera" ? "page" : undefined}>Validate cameras</a>
             <a href="#/camera-comparison" aria-current={route === "/camera-comparison" ? "page" : undefined}>Compare cameras</a>
             <a
               href="#/history"
@@ -91,8 +88,8 @@ export function App() {
         </div>
       </header>
       <main id="main" className="workspace" ref={main} tabIndex={-1}>
-        {(system.error || recent.error || active.error) && (
-          <Notice>{system.error || recent.error || active.error}</Notice>
+        {(system.error || recent.error) && (
+          <Notice>{system.error || recent.error}</Notice>
         )}
         {recent.data?.running_id && recent.data.running_id !== runId && (
           <div className="activity-banner" role="status">
@@ -107,12 +104,7 @@ export function App() {
         )}
         {system.data &&
           (route === "/runtime" ? (
-            <Runtime
-              system={system.data}
-              active={active.data}
-              openRun={openRun}
-              busy={busy}
-            />
+            <Runtime system={system.data} openRun={openRun} />
           ) : route === "/camera-comparison" ? (
             <CameraCompare />
           ) : route === "/camera" ? (
@@ -120,28 +112,38 @@ export function App() {
           ) : route === "/history" ? (
             <RunHistory onNew={() => setDraft(undefined)} />
           ) : runId ? (
-            <RunView
+            <CameraRun
               key={runId}
               identifier={runId}
-              system={system.data}
-              active={active.data}
               busy={busy}
               openRun={openRun}
               onEdit={editRun}
             />
           ) : (
             <>
-              <RunForm
-                key={draft ? JSON.stringify(draft) : "default"}
-                initial={draft}
-                system={system.data}
-                busy={busy || recent.loading}
-                onStart={openRun}
-                onReset={() => setDraft(undefined)}
-              />
+              <section className="camera-home" aria-labelledby="camera-home-title">
+                <div>
+                  <p className="eyebrow">ADAS camera-health workbench</p>
+                  <h1 id="camera-home-title">Check the cameras.<br />Keep the evidence.</h1>
+                  <p>Compare three recorded feeds. Measure image quality and delivery freshness with OpenCV before testing processing changes.</p>
+                  <div className="camera-actions">
+                    <a className="button primary" href="#/camera-comparison">Open three-camera replay</a>
+                    <a className="button secondary" href="#/camera" onClick={() => setDraft(undefined)}>Validate a configuration</a>
+                  </div>
+                  <p className="field-help">Local analysis by default. Decisions image review is optional and requires upload consent.</p>
+                </div>
+                <div className="camera-home-feeds">
+                  {(["left", "centre", "right"] as const).map(camera => <figure key={camera}>
+                    <video controls preload="metadata" playsInline src={`/api/camera-comparison/${camera}/video`} aria-label={`Original ${camera} camera recording`} />
+                    <figcaption>{camera === "centre" ? "Centre" : camera === "left" ? "Left" : "Right"} · recorded forward view</figcaption>
+                  </figure>)}
+                </div>
+                <p className="camera-home-runtime">OpenCV COOL · {system.data.cool.available ? "vendor runtime detected; performance unverified" : "not installed on this host"} <a href="#/runtime">Inspect runtime</a></p>
+                <p className="field-help">Engineering monitor for ADAS research. These overlapping forward views do not provide surround coverage. Alerts are suspicions; this system is not validated for driving decisions or vehicle control.</p>
+              </section>
               <section className="recent-section">
                 <div className="section-heading">
-                  <h2>Recent runs</h2>
+                  <h2>Recent camera-health runs</h2>
                   <a href="#/history">
                     View all{recent.data ? ` (${recent.data.total})` : ""}
                   </a>
@@ -155,7 +157,7 @@ export function App() {
       <footer className="site-footer">
         <span>COOLPilot</span>
         <span>
-          Local OpenCV measurements. <a href="#/runtime">Runtime details</a>
+          Camera-health evidence. <a href="#/runtime">Runtime details</a>
         </span>
         <a href="https://opencv.org/" target="_blank" rel="noreferrer">
           Built with OpenCV
@@ -184,8 +186,8 @@ function RunHistory({ onNew }: { onNew: () => void }) {
           <h1>Run history</h1>
           <p>Revisit results or reuse a setup.</p>
         </div>
-        <a className="button primary" href="#/" onClick={onNew}>
-          New optimization
+        <a className="button primary" href="#/camera" onClick={onNew}>
+          New camera validation
         </a>
       </div>
       <div className="history-toolbar">

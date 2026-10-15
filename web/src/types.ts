@@ -1,44 +1,12 @@
-export type Configuration = {
-  width: number;
-  features: number;
-  frame_stride: number;
-  threads: number;
-  workers: number;
-  pyramid_levels: number;
-};
-export type Goals = {
-  min_success: number;
-  max_corner_error_px: number;
-  max_p95_ms: number;
-};
 export type RunRequest = {
-  workload?: "tracking" | "camera_health";
-  camera?: CameraSettings;
+  workload: "camera_health";
+  camera: CameraSettings;
   name: string;
   strategy: "agent" | "random" | "baseline";
   budget: number;
   repetitions: number;
-  frames: number;
-  goals: Goals;
-  baseline: Configuration;
   hourly_price: number | null;
   seed: number;
-};
-export type Metrics = {
-  throughput_fps: number;
-  p95_ms: number;
-  p50_ms: number;
-  success_rate: number;
-  corner_error_px: number;
-  mean_iou: number;
-  lost_frames: number;
-  scored_frames_per_stream: number;
-  processed_frames_per_stream: number;
-  prediction_interval_ms: number;
-  cpu_capacity_pct: number;
-  worker_peak_rss_sum_mb: number;
-  cost_per_video_hour: number | null;
-  stages_ms: Record<string, number>;
 };
 export type Gate = {
   passed: boolean;
@@ -50,28 +18,22 @@ export type Gate = {
     passed: boolean;
   }[];
 };
-export type Polygon = number[][];
-export type Experiment = {
+export type CameraExperiment = {
   id: number;
   sequence: number;
   run_id: string;
   kind: string;
   status: string;
-  config: Configuration;
+  workload?: "camera_health";
+  config: CameraConfig;
   rationale: string;
   gate: Gate | null;
-  metrics?: Metrics;
+  metrics?: CameraMetrics;
   error: string | null;
-  split?: "tuning" | "validation";
-  frames?: number;
+  split?: string;
   repetitions?: number;
-  rounds?: { throughput_fps: number; p95_ms: number; wall_seconds: number }[];
-  trace?: {
-    polygons: (Polygon | null)[];
-    truth: Polygon[];
-    errors_px: number[];
-    ious: number[];
-  };
+  dataset?: CameraDataset;
+  trace?: {streams: CameraStream[]};
 };
 export type RunSummary = {
   id: string;
@@ -89,27 +51,14 @@ export type History = {
   page_size: number;
   running_id: string | null;
 };
-export type Run = RunSummary & {
-  experiments: Experiment[];
-  frontier: number[];
+export type CameraRunData = RunSummary & {
+  experiments: CameraExperiment[];
   events: {
     id: number;
     created: string;
     kind: string;
     payload: Record<string, unknown>;
   }[];
-};
-export type Dataset = {
-  name: string;
-  source: string;
-  citation: string;
-  fps: number;
-  frame_count: number;
-  width: number;
-  height: number;
-  sha256: string;
-  annotation: string;
-  splits: Record<string, { start: number; max_frames: number }>;
 };
 export type System = {
   runtime: {
@@ -121,19 +70,10 @@ export type System = {
     hardware_note: string;
     build_sha256: string;
   };
-  dataset: Dataset | null;
-  dataset_state: { status: string; error: string | null };
   agent: { model: string; configured: boolean };
   cool: { available: boolean; detail: string };
   camera_datasets: CameraDataset[];
 };
-export type Active = {
-  id: number;
-  created: string;
-  experiment_id: number;
-  previous_id: number | null;
-  experiment: Experiment;
-} | null;
 
 export type CameraConfig = {
   width: number; sample_every: number; threads: number; queue_size: number;
@@ -165,15 +105,10 @@ export type CameraMetrics = {
 };
 export type CameraStream = {
   clip: string; repetition: number; stream: number; session: string; camera: string;
-  transitions?: {time_s: number; conditions: string[]; unknown: boolean; delivery: string; queue_age_s: number}[];
+  transitions?: {time_s: number; pipeline_status?: string; quality_status?: string; visual_observations?: string[]; unknown: boolean; delivery: string; queue_age_s: number}[];
   observations?: {pts_s: number; analysis_s: number; arrival_age_s: number; local_conditions: string[];
     regions: {box: number[]; mean: number; detail: number; clipped: number; suspected_obstruction?: boolean}[]}[];
   episodes: {type: string; start_s: number; end_s: number | null}[];
   truth: {type: string; start_s: number; end_s: number; provenance: string; severity?: string}[];
   reviews: {frame: number; status: string; latency_s?: number; cost?: number | null; error?: string; probabilities?: Record<string, number>}[];
 };
-export type CameraExperiment = Omit<Experiment, "config" | "metrics" | "trace" | "split"> & {
-  workload?: "camera_health"; config: CameraConfig; metrics?: CameraMetrics; split?: string;
-  dataset?: CameraDataset; trace?: {streams: CameraStream[]};
-};
-export type CameraRunData = Omit<Run, "experiments"> & {experiments: CameraExperiment[]};

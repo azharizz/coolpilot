@@ -11,35 +11,11 @@ import httpx
 from pydantic import ValidationError
 
 from . import store
-from .benchmark import environment
-from .dataset import DATA, manifest
-from .models import (
-    CameraConfiguration,
-    CameraProposal,
-    Configuration,
-    ExperimentProposal,
-    FinishProposal,
-    RunRequest,
-    quality_gate,
-)
-
-SYSTEM = """You are COOLPilot, an experiment engineer optimizing the provided OpenCV workload.
-Your objective is greater measured source-frame throughput subject to ALL user quality and latency constraints.
-Use run_experiment to choose and measure configurations. Base each proposal on the actual evidence.
-You choose experiments, not a preset rule or grid. Explain a concise testable hypothesis in rationale.
-Tune width, feature count, stride, threads, worker replicas and pyramid depth. Balance quality and speed.
-Workers are concurrent independent streams of the same video; threads are OpenCV threads per worker.
-All source frames are scored, including held predictions between sampled frames. P95 is for processed frames.
-Success is IoU >= 0.5; corner error is measured in original-image pixels. Lost predictions incur the frame diagonal.
-Higher throughput is not useful if any quality gate fails. Never claim that a failed experiment was successful.
-The tuning and held-out clips are separate. You only see tuning data. Final validation happens after you finish.
-COOL is not available on this host unless the environment reports it. ARM does not imply Graviton performance.
-Do not invent measurements, cost, acceleration, deployments or tool results. No em dashes in public text.
-Call finish when evidence or budget warrants stopping. Summarize findings, uncertainty and remaining limits.
-Write the summary as plain prose, at most 150 words. Use request.frames as the measured clip length;
-the dataset's max_frames is capacity, not the number measured. Do not recommend production deployment
-before held-out validation. Your summary is commentary; the measured validation gate decides promotion.
-"""
+from .runtime import environment
+from .dataset import DATA
+from .camera_dataset import checked, public
+from .camera_health import gate as camera_gate
+from .models import CameraConfiguration, CameraProposal, FinishProposal, RunRequest
 
 CAMERA_SYSTEM = """You optimize a timestamped camera-health replay, not camera hardware.
 Minimize measured CPU seconds per camera-second subject to EVERY declared gate.
@@ -65,8 +41,8 @@ def tool(name: str, description: str, schema) -> dict:
 TOOLS = [
     tool(
         "run_experiment",
-        "Measure one new tracking configuration on the fixed tuning clip.",
-        ExperimentProposal,
+        "Measure one bounded camera-health configuration on the fixed tuning recordings.",
+        CameraProposal,
     ),
     tool(
         "finish",
@@ -133,7 +109,7 @@ async def provider(
 
 
 async def measure(
-    run_id: str, request: RunRequest, config: Configuration | CameraConfiguration, kind: str, rationale: str
+    run_id: str, request: RunRequest, config: CameraConfiguration, kind: str, rationale: str
 ) -> dict:
     identifier = store.start_experiment(run_id, kind, config.model_dump(), rationale)
     store.event(
@@ -145,29 +121,13 @@ async def measure(
     folder.mkdir(parents=True, exist_ok=True)
     config_path = folder / f"{identifier}-config.json"
     config_path.write_text(config.model_dump_json())
-    args = [
-        sys.executable,
-        "-m",
-        "coolpilot.benchmark",
-        "--config",
-        str(config_path),
-        "--split",
-        "validation" if kind.endswith("validation") else "tuning",
-        "--frames",
-        str(request.frames),
-        "--repetitions",
-        str(request.repetitions),
-    ]
-    if request.hourly_price is not None:
-        args += ["--hourly-price", str(request.hourly_price)]
-    if request.camera:
-        request_path = folder / "request.json"
-        request_path.write_text(request.model_dump_json())
-        args = [sys.executable, "-m", "coolpilot.simulation.camera_benchmark", "--request", str(request_path),
-                "--config", str(config_path), "--split", "validation" if kind.endswith("validation") else "tuning"]
+    request_path = folder / "request.json"
+    request_path.write_text(request.model_dump_json())
+    args = [sys.executable, "-m", "coolpilot.simulation.camera_benchmark", "--request", str(request_path),
+            "--config", str(config_path), "--split", "validation" if kind.endswith("validation") else "tuning"]
     environment_variables = {
         k: v for k, v in os.environ.items()
-        if not k.startswith("NEBIUS_") and (request.camera is not None or not k.startswith("AGENT_PROVIDER_"))
+        if not k.startswith("NEBIUS_") and (request.camera.allow_image_requests or not k.startswith("AGENT_PROVIDER_"))
     }
     process = await asyncio.create_subprocess_exec(
         *args,
@@ -197,11 +157,7 @@ async def measure(
         return store.experiment(identifier)
     try:
         result = json.loads(stdout)
-        if request.camera:
-            from .camera_health import gate as camera_gate
-            gate = camera_gate(result["metrics"], request.camera.goals)
-        else:
-            gate = quality_gate(result["metrics"], request.goals)
+        gate = camera_gate(result["metrics"], request.camera.goals)
     except (ValueError, KeyError, TypeError) as error:
         store.fail_experiment(
             identifier, "Benchmark output was not a valid measurement."
@@ -230,19 +186,15 @@ def evidence(experiment: dict) -> dict:
 
 
 async def optimize(run_id: str, request: RunRequest, baseline: dict) -> str:
-    dataset = manifest()
+    dataset = public(checked(request.camera, verify=False))
+    dataset["clips"] = [c for c in dataset["clips"] if c["split"] != "validation"]
     tools = TOOLS
     prompt_request = request.model_dump()
-    if request.camera:
-        from .camera_dataset import checked, public
-        dataset = public(checked(request.camera, verify=False))
-        dataset["clips"] = [c for c in dataset["clips"] if c["split"] != "validation"]
-        prompt_request["camera"]["scenarios"] = [
-            s for s in prompt_request["camera"]["scenarios"] if s["clip"] in {c["id"] for c in dataset["clips"]}
-        ]
-        tools = [tool("run_experiment", "Measure one bounded camera-health configuration.", CameraProposal), TOOLS[1]]
+    prompt_request["camera"]["scenarios"] = [
+        s for s in prompt_request["camera"]["scenarios"] if s["clip"] in {c["id"] for c in dataset["clips"]}
+    ]
     messages = [
-        {"role": "system", "content": CAMERA_SYSTEM if request.camera else SYSTEM},
+        {"role": "system", "content": CAMERA_SYSTEM},
         {
             "role": "user",
             "content": json.dumps(
@@ -294,11 +246,9 @@ async def optimize(run_id: str, request: RunRequest, baseline: dict) -> str:
                     and used < request.budget
                     and finish_summary is None
                 ):
-                    proposal_type = CameraProposal if request.camera else ExperimentProposal
-                    configuration_type = CameraConfiguration if request.camera else Configuration
-                    proposal = proposal_type.model_validate(arguments)
-                    config = configuration_type.model_validate(proposal.model_dump(exclude={"rationale"}))
-                    if request.camera and config.mode != "local" and not (
+                    proposal = CameraProposal.model_validate(arguments)
+                    config = CameraConfiguration.model_validate(proposal.model_dump(exclude={"rationale"}))
+                    if config.mode != "local" and not (
                         request.camera.allow_image_requests and request.camera.max_image_requests
                     ):
                         raise ValueError("Remote review was not authorized.")
@@ -349,7 +299,7 @@ async def execute(run_id: str):
         baseline = await measure(
             run_id,
             request,
-            request.reference(),
+            request.camera.baseline,
             "baseline",
             "Measure the reference configuration before search.",
         )
@@ -360,22 +310,13 @@ async def execute(run_id: str):
         elif request.strategy == "random":
             generator = random.Random(request.seed)
             for _ in range(request.budget):
-                config = Configuration(
-                    width=generator.choice([240, 320, 480, 640]),
-                    features=generator.choice([100, 300, 600, 1000]),
-                    frame_stride=generator.choice([1, 2, 3]),
-                    threads=generator.choice([1, 2, 4]),
-                    workers=generator.choice([1, 2, 4]),
-                    pyramid_levels=generator.choice([2, 3, 4]),
+                config = CameraConfiguration(
+                    width=generator.choice([320, 640, 960, 1280]),
+                    sample_every=generator.choice([1, 2, 4]), threads=generator.choice([1, 2, 4]),
+                    queue_size=generator.choice([1, 2, 4]),
+                    mode=generator.choice(["local", "scheduled", "hybrid"] if request.camera.allow_image_requests and request.camera.max_image_requests else ["local"]),
+                    review_interval_s=generator.choice([1, 2, 5]),
                 )
-                if request.camera:
-                    config = CameraConfiguration(
-                        width=generator.choice([320, 640, 960, 1280]),
-                        sample_every=generator.choice([1, 2, 4]), threads=generator.choice([1, 2, 4]),
-                        queue_size=generator.choice([1, 2, 4]),
-                        mode=generator.choice(["local", "scheduled", "hybrid"] if request.camera.allow_image_requests and request.camera.max_image_requests else ["local"]),
-                        review_interval_s=generator.choice([1, 2, 5]),
-                    )
                 await measure(
                     run_id,
                     request,
@@ -394,29 +335,26 @@ async def execute(run_id: str):
             if e.get("gate") and e["gate"]["passed"]
         ]
         store.update_run(run_id, summary=summary)
-        if request.camera:
-            from .camera_dataset import checked
-            if checked(request.camera, verify=False)["development_only"]:
-                candidates = []
-                store.update_run(run_id, summary=summary + " Development-only recordings: no held-out recommendation or apply.")
+        if checked(request.camera, verify=False)["development_only"]:
+            candidates = []
+            store.update_run(run_id, summary=summary + " Development-only recordings: no held-out recommendation or apply.")
         if candidates:
-            cost_available = request.camera and all(e["metrics"].get("cost_per_camera_hour") is not None for e in candidates)
+            cost_available = all(e["metrics"].get("cost_per_camera_hour") is not None for e in candidates)
             objective = "cost_per_camera_hour" if cost_available else "cpu_seconds_per_camera_second"
-            winner = (min(candidates, key=lambda e: e["metrics"][objective])
-                      if request.camera else max(candidates, key=lambda e: e["metrics"]["throughput_fps"]))
+            winner = min(candidates, key=lambda e: e["metrics"][objective])
             store.event(
                 run_id,
                 "search_frozen",
                 {
                     "selected_experiment": winner["id"],
-                    "reason": f"Lowest {objective} satisfying every tuning gate." if request.camera else "Highest measured throughput satisfying every tuning gate.",
+                    "reason": f"Lowest {objective} satisfying every tuning gate.",
                 },
             )
             if winner["id"] != baseline["id"] and baseline["gate"]["passed"]:
                 reference = await measure(
                     run_id,
                     request,
-                    request.reference(),
+                    request.camera.baseline,
                     "reference_validation",
                     "Held-out reference check. Preserve a validated fallback if the candidate regresses.",
                 )
@@ -425,7 +363,7 @@ async def execute(run_id: str):
             validation = await measure(
                 run_id,
                 request,
-                (CameraConfiguration if request.camera else Configuration).model_validate(winner["config"]),
+                CameraConfiguration.model_validate(winner["config"]),
                 "validation",
                 f"Held-out evaluation of experiment {winner['id']}. Search is frozen.",
             )

@@ -11,7 +11,7 @@ from types import SimpleNamespace
 import cv2
 import numpy as np
 
-from ..benchmark import environment
+from ..runtime import environment
 from .camera_benchmark import ReviewBudget, replay
 from .camera_effects import END, KINDS, START, effect, fields, strength
 from ..models import CameraConfiguration, CameraThresholds, ReplayScenario

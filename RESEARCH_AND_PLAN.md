@@ -1,5 +1,7 @@
 # COOLPilot research and implementation plan
 
+> Historical tracking-era research, superseded by the camera-only cutover. Commands and tracking results below are archival, not the current application contract. Use `README.md` and `IMPROVEMENT_PLAN.md`. Original datasets, old verification artifacts and the `video/` presentation remain preserved as historical material.
+
 Date: 2026-09-19. Source brief: `../RESEARCH_AGENT_RESPONSE.MD`.
 
 **Goal:** Build a working local browser application that uses a real Nebius agent to optimize one OpenCV tracking workload, measures every experiment, and refuses configurations that violate user quality constraints.

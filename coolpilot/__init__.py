@@ -1,1 +1,1 @@
-"""Measured optimization of a single OpenCV tracking workload."""
+"""Measured camera-health engineering with OpenCV and optional image review."""

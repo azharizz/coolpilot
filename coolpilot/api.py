@@ -21,9 +21,8 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from . import store
 from .agent import execute
-from .benchmark import environment
-from .dataset import DATASET, manifest, prepare
-from .models import CameraConfiguration, Contract, RunRequest, pareto_frontier
+from .runtime import environment
+from .models import CameraConfiguration, Contract, RunRequest
 from . import camera_dataset
 from . import decisions
 from .simulation import camera_comparison
@@ -36,7 +35,6 @@ for _key in ("AGENT_PROVIDER_API_KEY", "AGENT_PROVIDER_MODEL"):
         os.environ[_key] = _provider_env[_key]
 
 tasks: dict[str, asyncio.Task] = {}
-dataset_state = {"status": "preparing", "error": None}
 comparison_active = False
 
 
@@ -60,27 +58,13 @@ class CameraCompareRequest(Contract):
         return self
 
 
-async def load_dataset():
-    try:
-        await asyncio.to_thread(prepare)
-        dataset_state["status"] = "ready"
-    except Exception as error:  # noqa: BLE001 - startup boundary must report preparation failure
-        dataset_state.update(
-            status="failed",
-            error=f"Dataset preparation failed ({type(error).__name__}). Check source connectivity and archive hashes, then restart.",
-        )
-
-
 @asynccontextmanager
 async def lifespan(app):
     store.initialize()
-    loading = asyncio.create_task(load_dataset())
     yield
     for task in tasks.values():
         task.cancel()
     await asyncio.gather(*tasks.values(), return_exceptions=True)
-    loading.cancel()
-    await asyncio.gather(loading, return_exceptions=True)
 
 
 app = FastAPI(title="COOLPilot", version="1.0.0", lifespan=lifespan)
@@ -120,7 +104,7 @@ async def browser_boundary(request: Request, call_next):
 def health():
     with store.database() as db:
         db.execute("SELECT 1")
-    return {"status": "ok", "dataset": dataset_state["status"]}
+    return {"status": "ok"}
 
 
 @app.get("/api/system")
@@ -129,8 +113,6 @@ def system():
     facts.pop("opencv_build")
     return {
         "runtime": facts,
-        "dataset": manifest(),
-        "dataset_state": dataset_state,
         "camera_datasets": camera_dataset.catalog(),
         "agent": {
             "model": os.environ.get("NEBIUS_MODEL", ""),
@@ -141,7 +123,7 @@ def system():
         },
         "cool": {
             "available": facts["distribution"] == "COOL",
-            "detail": "COOL needs a licensed, compatible Graviton runtime. These local measurements use the installed OpenCV build.",
+            "detail": "COOL is a licensed OpenCV distribution for supported AWS Graviton hosts, not an OpenCV version flag. Detection uses the vendor /opt/cool/ module location on Linux ARM64; license and speedup are not verified. Upgrading the standard wheel does not enable COOL.",
         },
     }
 
@@ -163,21 +145,16 @@ def history(
 
 @app.post("/api/runs", status_code=201)
 async def start_run(request: RunRequest):
-    if request.workload == "tracking" and dataset_state["status"] != "ready":
-        raise HTTPException(
-            409, "The annotated dataset is not ready. Check Runtime before starting."
-        )
     if request.strategy == "agent" and not all(
         os.environ.get(k) for k in ("NEBIUS_MODEL", "NEBIUS_API_KEY", "NEBIUS_BASE_URL")
     ):
         raise HTTPException(
             409, "Configure Nebius in .env and restart before using the agent."
         )
-    if request.camera:
-        try:
-            await asyncio.to_thread(camera_dataset.checked, request.camera)
-        except (ValueError, KeyError, TypeError, OSError):
-            raise HTTPException(422, "Camera dataset or frozen replay contract is invalid.") from None
+    try:
+        await asyncio.to_thread(camera_dataset.checked, request.camera)
+    except (ValueError, KeyError, TypeError, OSError):
+        raise HTTPException(422, "Camera dataset or frozen replay contract is invalid.") from None
     if comparison_active:
         raise HTTPException(409, "A three-camera comparison is active. Wait for it to finish.")
     try:
@@ -198,9 +175,6 @@ def run(identifier: str):
     result = store.get_run(identifier)
     if result is None:
         raise HTTPException(404, "Run not found.")
-    result["frontier"] = pareto_frontier(
-        [e for e in result["experiments"] if not e["kind"].endswith("validation")]
-    )
     return result
 
 
@@ -224,7 +198,7 @@ def export(identifier: str):
     if result is None:
         raise HTTPException(404, "Run not found.")
     return JSONResponse(
-        {"schema_version": 2, "dataset": result["experiments"][0].get("dataset") if result["request"].get("camera") and result["experiments"] else manifest(), "run": result},
+        {"schema_version": 3, "dataset": result["experiments"][0].get("dataset") if result["experiments"] else None, "run": result},
         headers={
             "Content-Disposition": f'attachment; filename="coolpilot-{result["id"]}.json"'
         },
@@ -328,28 +302,8 @@ async def analyze_camera_comparison(request: CameraCompareRequest):
                              headers={"X-Accel-Buffering": "no"})
 
 
-@app.get("/api/frames/{split}/{index}")
-def frame(split: str, index: int):
-    if (
-        split not in ("tuning", "validation")
-        or not 0 <= index < 1000
-        or manifest() is None
-    ):
-        raise HTTPException(404, "Frame not found.")
-    # Names come from the prepared dataset, never from a user-supplied filesystem path.
-    info = manifest()
-    path = sorted((DATASET / "img").glob("*.jpg"))[
-        info["splits"][split]["start"] + index
-    ]
-    return FileResponse(
-        path,
-        media_type="image/jpeg",
-        headers={"Cache-Control": "private, max-age=86400"},
-    )
-
-
 @app.get("/api/active")
-def active(workload: Literal["tracking", "camera_health"] = "tracking"):
+def active(workload: Literal["camera_health"] = "camera_health"):
     return store.active_configuration(workload)
 
 
@@ -362,7 +316,7 @@ def apply(identifier: int):
 
 
 @app.post("/api/active/rollback")
-def rollback(workload: Literal["tracking", "camera_health"] = "tracking"):
+def rollback(workload: Literal["camera_health"] = "camera_health"):
     try:
         return store.rollback(workload)
     except ValueError as error:
@@ -370,16 +324,15 @@ def rollback(workload: Literal["tracking", "camera_health"] = "tracking"):
 
 
 @app.post("/api/active/benchmark", status_code=201)
-async def benchmark_active(workload: Literal["tracking", "camera_health"] = "tracking"):
+async def benchmark_active(workload: Literal["camera_health"] = "camera_health"):
     current = store.active_configuration(workload)
     if current is None:
         raise HTTPException(409, "Apply a validated configuration first.")
     original = store.get_run(current["experiment"]["run_id"])
-    values = {**original["request"], "name": "Active configuration verification", "strategy": "baseline"}
-    if workload == "camera_health":
-        values["camera"] = {**values["camera"], "baseline": current["experiment"]["config"]}
-    else:
-        values["baseline"] = current["experiment"]["config"]
+    # Old camera evidence can contain now-retired top-level tracking parameters.
+    values = {k: v for k, v in original["request"].items() if k in RunRequest.model_fields}
+    values.update(name="Active configuration verification", strategy="baseline")
+    values["camera"] = {**values["camera"], "baseline": current["experiment"]["config"]}
     request = RunRequest.model_validate(values)
     return await start_run(request)
 

@@ -148,14 +148,14 @@ def decode_experiment(row, trace=False) -> dict:
 def experiment(identifier: int, trace=False) -> dict | None:
     with database() as db:
         row = db.execute(
-            "SELECT * FROM experiments WHERE id=?", (identifier,)
+            "SELECT e.* FROM experiments e JOIN runs r ON r.id=e.run_id WHERE e.id=? AND json_extract(r.request, '$.workload')='camera_health'", (identifier,)
         ).fetchone()
     return decode_experiment(row, trace) if row else None
 
 
 def get_run(identifier: str, full=False) -> dict | None:
     with database() as db:
-        row = db.execute("SELECT * FROM runs WHERE id=?", (identifier,)).fetchone()
+        row = db.execute("SELECT * FROM runs WHERE id=? AND json_extract(request, '$.workload')='camera_health'", (identifier,)).fetchone()
         if row is None:
             return None
         result = dict(row)
@@ -180,12 +180,12 @@ def list_runs() -> list[dict]:
     with database() as db:
         return [
             {**dict(r), "request": json.loads(r["request"])}
-            for r in db.execute("SELECT * FROM runs ORDER BY created DESC LIMIT 100")
+            for r in db.execute("SELECT * FROM runs WHERE json_extract(request, '$.workload')='camera_health' ORDER BY created DESC LIMIT 100")
         ]
 
 
 def history(page: int, page_size: int, query: str, status: str) -> dict:
-    where = "WHERE instr(lower(json_extract(request, '$.name')), lower(?)) > 0"
+    where = "WHERE json_extract(request, '$.workload')='camera_health' AND instr(lower(json_extract(request, '$.name')), lower(?)) > 0"
     parameters = [query]
     if status:
         where += " AND status=?"
@@ -209,7 +209,7 @@ def history(page: int, page_size: int, query: str, status: str) -> dict:
     }
 
 
-def active_configuration(workload: str = "tracking") -> dict | None:
+def active_configuration(workload: str = "camera_health") -> dict | None:
     with database() as db:
         row = db.execute(
             "SELECT p.* FROM active a JOIN promotions p ON p.id=a.promotion_id WHERE a.workload=?",
@@ -222,12 +222,12 @@ def active_configuration(workload: str = "tracking") -> dict | None:
 
 def verify_camera_promotion(row):
     request = json.loads(row["request"])
-    if request.get("workload", "tracking") != "camera_health":
-        return
-    from .benchmark import environment
+    if request.get("workload") != "camera_health":
+        raise ValueError("Only camera-health evidence can be applied.")
+    from .runtime import environment
     from .camera_dataset import checked
-    from .models import RunRequest
-    settings = RunRequest.model_validate(request).camera
+    from .models import CameraSettings
+    settings = CameraSettings.model_validate(request["camera"])
     dataset = checked(settings)
     result = json.loads(row["result"])
     if dataset["development_only"] or result.get("split") != "validation":
@@ -256,7 +256,7 @@ def promote(experiment_id: int) -> dict:
                 "Only the completed run's held-out validated recommendation can be applied."
             )
         verify_camera_promotion(row)
-        workload = json.loads(row["request"]).get("workload", "tracking")
+        workload = "camera_health"
         current = db.execute(
             "SELECT promotion_id FROM active WHERE workload=?", (workload,)
         ).fetchone()
@@ -271,7 +271,7 @@ def promote(experiment_id: int) -> dict:
     return active_configuration(workload)
 
 
-def rollback(workload: str = "tracking") -> dict:
+def rollback(workload: str = "camera_health") -> dict:
     with database() as db:
         db.execute("BEGIN IMMEDIATE")
         current = db.execute(

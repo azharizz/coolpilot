@@ -9,7 +9,7 @@ from time import perf_counter
 import cv2
 import numpy as np
 
-from coolpilot.benchmark import environment
+from coolpilot.runtime import environment
 from coolpilot.camera_health import Monitor, analyze
 from coolpilot.models import CameraThresholds
 

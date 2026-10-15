@@ -10,20 +10,22 @@ Black navigation and start surface, white working surfaces, charcoal text, Poppi
 
 ## Hierarchy
 
-The main navigation contains Optimize, History and Runtime. Optimize has one primary start action with no required field entry. Native Customize details contain the existing editable contract and budget. The default uses the real Nebius optimizer and the real annotated CTU dataset. Recent history is limited to three rows; full history supports server-side name search, status filtering and eight-row pages without the previous 100-run visibility ceiling.
+Navigation contains Overview, Validate cameras, Compare cameras, History and Runtime. Overview presents three real source-video previews, replay/validation entrypoints, actual COOL availability and camera-only recent history. Validation defaults to a local baseline; external agent or image-review requests are explicit choices.
 
-Run pages lead with the validation outcome and an actionable recommendation. A before/after comparison uses the reference validation and recommended validation from the same run and split. A retained reference does not claim an improvement. Aggregate throughput is identified as throughput, never live camera fps. Result, Experiments and Agent notes separate evidence from diagnostics. Experiments use six-row pages; notes use four-item pages. Repetitions have the existing ten-item maximum and sit inside collapsed measurement details.
+The Overview hero retains the black start surface: white heading and primary action, outlined secondary action, light supporting text and three source recordings. History and the other working surfaces remain white.
 
-Run again posts the stored request to the existing coordinator. Edit setup prefills the optional form. Hash links make runs bookmarkable and support browser back/forward. Applying a recommendation still changes only the real local workload configuration; rollback and execution remain in Runtime.
+Camera runs expose passed and rejected gates, per-fault results, recorded evidence playback, regional measurements and exports. Apply and rollback change only the stored workbench configuration. Development-only evidence cannot authorize either a driving decision or configuration promotion.
+
+Edit setup prefills camera fields, excluding retired tracking settings. Hash links make runs bookmarkable and support browser back/forward. Historic tracking rows remain archived on disk but are not part of the active UI.
 
 ## Interaction and accessibility
 
 React state and native controls own interaction. There are no effects, DOM styling mutations or custom menu widgets. A ref moves keyboard focus for the skip link without changing the hash route. Native details progressively reveal settings. All controls have labels and focus indicators, and statuses include readable text. Animation is limited to a running-state pulse and short control transitions, respecting reduced-motion preferences.
 
-Real frames and stored geometry share the same index. Overlays are withheld while the requested frame loads. Dashed white identifies ground truth, green the predicted polygon. Toggles and scrubbing remain available. Quality limits and measured values sit next to the image. Stage comparisons use a reference from the same clip.
+Recorded replay separates Pipeline and Image channels and labels synthetic injection independently. Scrubbing uses measured historical samples; missing or stale evidence remains unknown. Regions and charts show measurements, not validated safety judgments. Native video controls show the original source views on Overview.
 
 ## Scope and review
 
-Desktop is the requested target. The page preserves a 720 px minimum working width; a new mobile layout is deliberately outside this revision. The benchmark engine, Nebius contract, safety gates and datasets remain unchanged.
+Desktop retains the compact OpenCV-inspired layout; narrow screens stack video previews and runtime details. Source videos, local heuristics and safety gates are unchanged by the camera-only homepage cutover.
 
-The user's chosen OpenCV visual system overrides generic design preferences. Review against the Impeccable 67-pattern catalog focuses on unnecessary cards, overdecorated controls, vague copy and diagnostic overload. No marketing carousel, stock imagery, decorative gradients, artificial progress percentages or invented metrics are included. Visual review and test status for this revision are recorded in `UX_REVAMP.md`; earlier review artifacts describe the prior interface.
+No stock imagery, fabricated acceleration or certified-safety claims. `UX_REVAMP.md`, `RESEARCH_AND_PLAN.md`, old screenshots and `video/` retain historical tracking-era material; they do not describe the current camera-only application.

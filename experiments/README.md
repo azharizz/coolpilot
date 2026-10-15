@@ -39,7 +39,7 @@ Features reuse the existing analyzer: 16 row-major triples of brightness/255, lo
 Both production and experiments import the same installed `cv2`; there is no remote COOL endpoint or second analyzer. Eligible OpenCV work can use a compatible licensed COOL build when that interpreter is selected. Python state logic, NumPy reductions, HTTP requests and remote model latency are not COOL acceleration targets. Exact operation support and output equivalence must be verified on that build; no automatic speedup is claimed for optical flow, SVM or BRISQUE.
 
 ```sh
-python -c 'from coolpilot.benchmark import environment; import json; print(json.dumps(environment(), indent=2))'
+python -c 'from coolpilot.runtime import environment; import json; print(json.dumps(environment(), indent=2))'
 python -m unittest discover -s tests -v
 ```
 

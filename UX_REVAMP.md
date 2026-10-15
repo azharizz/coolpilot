@@ -1,5 +1,7 @@
 # COOLPilot desktop simplification
 
+> Historical tracking UI revision. The current homepage and navigation are camera-only; see `DESIGN.md`, `README.md` and `IMPROVEMENT_PLAN.md`. Screenshots and tracking-era results below are archival.
+
 Date: 2026-09-20
 
 ## Problems confirmed

@@ -1,8 +1,6 @@
 # COOLPilot
 
-A local experiment workbench for planar tracking, camera-feed health, and camera-view comparison. A real Nebius model proposes bounded configurations, sees actual measurements, and chooses the next experiment. Quality gates reject regressions; held-out recommendations require human apply.
-
-Camera health adds timestamped local replay, OpenCV measurements, event scoring and workload-scoped promotion. **Compare cameras** provides per-camera synthetic faults, streamed analyzed-frame previews and local measurements, optional bounded Decisions review, and recorded evidence playback. This is an engineering workbench, not a validated ADAS monitor. Verification scope is recorded below; local results are not proof of AWS or COOL acceleration.
+A local **camera-health workbench for ADAS research**: replay three recorded views, inspect delivery and image-quality evidence, and evaluate bounded OpenCV configurations. Optional Decisions image review is advisory. This is not a validated road-safety system and cannot control a vehicle.
 
 ## Run
 
@@ -10,43 +8,26 @@ Camera health adds timestamped local replay, OpenCV measurements, event scoring 
 docker compose up -d --build --wait
 ```
 
-Open [COOLPilot](http://127.0.0.1:8769). The existing `.env` supplies the three Nebius settings. For a new checkout, copy `.env.example` to `.env`, fill in your own credentials and model, and restrict it with `chmod 600 .env`. Never commit it. Restart with `docker compose up -d --force-recreate --wait` after changing environment settings.
+Open [COOLPilot](http://127.0.0.1:8769). For a new checkout, copy `.env.example` to `.env` and restrict it with `chmod 600 .env`. Local replay needs no provider credentials. Configure Nebius only for agent search; optional Decisions uses separate server-side credentials and explicit image-upload consent. Never commit secrets.
 
-The first start downloads about 185 MB of original publisher archives, verifies pinned SHA-256 values, extracts 6,946 frames and annotations, and records a dataset manifest. The interface shows preparation and enables runs when ready. Existing data is reused. Allow roughly 1 GB for data and experiment artifacts plus Docker images. On a Linux host, create `data` with ownership matching container UID 10001 before starting; Docker Desktop on this Mac handles the bind mount.
+Startup no longer downloads the CTU tracking dataset. Supply the Oxford recordings or register your own camera dataset as described below. On Linux, create `data` with ownership matching container UID 10001. Restart after environment changes with `docker compose up -d --force-recreate --wait`.
 
-Both app and API are bound to `127.0.0.1`, port 8769. Port 8000 inside the container is private. Change `COOLPILOT_PORT` in `.env` if needed. Do not publish this single-user service to a network without adding authentication, TLS and an appropriate access boundary.
+Both app and API bind to loopback port 8769; container port 8000 is private. Change `COOLPILOT_PORT` if needed. Do not expose this single-user service without authentication, TLS and an appropriate access boundary.
 
 ## Use
 
-1. Open **Optimize** and click **Optimize tracking**. No setup is required. **Customize run** exposes quality limits, budget, search method and the reference configuration. Agent mode uses your configured Nebius account.
-2. The run opens with live status, then its validation outcome and a before/after comparison on the same held-out clip. **Result** shows source images and tracking quality; **Experiments** and **Agent notes** hold the supporting detail.
-3. **Apply configuration** persists the validated recommendation. **Runtime → Run active workload** executes that configuration. **Roll back** restores the preceding application. This controls the local benchmark runner, not EC2 or a camera service.
-4. **History** supports name search, status filters and eight-row pages. Open a saved run, use **Run again** to reuse its complete request, or **Edit setup** to prefill the optional controls. Run URLs are bookmarkable.
-5. **Export evidence** downloads the full measured record: repetitions, polygons, ground truth, decisions, token usage, dataset hashes and build facts. All completed evidence, including rejected experiments, remains available.
+1. **Overview** shows the three recorded forward views, links to replay and validation, and reports the actual COOL runtime status.
+2. **Compare cameras** streams local measurements at recorded pace. Choose reference for untouched video or an explicitly labelled synthetic fault. Pipeline health and image suspicions are separate; neither authorizes driving.
+3. **Validate cameras** freezes a dataset, gates and thresholds before baseline, seeded random or optional agent search. Development-only fixtures cannot authorize apply.
+4. **History** retains camera experiments, failed gates, traces and exports. **Edit setup** reuses camera settings. Apply/rollback changes only the workbench configuration, never physical cameras.
 
-**Baseline only** runs the reference and held-out check without the model. **Random-search comparison** samples a documented finite parameter set with a recorded seed. It is explicitly separate from the agent. Random mode samples widths 240/320/480/640, features 100/300/600/1000, strides 1/2/3, threads 1/2/4, workers 1/2/4 and pyramid levels 2/3/4. The agent has the full published schema bounds. Equal budgets, frames, repetitions and gates support a coarse comparison; this different search space and a single search cannot establish general agent superiority.
+Mouse-pad tracking, its optimizer, CTU preparation and tracking-only API/UI are removed. Historical database rows and original files remain on disk as archived evidence but are excluded from camera history and cannot be applied. No user recordings were deleted.
 
 ## Measurement contract
 
-The tracker executes JPEG decode, resize, grayscale, Gaussian blur, Shi-Tomasi feature extraction, pyramidal Lucas-Kanade flow and RANSAC homography. Features are reseeded inside the predicted polygon. Only the initial ground-truth polygon is supplied to tracking. There is no ground-truth correction after initialization and no hidden recovery that resets a lost track.
+Local OpenCV measurements cover regional detail, intensity, clipping and repeated imagery; delivery monitoring covers stale, unavailable and backlogged evidence. These are unvalidated heuristics, not obstacle detection or a causal diagnosis. Full timing, scoring, configuration and limitations are documented in the camera-health contract below.
 
-| Measurement | Definition |
-| --- | --- |
-| Source throughput | All source frames covered across concurrent independent stream replicas, divided by measured wall time. Includes initialization and decode of processed JPEGs. Excludes warm-up, quality evaluation, process startup and artifact writes. |
-| Processed-frame p95 | Pooled wall-clock latency across all processed, non-initial frames and repetitions. Skipped frames do not dilute it. |
-| Success | Fraction of all non-initial source frames with predicted polygon IoU at least 0.5. Lowest value across worker replicas and repetitions. |
-| Corner error | Mean corresponding four-corner distance in original 640 × 480 pixels. Highest mean across replicas and repetitions. Missing predictions incur the 800 px image diagonal; errors are capped at that diagonal. |
-| Frame stride | Intervening frames hold the last polygon and are still scored. Processing fewer JPEGs saves decode time; an encoded video decoder may still need intervening frames. |
-| CPU | Worker process CPU seconds divided by measured wall time and available logical CPUs. Coordinator overhead is excluded. |
-| Memory | Sum of worker peak RSS values, an upper bound rather than simultaneous resident memory. Coordinator memory is excluded. |
-| Stage profiles | Mean measured milliseconds per processed frame. Small Python overhead outside the named stages is included in latency but not attributed to a stage. |
-| Cost | Supplied total host USD/hour × 100 source fps ÷ aggregate measured throughput. No estimate is shown without a host price. Storage, transfer and model fees are excluded. |
-
-Each worker warms up on 20 frames, resets tracking, then measures 1 to 10 repetitions. Workers rendezvous before and after each timed interval so quality evaluation does not contend with tracking. Experiments are serialized. OpenCV uses the requested thread count; OpenCL is disabled and its RNG seed is fixed for reproducibility.
-
-Tuning starts at sequence index 0; held-out validation starts at 3473. Each clip is 30 to 1000 frames, default 300. This is a validation split within one sequence, not proof of generalization to other objects, cameras or production video. Laptop thermal state, other processes and Docker VM resources affect timing. Four streams at 200 aggregate fps do not mean one stream tracks at 200 fps.
-
-The frontier contains non-dominated tuning configurations that pass every gate, using throughput, error and p95. Final selection maximizes measured throughput subject to the explicit gates. With a fixed supplied host price, that also minimizes the reported host cost. The user must still choose to apply a recommendation. Model summaries describe tuning evidence; held-out measurements govern promotion.
+Agent and random search use the same finite camera configuration space. Selection minimizes included cost when all candidate prices are known, otherwise CPU seconds per camera-second, subject to every declared gate. Independent held-out validation governs promotion; the supplied single-session development fixture cannot produce a recommendation.
 
 ## Architecture and boundaries
 
@@ -77,25 +58,25 @@ docker compose logs --tail=50 app
 docker compose exec -T app python -m unittest discover -s tests -v
 ```
 
-Health confirms the API/database; its `dataset` field separately reports `preparing`, `ready` or `failed`. Wait for `ready` before the live verifier. In a separate terminal after the complete build:
+Health confirms API/database availability, not dataset validity or safe imagery. Against an idle service with the supplied videos:
 
 ```sh
 docker compose exec -T app python scripts/verify_live.py
 ```
 
-This executes real baseline and Nebius experiments, strict rejection, export secret checks, apply/rollback and cancellation. It consumes inference credits and adds named verification runs to history. The report is `data/live-verification.json`. Do not run it while another run is active. Unit tests use isolated temporary databases and synthetic geometric fixtures only to test contracts; those fixtures never populate the app.
+This verifies actual three-camera original-footage streaming, split health channels and frame accounting. It makes no paid requests and does not apply configurations or add history rows. Output is a JSON receipt on stdout.
 
-Portable benchmark reproduction using an exported experiment's configuration file:
+Reproduce a camera experiment with its saved request and configuration:
 
 ```sh
-docker compose exec -T app python -m coolpilot.benchmark \
-  --config /app/data/runs/RUN_ID/EXPERIMENT_ID-config.json \
-  --split tuning --frames 300 --repetitions 3
+docker compose exec -T app python -m coolpilot.simulation.camera_benchmark \
+  --request /app/data/runs/RUN_ID/request.json \
+  --config /app/data/runs/RUN_ID/EXPERIMENT_ID-config.json --split tuning
 ```
 
-Replace the identifiers with a real recorded run. The output includes OpenCV build identity, runner-source SHA-256, dataset fingerprint, architecture and raw measurements. The source hash covers `coolpilot/*.py`. Earlier development measurements predate this field. Never compare unlike source or dataset versions as a controlled experiment.
+Use real recorded identifiers. Runtime evidence includes OpenCV build identity, dataset fingerprint, architecture and a recursive `coolpilot/**/*.py` source hash. Older records predate this contract; do not compare unlike versions as controlled evidence.
 
-`data/coolpilot.sqlite3` owns run history and applied configuration. `data/runs/` contains configuration/result/error artifacts; `data/mouse_pad/` and `data/downloads/` contain the source dataset. For a simple consistent backup, stop the app, copy the entire `data` directory, then start it again. Keep `.env` separately in your secret storage. Restore the whole directory while stopped. No automatic pruning discards evidence.
+`data/coolpilot.sqlite3` owns camera history and applied configuration; `data/runs/` holds artifacts. `data/oxford_robotcar/` and registered camera datasets hold recordings. Retired tracking files are archival only. For a consistent backup, stop the service and copy the entire data directory; keep `.env` separately in secret storage. No automatic pruning discards evidence.
 
 ```sh
 docker compose stop
@@ -110,15 +91,15 @@ If a run fails, inspect its UI error first. Benchmark stderr is retained in `dat
 Two deployment approaches have different evidence requirements:
 
 1. **Native ARM Docker, implemented here:** package and execute the workload on ARM. Re-run on a target Graviton host to measure that host. ARM compatibility alone predicts neither performance nor cost.
-2. **Licensed COOL on matching Graviton, future execution:** use the vendor's supported Marketplace image and Python environment. The currently researched Graviton 5 offering checks EC2 entitlement and is not a distributable local pip substitute. It must be benchmarked on actual licensed hardware.
+2. **Licensed COOL on supported Graviton:** use the vendor-supported Marketplace image and its supplied Python environment. Check the current [OpenCV COOL requirements](https://opencv.org/cloud/) and Marketplace entitlement. A newer ordinary OpenCV wheel is not COOL; macOS ARM64 is not an entitled AWS Graviton runtime.
 
-For the second approach, transfer the same `coolpilot` package, verified dataset and configuration to the entitled machine. Confirm the vendor interpreter imports its supplied `cv2`, preserve that package and NumPy ABI, and install the compatible Pydantic dependency without replacing the vendor OpenCV build. Then run the same `python -m coolpilot.benchmark` command with the vendor interpreter. Repeat with vanilla OpenCV in a separate environment on the same instance. Match source/data hashes, frame counts, configurations and repetitions; retain both full build reports and differences. COOL and vanilla may bundle different OpenCV versions, so the measured delta reflects the distributions, not proof of one kernel's contribution.
+Transfer the same package, verified dataset, request and configuration to that host. Use the vendor interpreter that imports its supplied `cv2`; preserve its NumPy ABI and do not install the standard OpenCV wheel over it. Install the remaining compatible app dependencies and run the same `python -m coolpilot.simulation.camera_benchmark` command. Repeat with ordinary OpenCV in a separate environment on the same host. Match source/data hashes, configurations and repetitions; retain both build reports and output differences. The `/opt/cool/` Linux ARM64 detection is a runtime-location hint, not license validation or proof of acceleration.
 
 The web app does not provision EC2, accept Marketplace terms, upload to S3, discover prices or deploy a cloud fleet. These are explicit remaining integrations, not simulated buttons. No AWS account access or licensed COOL environment was supplied or used.
 
 ## Camera-health development videos
 
-The Camera health navigation opens the replay workbench. Existing tracking records remain readable. The local UI and recorded-evidence playback were verified; the supplied Oxford fixture remains development-only, with no independent held-out recommendation or apply.
+**Validate cameras** opens the camera experiment workbench. Retired tracking records are preserved on disk, not shown in the active app. The supplied Oxford fixture remains development-only, with no independent held-out recommendation or apply.
 
 Oxford RobotCar source frames are under `data/oxford_robotcar/`. Its `videos/` directory holds the original colour stereo conversions. `data/oxford_robotcar/camera_health_development/` holds a matched centre reference plus six synthetic variants: blur, underexposure, localized glare, camera-fixed translucent obstruction, blackout, and frozen image content. Each is 1280x960 with 271 frames over approximately 19.06 seconds. Edits are scheduled for 4-10 seconds; original imagery resumes afterward. Source timestamps, including existing gaps, are preserved. Raw images and original stereo videos are untouched.
 
@@ -138,7 +119,7 @@ This is one development session, not independent tuning/held-out evidence. No ph
 
 ## Camera-health workbench contract
 
-Use **Camera health**, select a registered dataset, review the proposed gates, then run baseline, seeded random search or the existing Nebius agent. No image requests are enabled by default. The supplied Oxford session is development-only: no recommendation or apply is allowed, even if its gates pass.
+Use **Validate cameras**, select a registered dataset, review the proposed gates, then run baseline, seeded random search or the existing Nebius agent. No image requests are enabled by default. The supplied Oxford session is development-only: no recommendation or apply is allowed, even if its gates pass.
 
 - `camera_dataset.py` locks the manifest, sidecars and MP4 hashes and rejects sessions/source hashes spanning tuning and validation. Register additional local sets in `data/camera_health/<id>/manifest.json`, using schema version 1 and the Oxford artifact/sidecar structure. Each artifact names its MP4, annotation JSON and SHA-256. Each sidecar supplies `split`, `split_group`, `session_id`, `camera`, `source_frames_sha256`, increasing `relative_frame_timestamps_us`, and events with `type`, `provenance`, `first_affected_pts_us`, `first_recovered_pts_us`. Use `tuning` and `validation` only for genuinely independent sessions. Physical annotations use `human_labelled_physical`; retain rights and severity metadata.
 - `camera_health.py` measures a 4×4 region grid, intensity, detail, clipping and repeated imagery, with persistence/recovery. Obstruction and freeze are suspicions, not causal diagnoses. Defaults in `CameraThresholds` are development calibration, not validated safety limits. Threshold overrides are frozen before a run.

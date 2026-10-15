@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Configuration, Experiment, RunSummary } from "./types";
+import type { RunSummary } from "./types";
 
 export const number = (value: number | undefined, digits = 1) =>
   value === undefined
@@ -51,48 +51,6 @@ export function Notice({ children }: { children: ReactNode }) {
       {children}
     </div>
   );
-}
-
-export const defaultConfig: Configuration = {
-  width: 640,
-  features: 600,
-  frame_stride: 1,
-  threads: 1,
-  workers: 1,
-  pyramid_levels: 3,
-};
-export const configLabels: Record<keyof Configuration, string> = {
-  width: "Processing width",
-  features: "Max features",
-  frame_stride: "Frame stride",
-  threads: "Threads per worker",
-  workers: "Concurrent streams",
-  pyramid_levels: "Pyramid levels",
-};
-export function ConfigList({ config }: { config: Configuration }) {
-  return (
-    <dl className="config-list">
-      {Object.entries(config).map(([key, value]) => (
-        <div key={key}>
-          <dt>{configLabels[key as keyof Configuration]}</dt>
-          <dd>
-            {value}
-            {key === "width" ? " px" : ""}
-          </dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-export function experimentName(experiment: Experiment) {
-  return experiment.kind === "baseline"
-    ? "Reference"
-    : experiment.kind === "reference_validation"
-      ? "Reference validation"
-      : experiment.kind === "validation"
-        ? "Candidate validation"
-        : `Candidate ${experiment.sequence}`;
 }
 
 export function Pagination({
@@ -157,14 +115,14 @@ export function RunRows({
         <p>
           {filtered
             ? "Try another name or status."
-            : "Start an optimization above. Your results will be saved here."}
+            : "Run a camera-health validation. Saved evidence will appear here."}
         </p>
       </div>
     );
   return (
     <div className="table-scroll">
       <table className="history-table">
-        <caption className="sr-only">Saved optimization runs</caption>
+        <caption className="sr-only">Saved camera-health runs</caption>
         <thead>
           <tr>
             <th>Run</th>
