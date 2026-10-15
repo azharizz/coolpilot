@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useResource } from "./api";
+import { Icon, PageHead } from "./ui";
 
 type CameraId = "left" | "centre" | "right";
 type Mode = "local" | "scheduled" | "hybrid";
@@ -90,7 +91,7 @@ export function CameraCompare() {
   const [limit, setLimit] = useState(4);
   const [timeout, setTimeoutSeconds] = useState(5);
   const [busy, setBusy] = useState(false);
-  const [phase, setPhase] = useState("Choose scenarios, then start a local replay. No images leave this service in local mode.");
+  const [phase, setPhase] = useState("Ready. In local mode no image leaves this machine.");
   const [error, setError] = useState("");
   const [cameraErrors, setCameraErrors] = useState<Partial<Record<CameraId, string>>>({});
   const [ready, setReady] = useState<Ready>();
@@ -99,7 +100,7 @@ export function CameraCompare() {
   const [playing, setPlaying] = useState(false);
   const [tick, setTick] = useState(Date.now());
   const [metrics, setMetrics] = useState([0, 0, 0]);
-  const [regionMetric, setRegionMetric] = useState<"mean" | "detail" | "clipped">("mean");
+  const [regionMetric, setRegionMetric] = useState<"off" | "mean" | "detail" | "clipped">("detail");
   const [, redraw] = useState(0);
   const history = useRef<Record<CameraId, Frame[]>>({ left: [], centre: [], right: [] });
   const received = useRef<Partial<Record<CameraId, number>>>({});
@@ -130,7 +131,7 @@ export function CameraCompare() {
     controller.current = abort;
     history.current = { left: [], centre: [], right: [] }; received.current = {};
     setReady(undefined); setResult(undefined); setCameraErrors({}); setError("");
-    setCursor(0); setPlaying(false); setBusy(true); setPhase("Opening source metadata; frames decode incrementally during replay…");
+    setCursor(0); setPlaying(false); setBusy(true); setPhase("Opening sources…");
     let completed = false;
     try {
       const response = await fetch("/api/camera-comparison/analyze", {
@@ -150,7 +151,7 @@ export function CameraCompare() {
         const message = JSON.parse(line) as Message;
         if (message.type === "error") throw new Error(message.error);
         if (message.type === "ready") {
-          setReady(message); setPhase("Live paced replay — previews and measurements come from the same analyzed frames.");
+          setReady(message); setPhase("Live. Previews and charts come from the same analyzed frames.");
         } else if (message.type === "frame") {
           if (!Array.isArray(message.visual_observations) ||
               !message.visual_observations.every(value => typeof value === "string") ||
@@ -164,7 +165,7 @@ export function CameraCompare() {
           setCameraErrors(errors => ({ ...errors, [message.camera]: message.error }));
         } else if (message.type === "complete") {
           completed = true; setResult(message);
-          setPhase(message.cancelled ? "Replay stopped. Retained evidence is historical." : "Replay complete. Scrub or play the recorded preview samples below.");
+          setPhase(message.cancelled ? "Replay stopped. Retained evidence is historical." : "Replay complete. Scrub the timeline to inspect any moment.");
         }
       }
       try {
@@ -180,7 +181,7 @@ export function CameraCompare() {
     } catch (reason) {
       abort.abort();
       if (reason instanceof DOMException && reason.name === "AbortError") {
-        setPhase("Stopped. Retained samples are partial; the server releases the run after outstanding work exits (up to the review timeout).");
+        setPhase("Stopped. Retained samples are partial.");
       } else {
         setError(reason instanceof Error ? reason.message : "Replay failed.");
         setPhase("Replay interrupted. Retained samples are historical, not live measurements.");
@@ -210,58 +211,67 @@ export function CameraCompare() {
       const frame = history.current[id].reduce<Frame | undefined>((last, f) => f.time_s <= shownTime ? f : last, undefined);
       return frame?.evidence.regions?.map(r => r.detail) ?? [];
     }));
-  return <section className="camera-workbench camera-comparison">
-    <div className="section-heading"><h1>Three-camera replay monitor</h1>
-      <p>Three forward views · one brief random fault per camera. Pipeline ≠ image quality. Unvalidated heuristics—not a driving-safety assessment.</p></div>
-    {source.loading && !source.data && <p role="status">Loading camera sources…</p>}
+  const canStart = !busy && source.data && Number.isInteger(seed) && seed >= 0 && seed <= 2147483647 &&
+    (mode === "local" || (consent && limit >= 1 && limit <= 10 && timeout >= 1 && timeout <= 20));
+  const progress = horizon ? Math.min(100, shownTime / horizon * 100) : 0;
+  return <section className="monitor">
+    <PageHead title="Live replay" lead="Three forward views, one brief random fault each. Pipeline and image health are judged separately.">
+      <span className={`sys-chip${distribution === "COOL" ? " is-cool" : ""}`}>
+        <span className="sys-dot" aria-hidden="true" />
+        {distribution ?? "Checking"} <b className="mono">{ready?.environment.opencv_version ?? source.data?.opencv_version ?? "—"}</b>
+        {distribution === "COOL" ? " · speedup unverified" : " · COOL not on this host"}
+      </span>
+    </PageHead>
+    {source.loading && !source.data && <div className="skeleton-rows" role="status" aria-label="Loading camera sources"><i /></div>}
     {source.error && <p className="notice" role="alert">{source.error}</p>}
-    <p className="camera-runtime-note"><strong>Runtime: {distribution ?? "checking"} · OpenCV {ready?.environment.opencv_version ?? source.data?.opencv_version ?? "—"}</strong><br />
-      {distribution === "COOL" ? "Detected COOL runtime; speedup not established." : "Local OpenCV · COOL unavailable on this host."}</p>
-    <fieldset disabled={busy} className="camera-replay-settings"><legend>Next replay</legend>
-      <div className="camera-comparison-controls">
-        <label>Random seed <input id="camera-replay-seed" type="number" min="0" max="2147483647" step="1" value={seed} onChange={e => setSeed(e.target.valueAsNumber)} /></label>
-        <button type="button" onClick={() => setSeed(Math.floor(Math.random() * 2147483648))}>New seed</button>
-        <label>Review mode <select value={mode} onChange={e => { setMode(e.target.value as Mode); setConsent(false); }}>
-          <option value="local">Local only · no uploads</option>
-          <option value="scheduled" disabled={!source.data?.decision_configured}>Scheduled Decisions review</option>
-          <option value="hybrid" disabled={!source.data?.decision_configured}>Decisions on local suspicion</option>
-        </select></label>
-        {mode !== "local" && <>
-          <label>Review slot interval <select value={interval} onChange={e => setIntervalSeconds(Number(e.target.value))}>{[1, 2, 5].map(n => <option key={n} value={n}>{n} seconds</option>)}</select></label>
-          <label>Max requests / camera <input type="number" min="1" max="10" value={limit} onChange={e => setLimit(Number(e.target.value))} /></label>
-          <label>Request deadline (seconds) <input type="number" min="1" max="20" value={timeout} onChange={e => setTimeoutSeconds(Number(e.target.value))} /></label>
-          <label className="camera-decision-consent"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} /> I authorize up to {limit * 3} image reviews for this run through OpenRouter to OpenAI, each with at most one HTTP 404 retry. Paid uploads, data collection allowed, not zero-retention. One outstanding review per camera; missed slots stay visible. Scores never clear local alarms.</label>
-        </>}
+
+    <div className={`deck panel${busy ? " is-live" : ""}`}>
+      <div className="deck-primary">
+        {busy
+          ? <button type="button" className="btn btn-lg btn-danger" onClick={() => controller.current?.abort()}><Icon name="stop" /> Stop replay</button>
+          : <button type="button" className="btn btn-lg btn-primary" onClick={start} disabled={!canStart}><Icon name="play" /> {mode === "local" ? "Start replay" : "Start replay and paid review"}</button>}
+        <p className="deck-phase" role="status"><span className={`live-dot${busy ? "" : " is-idle"}`} aria-hidden="true" />{phase}</p>
       </div>
-      {!source.data?.decision_configured && <p>Decisions is not configured on the server. Local replay remains available.</p>}
-    </fieldset>
-    <div className="camera-comparison-controls">
-      <button type="button" onClick={start} disabled={busy || !source.data || !Number.isInteger(seed) || seed < 0 || seed > 2147483647 || (mode !== "local" && (!consent || limit < 1 || limit > 10 || timeout < 1 || timeout > 20))}>{busy ? "Replay running…" : mode === "local" ? "Start local three-camera replay" : "Start replay and paid review"}</button>
-      {busy && <button type="button" onClick={() => controller.current?.abort()}>Stop replay</button>}
-      {!busy && liveTime > 0 && <button type="button" onClick={() => { if (cursor >= liveTime) setCursor(0); setPlaying(!playing); }}>{playing ? "Pause recorded preview" : "Play recorded preview"}</button>}
-      <label>Shared replay time {shownTime.toFixed(2)} / {horizon.toFixed(2)} s
-        <input aria-label="Shared replay time" type="range" min="0" max={liveTime || 1} step="0.05" disabled={busy || !liveTime} value={shownTime} onChange={e => { setPlaying(false); setCursor(Number(e.target.value)); }} /></label>
+      <fieldset disabled={busy} className="deck-settings">
+        <legend className="sr-only">Next replay</legend>
+        <label className="field">Seed
+          <span className="input-group">
+            <input id="camera-replay-seed" type="number" min="0" max="2147483647" step="1" value={seed} onChange={e => setSeed(e.target.valueAsNumber)} />
+            <button type="button" className="btn btn-icon" aria-label="New random seed" onClick={() => setSeed(Math.floor(Math.random() * 2147483648))}><Icon name="dice" /></button>
+          </span>
+        </label>
+        <label className="field">Review
+          <select value={mode} onChange={e => { setMode(e.target.value as Mode); setConsent(false); }}>
+            <option value="local">Local only · no uploads</option>
+            <option value="scheduled" disabled={!source.data?.decision_configured}>Scheduled Decisions review</option>
+            <option value="hybrid" disabled={!source.data?.decision_configured}>Decisions on local suspicion</option>
+          </select>
+        </label>
+        {mode !== "local" && <>
+          <label className="field">Interval<select value={interval} onChange={e => setIntervalSeconds(Number(e.target.value))}>{[1, 2, 5].map(n => <option key={n} value={n}>{n} s</option>)}</select></label>
+          <label className="field">Max / camera<input type="number" min="1" max="10" value={limit} onChange={e => setLimit(Number(e.target.value))} /></label>
+          <label className="field">Deadline (s)<input type="number" min="1" max="20" value={timeout} onChange={e => setTimeoutSeconds(Number(e.target.value))} /></label>
+          <label className="check deck-consent"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
+            <span>Send up to {limit * 3} images for paid review through OpenRouter to OpenAI, with at most one HTTP 404 retry each. The provider may collect data; not zero retention. Scores never clear local alarms.</span></label>
+        </>}
+        {source.data && !source.data.decision_configured && <p className="hint">Decisions is not configured on the server. Local replay is available.</p>}
+      </fieldset>
     </div>
-    <p role="status">{phase}</p>
     {error && <p className="notice" role="alert">{error}</p>}
-    <details className="camera-run-notes"><summary>Replay notes{ready && ` · seed ${ready.seed}`}</summary>
-      <p>Previews use analyzed pixels at up to 10 Hz. Timelines show sampled reports, not every frame; gaps are unknown and future time is blank. Scrub after replay to inspect history.</p>
-      <p>Seeds repeat injection schedules, not host timing. Worker waits are synthetic, not COOL performance. Resolution stress doubles initial analysis width, not source resolution. Injection labels never control health.</p>
-      <p>Image flags are suspicions: sky and scene changes can trigger glare or obstruction. No flag does not establish usable imagery. Stale evidence is unknown; last flags remain in diagnostics.</p>
-    </details>
-    <div className="camera-chart-controls">
-      {metricGroups.map((group, i) => <label key={group.label}>{group.label} chart
+
+    <div className="lens-bar">
+      {metricGroups.map((group, i) => <label className="field" key={group.label}>{group.label}
         <select value={metrics[i]} onChange={e => setMetrics(values => values.map((value, j) => j === i ? Number(e.target.value) : value))}>
           {group.metrics.map((metric, j) => <option key={metric.label} value={j}>{metric.label}</option>)}
         </select>
       </label>)}
-      <label>Region map<select value={regionMetric} onChange={e => setRegionMetric(e.target.value as typeof regionMetric)}>
-        <option value="mean">Brightness</option><option value="detail">Detail variance</option><option value="clipped">Clipped pixels</option>
+      <label className="field">Region overlay<select value={regionMetric} onChange={e => setRegionMetric(e.target.value as typeof regionMetric)}>
+        <option value="detail">Detail variance</option><option value="mean">Brightness</option><option value="clipped">Clipped pixels</option><option value="off">Off</option>
       </select></label>
     </div>
-    <p className="camera-frame-caption">Shared scales · sampled report time · gaps = missing data · hover for values. Dashed line = age limit or source fps. Region shading = magnitude, not safety.</p>
-    <div className="camera-comparison-grid">
-      {source.data?.sources.map(camera => {
+
+    <div className="monitor-grid">
+      {source.data?.sources.map((camera, ci) => {
         const samples = history.current[camera.id];
         const snapshot = busy ? samples.at(-1) : samples.reduce<Frame | undefined>((last, frame) => frame.time_s <= cursor ? frame : last, undefined);
         const sinceReceipt = busy ? Math.max(0, (tick - (received.current[camera.id] ?? tick)) / 1000) : 0;
@@ -281,109 +291,171 @@ export function CameraCompare() {
         const runMode = ready?.configuration.mode ?? "local";
         const episodes = snapshot?.episodes ?? [];
         const finalReviews = profile?.trace?.reviews ?? [];
-        return <article className="camera-comparison-card" key={camera.id}>
-          <h2>{camera.label} <small className="camera-frame-caption">{busy ? "Live" : snapshot ? "Recorded" : "Ready"}</small></h2>
-          <label>Next replay fault <select disabled={busy} value={faults[camera.id]} onChange={e => setFaults(f => ({ ...f, [camera.id]: e.target.value }))}>
-            {source.data?.faults.map(fault => <option key={fault} value={fault}>{fault === "reference" ? "Original · no injected fault" : fault === "random" ? "Randomized fault mix" : fault}</option>)}
-          </select></label>
-          {snapshot?.image ? <img className="camera-replay-image" src={snapshot.image} alt={`${camera.label} analyzed frame at ${number(snapshot.evidence.pts_s)} seconds; ${snapshot.injection.kind}`} /> :
-            <div className="camera-replay-empty">{ready ? "No analyzed frame at this time" : "Start replay to decode this source incrementally"}</div>}
-          <div className="camera-health-pair">
-            <section className={`camera-health-channel camera-state-${status}`} aria-label={`${camera.label} pipeline status`}>
-              <h3>Pipeline</h3><strong>{status === "healthy" ? "On time" : status.replaceAll("_", " ")}</strong>
-              <small>{snapshot?.delivery_conditions.join(", ") || "Delivery & processing"}</small>
-            </section>
-            <section className={`camera-health-channel camera-state-${quality}`} aria-label={`${camera.label} image status`}>
-              <h3>Image</h3><strong>{quality === "suspected" ? "Check image" : quality === "no_issue_detected" ? "No flag detected" : "Unknown"}</strong>
-              <small>{quality === "suspected" ? snapshot?.visual_observations.join(", ") : quality === "unknown" ? "No fresh assessment" : "Unvalidated visual checks"}</small>
-            </section>
+        const alarm = status === "degraded" || status === "unavailable" || quality === "suspected";
+        const injecting = snapshot && snapshot.injection.current && !["none", "reference"].includes(snapshot.injection.current) ? snapshot.injection.current.replaceAll("_", " ") : null;
+        return <article className={`cam${alarm ? " is-alarm" : ""}`} key={camera.id} style={{ "--i": ci } as CSSProperties}>
+          <header className="cam-head">
+            <h2><span className="hud-tag">{camera.id === "centre" ? "C" : camera.id[0].toUpperCase()}</span>{camera.label}</h2>
+            <span className={`chip ${busy ? "chip-running" : snapshot ? "chip-completed" : "chip-idle"}`}>{busy ? "Live" : snapshot ? "Recorded" : "Ready"}</span>
+          </header>
+          <div className={`hud cam-frame${busy && !stale ? " is-live" : ""}`}>
+            {snapshot?.image
+              ? <img src={snapshot.image} alt={`${camera.label} analyzed frame at ${number(snapshot.evidence.pts_s)} seconds; ${snapshot.injection.kind}`} />
+              : <div className="no-signal"><Icon name="target" size={28} /><span>{ready ? "No analyzed frame at this time" : "Awaiting replay"}</span></div>}
+            {regionMetric !== "off" && regions.length > 0 && <div className="region-overlay" aria-hidden="true">
+              {regions.map((r, i) => <i key={i} style={{ left: `${(i % 4) * 25}%`, top: `${Math.floor(i / 4) * 25}%`, width: "25%", height: "25%", "--v": Math.max(0, Math.min(1, r[regionMetric] / regionMax)) } as CSSProperties} />)}
+            </div>}
+            <div className="hud-status">
+              <span className={`hud-pill tone-${status === "healthy" ? "ok" : status === "unknown" ? "unknown" : "alarm"}`}>Pipeline · {status === "healthy" ? "on time" : status.replaceAll("_", " ")}</span>
+              <span className={`hud-pill tone-${quality === "no_issue_detected" ? "ok" : quality === "suspected" ? "alarm" : "unknown"}`}>Image · {quality === "suspected" ? "check" : quality === "no_issue_detected" ? "no flag" : "unknown"}</span>
+            </div>
+            <span className="hud-time mono">{snapshot ? `${number(snapshot.evidence.pts_s, 2)} s · f${snapshot.evidence.frame ?? "—"}` : "—"}</span>
+            {injecting && <span className="hud-inject">Injected · {injecting}</span>}
           </div>
-          <div className="camera-status-history" aria-label={`${camera.label} sampled status history`}>
-            {(["pipeline_status", "quality_status"] as const).map(channel => <div className="camera-history-row" key={channel}>
+
+          <div className="cam-readout">
+            <div className={`channel tone-${status === "healthy" ? "ok" : status === "unknown" ? "unknown" : "alarm"}`} aria-label={`${camera.label} pipeline status`}>
+              <small>Pipeline</small><strong>{status === "healthy" ? "On time" : status.replaceAll("_", " ")}</strong>
+              <span>{snapshot?.delivery_conditions.join(", ") || "Delivery and processing"}</span>
+            </div>
+            <div className={`channel tone-${quality === "no_issue_detected" ? "ok" : quality === "suspected" ? "alarm" : "unknown"}`} aria-label={`${camera.label} image status`}>
+              <small>Image</small><strong>{quality === "suspected" ? "Check image" : quality === "no_issue_detected" ? "No flag" : "Unknown"}</strong>
+              <span>{quality === "suspected" ? snapshot?.visual_observations.join(", ") : quality === "unknown" ? "No fresh assessment" : "Unvalidated visual checks"}</span>
+            </div>
+          </div>
+
+          <label className="field field-compact">Next fault <select disabled={busy} value={faults[camera.id]} onChange={e => setFaults(f => ({ ...f, [camera.id]: e.target.value }))}>
+            {source.data?.faults.map(fault => <option key={fault} value={fault}>{fault === "reference" ? "None (original)" : fault === "random" ? "Random mix" : fault.replaceAll("_", " ")}</option>)}
+          </select></label>
+
+          <div className="cam-tracks" aria-label={`${camera.label} sampled status history`}>
+            {(["pipeline_status", "quality_status"] as const).map(channel => <div className="track" key={channel}>
               <span>{channel === "pipeline_status" ? "Pipeline" : "Image"}</span>
-              <div className="camera-history-track" role="img" aria-label={`${channel === "pipeline_status" ? "Pipeline" : "Image"} history through ${number(shownTime, 1)} seconds; details in diagnostics`}>
-                <div className="camera-history-elapsed" style={{ width: `${horizon ? shownTime / horizon * 100 : 0}%` }} />
+              <div className="track-lane" role="img" aria-label={`${channel === "pipeline_status" ? "Pipeline" : "Image"} history through ${number(shownTime, 1)} seconds`}>
                 {samples.filter(sample => sample.time_s <= shownTime).map((sample, i) => {
                   const end = Math.min(samples[i + 1]?.time_s ?? shownTime, shownTime, sample.time_s + 1);
-                  return <span key={sample.time_s} className={`camera-history-segment camera-state-${sample[channel]}`}
-                    title={`${number(sample.time_s, 1)}–${number(end, 1)} s: ${sample[channel].replaceAll("_", " ")}`}
+                  const value = sample[channel];
+                  const tone = value === "healthy" || value === "no_issue_detected" ? "ok" : value === "unknown" ? "unknown" : "alarm";
+                  return <i key={sample.time_s} className={`seg tone-${tone}`}
+                    title={`${number(sample.time_s, 1)}–${number(end, 1)} s: ${value.replaceAll("_", " ")}`}
                     style={{ left: `${horizon ? sample.time_s / horizon * 100 : 0}%`, width: `${horizon ? Math.max(0, end - sample.time_s) / horizon * 100 : 0}%` }} />;
                 })}
+                {shownTime > 0 && <i className="playhead" style={{ left: `${progress}%` }} />}
               </div>
             </div>)}
-            <p className="camera-frame-caption">Green: on time / no flag · red: alarm / image flag · striped: unknown</p>
           </div>
-          <p className="camera-frame-caption">{snapshot ? `Frame ${number(snapshot.evidence.pts_s, 2)} s · injection: ${snapshot.injection.kind}` : "Waiting for frames"}</p>
+
           {cameraErrors[camera.id] && <p role="alert" className="notice">{cameraErrors[camera.id]}</p>}
-          <div className="camera-metric-plots">
+          <div className="plots">
             {plots.map(({ metric, series, max, reference }, chart) => {
               const points = series[ids.indexOf(camera.id)];
               const guide = chart === 0 && metrics[chart] === 1 ? ready?.sources.find(s => s.camera === camera.id)?.source_fps : reference;
-              let path = "", previous: number | null = null;
+              const x = (t: number) => 4 + t / (horizon || 1) * 292;
+              const y = (v: number) => 76 - v / max * 64;
+              let path = "", area = "", previous: number | null = null, last = 0;
               for (const point of points) {
-                if (point.value == null) { previous = null; continue; }
-                const x = 4 + point.time / (horizon || 1) * 292;
-                const y = 76 - point.value / max * 68;
-                path += `${previous == null || point.time - previous > 1 ? "M" : "L"}${x},${y} `;
-                previous = point.time;
+                if (point.value == null) { if (previous != null) area += `L${last},76 Z `; previous = null; continue; }
+                const px = x(point.time), py = y(point.value);
+                if (previous == null || point.time - previous > 1) {
+                  if (previous != null) area += `L${last},76 Z `;
+                  path += `M${px},${py} `; area += `M${px},76 L${px},${py} `;
+                } else { path += `L${px},${py} `; area += `L${px},${py} `; }
+                previous = point.time; last = px;
               }
+              if (previous != null) area += `L${last},76 Z`;
               const latest = points.at(-1)?.value;
-              return <figure className="camera-metric-plot" key={chart}>
-                <figcaption><span>{metric.label}</span><strong>{number(latest)} <small>{metric.unit}</small></strong></figcaption>
-                <svg tabIndex={0} viewBox="0 0 300 96" role="img" aria-label={`${camera.label} ${metric.label}; latest sampled ${number(latest)} ${metric.unit}; scale 0 to ${number(max)}; ${stale ? "stale" : busy ? "live" : "recorded"}`}>
+              const gid = `g-${camera.id}-${chart}`;
+              return <figure className="plot" key={chart}>
+                <figcaption><span>{metric.label}</span><strong className="mono">{number(latest)} <small>{metric.unit}</small></strong></figcaption>
+                <svg tabIndex={0} viewBox="0 0 300 92" role="img" aria-label={`${camera.label} ${metric.label}; latest sampled ${number(latest)} ${metric.unit}; scale 0 to ${number(max)}; ${stale ? "stale" : busy ? "live" : "recorded"}`}>
                   <title>{metric.label}: 0–{number(max)} {metric.unit}. Report time 0–{number(horizon, 1)} s.{guide != null && ` Dashed reference: ${number(guide)} ${metric.unit}.`}</title>
-                  <path className="camera-plot-axis" d="M4 8 V76 H296" />
-                  {guide != null && <path className="camera-plot-limit" d={`M4 ${76 - guide / max * 68} H296`} />}
-                  <path className="camera-plot-line" d={path} />
-                  {points.map((point, i) => point.value == null ? null : <circle key={i} cx={4 + point.time / (horizon || 1) * 292} cy={76 - point.value / max * 68} r="2">
+                  <defs><linearGradient id={gid} x1="0" y1="0" x2="0" y2="1"><stop offset="0" style={{ stopColor: "var(--blue)" }} stopOpacity="0.35" /><stop offset="1" style={{ stopColor: "var(--blue)" }} stopOpacity="0" /></linearGradient></defs>
+                  <path className="plot-grid" d="M4 12 H296 M4 44 H296 M4 76 H296" />
+                  {guide != null && <path className="plot-limit" d={`M4 ${y(guide)} H296`} />}
+                  <path d={area} fill={`url(#${gid})`} />
+                  <path className="plot-line" d={path} />
+                  {points.map((point, i) => point.value == null ? null : <circle key={i} cx={x(point.time)} cy={y(point.value)} r="2">
                     <title>{number(point.time, 2)} s: {number(point.value)} {metric.unit}</title>
                   </circle>)}
-                  <text x="8" y="14">{number(max, 1)} {metric.unit}</text><text x="4" y="92">0 s</text><text x="296" y="92" textAnchor="end">{number(horizon, 1)} s</text>
-                  {!points.some(p => p.value != null) && <text x="150" y="46" textAnchor="middle">No samples</text>}
+                  {latest != null && <circle className="plot-head" cx={x(points.at(-1)!.time)} cy={y(latest)} r="3" />}
+                  <text x="6" y="9">{number(max, 1)}</text><text x="4" y="90">0 s</text><text x="296" y="90" textAnchor="end">{number(horizon, 1)} s</text>
+                  {!points.some(p => p.value != null) && <text className="plot-empty" x="150" y="48" textAnchor="middle">No samples</text>}
                 </svg>
               </figure>;
             })}
-            {stale && <p className="camera-frame-caption">Updates stale · charts retain past samples</p>}
+            {stale && <p className="hint">Updates stale · charts keep past samples</p>}
           </div>
-          <div className="camera-region-map" aria-label={`${camera.label} regional ${regionMetric}`}>
-            {Array.from({ length: 16 }, (_, i) => {
-              const value = regions[i]?.[regionMetric];
-              const label = `Tile ${Math.floor(i / 4) + 1},${i % 4 + 1}: ${value == null ? "unknown" : number(regionMetric === "clipped" ? value * 100 : value, 1)}${regionMetric === "clipped" ? "%" : ""}`;
-              return <div key={i} tabIndex={0} aria-label={label} title={label} style={{ backgroundColor: value == null ? undefined : `color-mix(in srgb, var(--blue) ${Math.max(0, Math.min(100, value / regionMax * 100))}%, var(--surface))` }}><span>{i + 1}</span></div>;
-            })}
-          </div>
-          <p className="camera-frame-caption">Region {regionMetric === "mean" ? "brightness" : regionMetric} · light 0 → dark {number(regionMetric === "clipped" ? 100 : regionMax, 1)}{regionMetric === "clipped" ? "%" : ""} · displayed frame</p>
-          <details className="camera-diagnostics"><summary>Diagnostics & event log</summary>
-          <p>Report {number(snapshot?.time_s, 3)} s · frame {snapshot?.evidence.frame ?? "—"} · injection at report: {snapshot?.injection.current ?? "none"} · displayed strength: {number(snapshot ? snapshot.injection.strength * 100 : null, 0)}%. Last observations: {snapshot?.visual_observations.join(", ") || "none"}. Suspected causes (not diagnoses): {snapshot?.visual_conditions.join(", ") || "none"}.</p>
+
+          <details className="disclosure"><summary>Diagnostics</summary>
+            <p className="small">Report {number(snapshot?.time_s, 3)} s · frame {snapshot?.evidence.frame ?? "—"} · injection at report: {snapshot?.injection.current ?? "none"} ({number(snapshot ? snapshot.injection.strength * 100 : null, 0)}%). Observations: {snapshot?.visual_observations.join(", ") || "none"}. Suspected causes, not diagnoses: {snapshot?.visual_conditions.join(", ") || "none"}.</p>
           </details>
-          {runMode !== "local" && <details><summary>Decisions · {adviceStatus} {snapshot?.review_pending ? "· pending" : ""} · advisory</summary>
-            <p>{snapshot?.review_pending ? `Pending at report time: frame PTS ${number(snapshot.review_pending.pts_s, 3)} s` : "No request pending at report time."}<br />Latest slot: {snapshot?.review_slot?.status ?? "waiting"} · attempts {snapshot?.review_attempts ?? 0}<br />Reported charges at report time: ${number(snapshot?.review_cost, 6)} {snapshot?.review_cost_complete ? "" : "(incomplete / pending)"}</p>
-            {review && <><p>Historical response: {review.status} · valid on arrival: {review.valid_on_arrival ? "yes" : "no"} · frame PTS {number(review.pts_s, 3)} s · source age {number(reviewAge)} s<br />Advice at {busy ? "current" : "recorded"} time: {adviceStatus} · expires at {number(advice?.expires_s, 3)} s<br />Latency {number(review.latency_s)} s{review.error && ` · ${review.error}`}</p>
-              {adviceValid && <div className="camera-review-bars">{Object.entries(advice?.probabilities ?? {}).map(([kind, score]) => <label key={kind}>{kind} <meter min="0" max="1" value={score} /> {number(score * 100, 1)}%</label>)}</div>}</>}
-            <p>Advice expires at the local source-age limit, not the request timeout or review interval. Historical responses and charges remain in export. Single-frame review cannot establish freeze or feed interruption. Scores are not calibrated safety probabilities.</p>
+          {runMode !== "local" && <details className="disclosure"><summary>Decisions · {adviceStatus}{snapshot?.review_pending ? " · pending" : ""}</summary>
+            <p className="small">{snapshot?.review_pending ? `Pending: frame PTS ${number(snapshot.review_pending.pts_s, 3)} s` : "No request pending."} Latest slot: {snapshot?.review_slot?.status ?? "waiting"} · attempts {snapshot?.review_attempts ?? 0} · charges ${number(snapshot?.review_cost, 6)}{snapshot?.review_cost_complete ? "" : " (incomplete)"}</p>
+            {review && <><p className="small">Response: {review.status} · valid on arrival: {review.valid_on_arrival ? "yes" : "no"} · PTS {number(review.pts_s, 3)} s · source age {number(reviewAge)} s · expires {number(advice?.expires_s, 3)} s · latency {number(review.latency_s)} s{review.error && ` · ${review.error}`}</p>
+              {adviceValid && <div className="meters">{Object.entries(advice?.probabilities ?? {}).map(([kind, score]) => <label key={kind}><span>{kind}</span><meter min="0" max="1" value={score} /><b className="mono">{number(score * 100, 1)}%</b></label>)}</div>}</>}
+            <p className="hint">Advisory only. Advice expires with source age, cannot detect freeze or interruption, and scores are not calibrated probabilities.</p>
           </details>}
-          <details><summary>Injection & detection timeline</summary>
-          <p>Scheduled injections are not proof of detection. Open episodes have not cleared.</p>
-          <div className="table-scroll"><table><thead><tr><th>Signal</th><th>Onset s</th><th>End / cleared s</th></tr></thead><tbody>
-            {ready?.schedule[camera.id].map((event, i) => <tr key={`injection-${i}`}><td>Injection: {event.kind}{event.delay_ms != null && ` (${event.delay_ms} ms wait)`}{event.max_delay_ms != null && ` (0–${event.max_delay_ms} ms)`}{event.analysis_width_multiplier != null && ` (${event.analysis_width_multiplier}× width)`}</td><td>{number(event.start_s, 3)}</td><td>{number(event.end_s, 3)}</td></tr>)}
-            {episodes.map((e, i) => <tr key={i}><td>{["interruption", "backlog"].includes(e.type) ? "Delivery alarm" : "Visual observation"}: {e.observation} {e.observation !== e.type && `(possible ${e.type})`}</td><td>{number(e.start_s, 3)}</td><td>{e.end_s == null ? "not cleared" : number(e.end_s, 3)}</td></tr>)}
-            {!episodes.length && <tr><td colSpan={3}>No alarm or suspicion episodes by this report time.</td></tr>}
-          </tbody></table></div>
-          {profile && <section className="camera-final-report"><h3>Final camera report{profile.error ? " · failed" : ""}</h3>
-            <p>{profile.error ?? `Processed ${profile.trace?.processed}/${profile.frames}; dropped ${profile.trace?.dropped}; interrupted ${profile.trace?.interrupted_frames}; rejected ${profile.trace?.rejected_frames}; unfinished ${profile.trace?.unfinished_frames}. Unknown ${number((profile.trace?.unknown_fraction ?? 1) * 100)}%; max age ${number(profile.trace?.max_age_s, 3)} s.`}</p>
-            {runMode !== "local" && <>
-              <p>Completed attempts: {finalReviews.filter(r => r.attempted).length} · covered slots: {finalReviews.filter(r => r.valid_on_arrival).length}/{profile.trace?.review_required ?? 0}. Expired/late/unavailable results do not count as covered.</p>
-              <div className="table-scroll"><table><thead><tr><th>Reviewed PTS s</th><th>Historical outcome</th><th>Reported $</th></tr></thead><tbody>{finalReviews.map((r, i) => <tr key={i}><td>{number(r.pts_s, 3)}</td><td>{r.status}{r.attempted && !r.valid_on_arrival ? " · not valid on arrival" : ""}{r.late ? " · late" : ""}{r.error && <><br />{r.error}</>}</td><td>{r.attempted ? number(r.cost, 6) : "not attempted"}</td></tr>)}</tbody></table></div>
-            </>}
-          </section>}
+          <details className="disclosure"><summary>Injections and detections</summary>
+            <div className="table-scroll"><table className="compact"><thead><tr><th>Signal</th><th>Onset s</th><th>End s</th></tr></thead><tbody>
+              {ready?.schedule[camera.id].map((event, i) => <tr key={`injection-${i}`}><td><span className="fault-tag">{event.kind}</span>{event.delay_ms != null && ` ${event.delay_ms} ms`}{event.max_delay_ms != null && ` 0–${event.max_delay_ms} ms`}{event.analysis_width_multiplier != null && ` ${event.analysis_width_multiplier}× width`}</td><td className="mono">{number(event.start_s, 3)}</td><td className="mono">{number(event.end_s, 3)}</td></tr>)}
+              {episodes.map((e, i) => <tr key={i}><td>{["interruption", "backlog"].includes(e.type) ? "Delivery alarm" : "Visual"}: {e.observation}{e.observation !== e.type && ` (possible ${e.type})`}</td><td className="mono">{number(e.start_s, 3)}</td><td className="mono">{e.end_s == null ? "open" : number(e.end_s, 3)}</td></tr>)}
+              {!episodes.length && <tr><td colSpan={3} className="muted">No episodes yet.</td></tr>}
+            </tbody></table></div>
+            {profile && <div className="final-report"><h3>Final report{profile.error ? " · failed" : ""}</h3>
+              {profile.error ? <p className="small">{profile.error}</p> : <dl className="mini-stats">
+                <div><dt>Processed</dt><dd className="mono">{profile.trace?.processed}/{profile.frames}</dd></div>
+                <div><dt>Dropped</dt><dd className="mono">{profile.trace?.dropped}</dd></div>
+                <div><dt>Interrupted</dt><dd className="mono">{profile.trace?.interrupted_frames}</dd></div>
+                <div><dt>Rejected</dt><dd className="mono">{profile.trace?.rejected_frames}</dd></div>
+                <div><dt>Unfinished</dt><dd className="mono">{profile.trace?.unfinished_frames}</dd></div>
+                <div><dt>Unknown</dt><dd className="mono">{number((profile.trace?.unknown_fraction ?? 1) * 100)}%</dd></div>
+                <div><dt>Max age</dt><dd className="mono">{number(profile.trace?.max_age_s, 3)} s</dd></div>
+              </dl>}
+              {runMode !== "local" && <>
+                <p className="small">Attempts {finalReviews.filter(r => r.attempted).length} · covered slots {finalReviews.filter(r => r.valid_on_arrival).length}/{profile.trace?.review_required ?? 0}. Late or expired results do not count.</p>
+                <div className="table-scroll"><table className="compact"><thead><tr><th>PTS s</th><th>Outcome</th><th>$</th></tr></thead><tbody>{finalReviews.map((r, i) => <tr key={i}><td className="mono">{number(r.pts_s, 3)}</td><td>{r.status}{r.attempted && !r.valid_on_arrival ? " · not valid on arrival" : ""}{r.late ? " · late" : ""}{r.error && <><br />{r.error}</>}</td><td className="mono">{r.attempted ? number(r.cost, 6) : "—"}</td></tr>)}</tbody></table></div>
+              </>}
+            </div>}
           </details>
         </article>;
       })}
     </div>
-    {result && <section><h2>Final measured evidence</h2>
-      <p>Wall {number(result.measurement.wall_seconds)} s · CPU {number(result.measurement.cpu_seconds)} s · sampled previews, full traces in export.</p>
-      <button type="button" onClick={() => { const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "three-camera-replay.json"; a.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); }}>Download measured evidence JSON</button>
-      <details><summary>Full runtime identity, configuration and traces</summary><pre>{JSON.stringify(result, null, 2)}</pre></details>
+
+    {(busy || liveTime > 0) && <div className="transport" role="group" aria-label="Replay timeline">
+      <button type="button" className="btn btn-icon" disabled={busy} aria-label={playing ? "Pause recorded preview" : "Play recorded preview"}
+        onClick={() => { if (cursor >= liveTime) setCursor(0); setPlaying(!playing); }}><Icon name={playing ? "pause" : "play"} /></button>
+      <div className="scrub">
+        <div className="scrub-marks" aria-hidden="true">
+          {ready && ids.map((id, row) => ready.schedule[id].map((event, i) => <i key={`${id}-${i}`} className={`mark-${id}`}
+            style={{ left: `${horizon ? event.start_s / horizon * 100 : 0}%`, width: `${horizon ? Math.max(0.4, (event.end_s - event.start_s) / horizon * 100) : 0}%`, top: `${row * 5}px` }} title={`${id}: ${event.kind}`} />))}
+        </div>
+        <input aria-label="Shared replay time" type="range" min="0" max={liveTime || 1} step="0.05" disabled={busy || !liveTime} value={shownTime}
+          style={{ "--p": `${liveTime ? shownTime / Math.max(liveTime, 0.001) * 100 : 0}%` } as CSSProperties}
+          onChange={e => { setPlaying(false); setCursor(Number(e.target.value)); }} />
+      </div>
+      <span className="mono transport-time">{shownTime.toFixed(2)} <small>/ {horizon.toFixed(2)} s</small></span>
+    </div>}
+
+    <details className="panel disclosure"><summary>Reading this monitor{ready && ` · seed ${ready.seed}`}</summary>
+      <ul className="notes">
+        <li>Previews use analyzed pixels at up to 10 Hz. Charts plot sampled reports; gaps are unknown.</li>
+        <li>Seeds repeat injection schedules, not host timing. Synthetic waits are not COOL performance.</li>
+        <li>Image flags are suspicions. Sky and scene changes can trigger glare or obstruction, and no flag does not prove usable imagery.</li>
+        <li>Region overlay shows magnitude on the displayed frame, not safety.</li>
+      </ul>
+    </details>
+
+    {result && <section className="panel result">
+      <div className="evidence-head"><h2>Measured evidence</h2>
+        <button type="button" className="btn btn-sm" onClick={() => { const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "three-camera-replay.json"; a.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); }}><Icon name="download" size={16} /> Download JSON</button>
+      </div>
+      <dl className="stat-strip">
+        <div><dt>Wall time</dt><dd className="mono">{number(result.measurement.wall_seconds)} s</dd></div>
+        <div><dt>CPU time</dt><dd className="mono">{number(result.measurement.cpu_seconds)} s</dd></div>
+        <div><dt>Seed</dt><dd className="mono">{result.seed}</dd></div>
+        <div><dt>Status</dt><dd>{result.cancelled ? "Stopped early" : "Complete"}</dd></div>
+      </dl>
+      <details className="disclosure"><summary>Runtime identity, configuration and traces</summary><pre className="code">{JSON.stringify(result, null, 2)}</pre></details>
     </section>}
   </section>;
 }

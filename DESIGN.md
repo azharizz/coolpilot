@@ -4,28 +4,22 @@
 
 ## Direction
 
-Desktop operating interface using the user-selected OpenCV visual language. The official homepage was inspected directly on 2026-09-20, including a browser screenshot and computed typography. Reference capture: `.impeccable/review/revamp/opencv-reference.png`.
-
-Black navigation and start surface, white working surfaces, charcoal text, Poppins typography, compact rectangular buttons and OpenCV blue links. Poppins 400/500/600/700 is self-hosted with its OFL license. The custom COOLPilot mark uses three open RGB rings and a pilot arrow. It is a COOLPilot identity, not an assertion of official OpenCV ownership.
+Night-drive instrument cluster. Graphite surfaces (`--bg #06080b`, `--panel #0d1117`), white primary actions, Poppins 400 to 700 self-hosted, and a system mono stack only for measurements. The COOLPilot mark (green, blue and red chevrons) is unchanged and supplies the only signal colours: green means on time or passed, red means alarm or rejected, blue means active, selected or analysed. Amber marks development-only or interrupted states. Tokens live on `:root` in `web/src/style.css`.
 
 ## Hierarchy
 
-Navigation contains Overview, Validate cameras, Compare cameras, History and Runtime. Overview presents three real source-video previews, replay/validation entrypoints, actual COOL availability and camera-only recent history. Validation defaults to a local baseline; external agent or image-review requests are explicit choices.
+Navigation: Overview, Live replay, Validate, History, Runtime. A runtime chip in the top bar shows the actual distribution, OpenCV version and architecture.
 
-The Overview hero retains the black start surface: white heading and primary action, outlined secondary action, light supporting text and three source recordings. History and the other working surfaces remain white.
+Overview: headline, two actions (live replay, validate) and runtime facts beside an animated top-down diagram of three overlapping forward camera fields. Below are the three source recordings in HUD frames, the processing pipeline diagram (feeds, OpenCV 4 × 4 regions, separate Pipeline and Image channels, frozen gates, evidence) and recent runs.
 
-Camera runs expose passed and rejected gates, per-fault results, recorded evidence playback, regional measurements and exports. Apply and rollback change only the stored workbench configuration. Development-only evidence cannot authorize either a driving decision or configuration promotion.
+Live replay: control deck, chart and region-overlay lenses, three camera monitors and a sticky transport bar with per-camera injection marks. Each monitor shows the analysed frame with HUD status pills, an optional 4 × 4 region heatmap over the frame, Pipeline and Image readouts, status tracks, three charts and collapsible diagnostics.
 
-Edit setup prefills camera fields, excluding retired tracking settings. Hash links make runs bookmarkable and support browser back/forward. Historic tracking rows remain archived on disk but are not part of the active UI.
+Validate: three numbered steps (recordings, search, acceptance limits), with a sticky contract summary and the run button. Run detail: verdict banner, action bar, experiment board with CPU bars, gate meter with failures first, per-fault table, and recorded playback with region overlay and annotated, detected, pipeline and image tracks.
 
-## Interaction and accessibility
+## Motion
 
-React state and native controls own interaction. There are no effects, DOM styling mutations or custom menu widgets. A ref moves keyboard focus for the skip link without changing the hash route. Native details progressively reveal settings. All controls have labels and focus indicators, and statuses include readable text. Animation is limited to a running-state pulse and short control transitions, respecting reduced-motion preferences.
+Motion conveys state: live scan line and alarm glow on monitors, breathing status dots, flowing packets in pipeline and runtime diagrams, bar growth on data. The Overview diagram is the one authored showcase (lane flow, scan pulses, a periodic illustrative fault on the right field). Everything collapses under `prefers-reduced-motion`; source previews then show native controls instead of autoplaying.
 
-Recorded replay separates Pipeline and Image channels and labels synthetic injection independently. Scrubbing uses measured historical samples; missing or stale evidence remains unknown. Regions and charts show measurements, not validated safety judgments. Native video controls show the original source views on Overview.
+## Truth constraints
 
-## Scope and review
-
-Desktop retains the compact OpenCV-inspired layout; narrow screens stack video previews and runtime details. Source videos, local heuristics and safety gates are unchanged by the camera-only homepage cutover.
-
-No stock imagery, fabricated acceleration or certified-safety claims. `UX_REVAMP.md`, `RESEARCH_AND_PLAN.md`, old screenshots and `video/` retain historical tracking-era material; they do not describe the current camera-only application.
+Diagrams are labelled illustrations; every number on screen comes from actual execution. Overlapping forward views are never described as surround coverage. Pipeline and image health stay separate. Development-only evidence cannot authorize apply. The footer states once that this is not validated for driving decisions or vehicle control. No em dashes in copy.

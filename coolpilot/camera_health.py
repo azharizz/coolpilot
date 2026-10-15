@@ -22,14 +22,17 @@ def analyze(frame, width: int) -> dict:
     # Compare detail at a common scale so a resolution change does not redefine calibration.
     gray = cv2.resize(gray, (320, 240), interpolation=cv2.INTER_AREA)
     laplacian = cv2.Laplacian(gray, cv2.CV_32F)
+    # Tile statistics stay inside OpenCV so an accelerated build (e.g. COOL) covers them too.
+    bright = cv2.compare(gray, 250, cv2.CMP_GE)
     regions = []
     for y in range(4):
         for x in range(4):
-            tile = gray[y * 60:(y + 1) * 60, x * 80:(x + 1) * 80]
-            regions.append({"box": [x / 4, y / 4, 0.25, 0.25], "mean": float(tile.mean()),
-                            "detail": float(laplacian[y * 60:(y + 1) * 60, x * 80:(x + 1) * 80].var()),
-                            "clipped": float(np.mean(tile >= 250))})
-    return {"regions": regions, "black_fraction": float(np.mean(gray < 8)),
+            rows, cols = slice(y * 60, (y + 1) * 60), slice(x * 80, (x + 1) * 80)
+            _, deviation = cv2.meanStdDev(laplacian[rows, cols])
+            regions.append({"box": [x / 4, y / 4, 0.25, 0.25], "mean": cv2.mean(gray[rows, cols])[0],
+                            "detail": float(deviation[0, 0]) ** 2,
+                            "clipped": cv2.countNonZero(bright[rows, cols]) / (60 * 80)})
+    return {"regions": regions, "black_fraction": cv2.countNonZero(cv2.compare(gray, 8, cv2.CMP_LT)) / gray.size,
             "thumbnail": cv2.resize(gray, (80, 60), interpolation=cv2.INTER_AREA)}
 
 

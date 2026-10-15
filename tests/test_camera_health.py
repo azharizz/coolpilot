@@ -10,8 +10,27 @@ import numpy as np
 
 from coolpilot.simulation import camera_benchmark
 from coolpilot.simulation.camera_benchmark import ReviewBudget, cost_per_camera_hour, replay
-from coolpilot.camera_health import gate, score
+from coolpilot.camera_health import analyze, gate, score
 from coolpilot.models import CameraConfiguration, CameraGoals, CameraThresholds, FaultLimit, ReplayScenario
+
+
+class AnalyzerContract(unittest.TestCase):
+    def test_opencv_tile_statistics_match_their_numpy_definitions(self):
+        # Guards any OpenCV build swap (e.g. COOL): measurements must not drift.
+        rng = np.random.default_rng(7)
+        frame = rng.integers(0, 256, (480, 640, 3), dtype=np.uint8)
+        frame[:120, :160] = 255
+        frame[-120:, -160:] = 0
+        measured = analyze(frame, 640)
+        gray = cv2.resize(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), (320, 240), interpolation=cv2.INTER_AREA)
+        laplacian = cv2.Laplacian(gray, cv2.CV_32F).astype(np.float64)
+        for i, region in enumerate(measured["regions"]):
+            rows, cols = slice(i // 4 * 60, i // 4 * 60 + 60), slice(i % 4 * 80, i % 4 * 80 + 80)
+            self.assertAlmostEqual(region["mean"], gray[rows, cols].mean(), places=9)
+            self.assertAlmostEqual(region["detail"], laplacian[rows, cols].var(), delta=1e-6 * max(1, region["detail"]))
+            self.assertEqual(region["clipped"], np.mean(gray[rows, cols] >= 250))
+        self.assertEqual(measured["regions"][0]["clipped"], 1)
+        self.assertEqual(measured["black_fraction"], np.mean(gray < 8))
 
 
 class CameraScoringContract(unittest.TestCase):

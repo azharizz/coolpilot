@@ -43,6 +43,18 @@ python -c 'from coolpilot.runtime import environment; import json; print(json.du
 python -m unittest discover -s tests -v
 ```
 
+### Same-host build comparison
+
+`experiments.opencv_profile` runs the analyzer, alarm logic and optionally the flow candidate unpaced over the three Oxford views, once per interpreter, then compares the two profiles. It reports CPU per stage (decode, OpenCV analysis, Python alarms, flow) and fails (exit 1) unless every per-frame condition and alarm episode is identical.
+
+```sh
+python -m experiments.opencv_profile --flow --out standard.json
+/path/to/cool/python -m experiments.opencv_profile --flow --out cool.json
+python -m experiments.opencv_profile --compare standard.json cool.json
+```
+
+Run both on the same host with the same `--width` and `--threads`; video hashes must match. The first pass is a discarded warm-up. Totals are exact process CPU; small stage splits are approximate because decoder threads can charge a neighbouring stage. Analyzer tile statistics use `cv2.meanStdDev`, `cv2.mean` and `cv2.countNonZero`, so an accelerated build covers them; measured on Darwin/arm64 with OpenCV 4.13, this cut analysis CPU 1.5× versus the former NumPy reductions, with identical alarms.
+
 The default Docker image installs ordinary `opencv-python-headless`, not licensed COOL. Do not install the default OpenCV wheel or contrib wheel over a vendor COOL environment. Use a separate environment for BRISQUE if the vendor build lacks `cv2.quality`. The existing runtime distribution label uses the `/opt/cool/` module path convention; it is not license verification. Retain actual module path, build hash, hardware and license provenance. Run matched workloads with fixed gates on the intended licensed hardware before asserting acceleration.
 
 ## Research-only candidates, not implemented models

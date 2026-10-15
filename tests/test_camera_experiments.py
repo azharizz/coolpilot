@@ -7,6 +7,7 @@ import numpy as np
 from coolpilot.camera_health import analyze
 from experiments.camera_health import Candidate
 from experiments.feature_classifier import fit_evaluate, features
+from experiments.opencv_profile import compare
 
 
 class ExperimentChecks(unittest.TestCase):
@@ -82,6 +83,23 @@ class ExperimentChecks(unittest.TestCase):
         self.assertEqual(float(black[-1]), 1)
         self.assertEqual(float(white[-1]), 0)
         self.assertEqual(float(white[2]), 1)
+
+    def test_build_comparison_flags_changed_alarms_and_refuses_unlike_inputs(self):
+        def profile(conditions, sha="x", cpu=1.0):
+            frame = {"pts_s": 0, "conditions": conditions, "regions": [[1, 2, 0]] * 16, "black_fraction": 0}
+            video = {"sha256": sha, "frames": 1, "cpu_s": dict.fromkeys(("decode", "opencv_analysis", "python_alarms", "flow_candidate"), cpu),
+                     "other_cpu_s": 0, "total_cpu_s": 4 * cpu, "episodes": [], "detections": [frame]}
+            return {"environment": {}, "settings": {"width": 640, "threads": 1}, "videos": {"v.mp4": video}}
+        same = compare(profile([]), profile([], cpu=0.5))
+        self.assertTrue(same["identical_alarms"])
+        self.assertEqual(same["stages"]["total"]["speedup"], 2)
+        self.assertFalse(compare(profile([]), profile(["blur"]))["identical_alarms"])
+        with self.assertRaises(ValueError):
+            compare(profile([]), profile([], sha="y"))
+        empty = profile([])
+        empty["videos"]["v.mp4"]["detections"] = []
+        with self.assertRaises(ValueError):
+            compare(empty, profile([]))
 
 
 if __name__ == "__main__":
