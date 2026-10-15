@@ -141,3 +141,23 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Local data, credentials, and verification artifacts
+data/
+verification/
+.deepeval/
+.impeccable/
+
+# Generated frontend output
+web/dist/
+
+# Generated video exports
+video/*.mp4
+video/*.wav

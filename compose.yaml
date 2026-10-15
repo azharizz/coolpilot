@@ -1,0 +1,27 @@
+name: coolpilot
+services:
+  app:
+    build: .
+    platform: linux/arm64
+    ports:
+      - "127.0.0.1:${COOLPILOT_PORT:-8769}:8000"
+    env_file: .env
+    environment:
+      COOLPILOT_DATA: /app/data
+    volumes:
+      - ./data:/app/data
+    init: true
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 30s
+      timeout: ${COOLPILOT_HEALTHCHECK_TIMEOUT:-120s}
+      retries: 3
