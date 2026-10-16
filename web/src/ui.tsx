@@ -49,6 +49,10 @@ export function Notice({ children }: { children: ReactNode }) {
   return <div role="alert" className="notice">{children}</div>;
 }
 
+export function Callout({ children }: { children: ReactNode }) {
+  return <div role="status" className="callout">{children}</div>;
+}
+
 export function PageHead({ title, lead, children }: { title: ReactNode; lead?: ReactNode; children?: ReactNode }) {
   return (
     <header className="page-head">

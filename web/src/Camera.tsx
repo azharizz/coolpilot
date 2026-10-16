@@ -1,7 +1,7 @@
 import { useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { request, refresh, useResource } from "./api";
 import type { CameraConfig, CameraExperiment, CameraRunData, CameraSettings, CameraStream, RunRequest, System } from "./types";
-import { Icon, Notice, PageHead, Status, number } from "./ui";
+import { Callout, Icon, Notice, PageHead, Status, number } from "./ui";
 
 const baseline: CameraConfig = { width: 640, sample_every: 1, threads: 1, queue_size: 2, mode: "local", review_interval_s: 2 };
 const proposedGoals: CameraSettings["goals"] = {
@@ -68,8 +68,9 @@ export function CameraForm({ system, busy, initial, onStart }: { system: System;
     <section className="validate">
       <PageHead title="Validate a configuration" lead="Freeze the contract, then measure. Gates never move after the run starts." />
       {error && <Notice>{error}</Notice>}
+      {system.readonly && <Callout>This serverless deployment replays and inspects saved evidence. Validation runs need an always-on server, so the form is read-only here. Live replay and History work normally.</Callout>}
       <form onSubmit={submit} className="validate-form">
-        <fieldset disabled={busy || acting} className="validate-main">
+        <fieldset disabled={busy || acting || !!system.readonly} className="validate-main">
           <section className="panel step">
             <h2><span className="step-n">1</span> Recordings</h2>
             <div className="field-row">
@@ -169,7 +170,7 @@ export function CameraForm({ system, busy, initial, onStart }: { system: System;
             <div><dt>Apply</dt><dd>{dataset?.development_only ? "Disabled" : "After held-out pass"}</dd></div>
           </dl>
           {dataset?.sha256 && <code className="hash" title="Contract SHA-256">{dataset.sha256.slice(0, 16)}…</code>}
-          <button className="btn btn-primary btn-lg btn-block" disabled={busy || acting || !dataset || !!dataset.error}>
+          <button className="btn btn-primary btn-lg btn-block" disabled={busy || acting || !!system.readonly || !dataset || !!dataset.error}>
             {acting ? <><span className="spinner" aria-hidden="true" /> Starting…</> : <><Icon name="play" /> Run measured replay</>}
           </button>
           {busy && <p className="hint">Another run is in progress.</p>}
@@ -179,7 +180,7 @@ export function CameraForm({ system, busy, initial, onStart }: { system: System;
   );
 }
 
-export function CameraRun({ identifier, busy, onEdit, openRun }: { identifier: string; busy: boolean; onEdit: (r: RunRequest) => void; openRun: (id: string) => void }) {
+export function CameraRun({ identifier, busy, readonly, onEdit, openRun }: { identifier: string; busy: boolean; readonly?: boolean; onEdit: (r: RunRequest) => void; openRun: (id: string) => void }) {
   const resource = useResource<CameraRunData>(`/api/runs/${identifier}`);
   const active = useResource<{ experiment_id: number; previous_id: number | null } | null>("/api/active?workload=camera_health");
   const [selected, setSelected] = useState<number | null>(null);
@@ -213,17 +214,17 @@ export function CameraRun({ identifier, busy, onEdit, openRun }: { identifier: s
       <div className="action-bar">
         <a className="btn btn-sm" href={`/api/runs/${identifier}/export`}><Icon name="download" size={16} /> Export evidence</a>
         <button className="btn btn-sm" onClick={() => onEdit(run.request)}><Icon name="copy" size={16} /> Reuse contract</button>
-        {running && <button className="btn btn-sm btn-danger" disabled={acting} onClick={() => action(`/api/runs/${identifier}/cancel`)}><Icon name="stop" size={16} /> Cancel</button>}
+        {running && <button className="btn btn-sm btn-danger" disabled={acting || readonly} onClick={() => action(`/api/runs/${identifier}/cancel`)}><Icon name="stop" size={16} /> Cancel</button>}
         <span className="action-sep" />
-        <button className="btn btn-sm" disabled={busy || acting || !run.recommendation || active.data?.experiment_id === run.recommendation}
+        <button className="btn btn-sm" disabled={busy || acting || readonly || !run.recommendation || active.data?.experiment_id === run.recommendation}
           onClick={() => { if (window.confirm("Apply this held-out validated camera-health configuration to the workbench? Physical cameras are unchanged.")) void action(`/api/experiments/${run.recommendation}/apply`); }}>
           <Icon name="check" size={16} /> Apply
         </button>
-        <button className="btn btn-sm" disabled={busy || acting || !active.data?.previous_id}
+        <button className="btn btn-sm" disabled={busy || acting || readonly || !active.data?.previous_id}
           onClick={() => { if (window.confirm("Restore the previous validated camera-health configuration?")) void action("/api/active/rollback?workload=camera_health"); }}>
           <Icon name="undo" size={16} /> Rollback
         </button>
-        <button className="btn btn-sm" disabled={busy || acting || !active.data} onClick={() => action("/api/active/benchmark?workload=camera_health")}>
+        <button className="btn btn-sm" disabled={busy || acting || readonly || !active.data} onClick={() => action("/api/active/benchmark?workload=camera_health")}>
           <Icon name="target" size={16} /> Verify active
         </button>
       </div>

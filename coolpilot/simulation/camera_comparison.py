@@ -1,6 +1,7 @@
 """Three-view, PTS-paced development replay; remote review is advisory only."""
 import base64
 import math
+import os
 import random
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -16,7 +17,9 @@ from .camera_benchmark import ReviewBudget, replay
 from .camera_effects import END, KINDS, START, effect, fields, strength
 from ..models import CameraConfiguration, CameraThresholds, ReplayScenario
 
-VIDEO_ROOT = Path(__file__).resolve().parents[2] / "data" / "oxford_robotcar" / "videos"
+# COOLPILOT_DATA relocates the recordings (serverless hosts only write to /tmp); unset keeps the repo-relative path.
+_DATA = Path(os.environ["COOLPILOT_DATA"]) if "COOLPILOT_DATA" in os.environ else Path(__file__).resolve().parents[2] / "data"
+VIDEO_ROOT = _DATA / "oxford_robotcar" / "videos"
 CAMERAS = {
     "left": {"label": "Left", "file": "stereo_left.mp4"},
     "centre": {"label": "Centre", "file": "stereo_centre.mp4"},

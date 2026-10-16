@@ -89,7 +89,7 @@ export function App() {
             ) : route === "/history" ? (
               <RunHistory onNew={() => setDraft(undefined)} />
             ) : runId ? (
-              <CameraRun key={runId} identifier={runId} busy={busy} openRun={openRun} onEdit={editRun} />
+              <CameraRun key={runId} identifier={runId} busy={busy} readonly={system.data.readonly} openRun={openRun} onEdit={editRun} />
             ) : (
               <Overview system={system.data} recent={recent.data} onNew={() => setDraft(undefined)} />
             )}

@@ -1,10 +1,14 @@
 """Loopback-only web API. One coordinator protects benchmark comparability."""
 
 import asyncio
+import base64
+import hmac
 import json
 import logging
 import os
 import sqlite3
+import time
+import threading
 from contextlib import asynccontextmanager
 from pathlib import Path
 from threading import Event, Lock
@@ -68,10 +72,97 @@ async def lifespan(app):
 
 
 app = FastAPI(title="COOLPilot", version="1.0.0", lifespan=lifespan)
+# Deployment switches, all off by default. COOLPILOT_ALLOWED_HOSTS adds public host names
+# (comma separated, "*.example.com" patterns allowed); BASIC_AUTH is "user:password";
+# READONLY refuses anything that starts background work (serverless hosts freeze between requests).
+READONLY = os.environ.get("COOLPILOT_READONLY") == "1"
+BASIC_AUTH = os.environ.get("COOLPILOT_BASIC_AUTH", "")
+MUTATING = ("/api/runs", "/api/experiments", "/api/active")
+EXTRA_HOSTS = [h.strip() for h in os.environ.get("COOLPILOT_ALLOWED_HOSTS", "").split(",") if h.strip()]
+# Optional global budget for the expensive endpoints, shared by every server copy through one DynamoDB
+# counter per minute. No login: when the budget is spent, anyone gets 429 until the next minute.
+RATE_TABLE = os.environ.get("COOLPILOT_RATE_TABLE", "")
+RATE_LIMITS = {"replay": int(os.environ.get("COOLPILOT_REPLAYS_PER_MIN", "6")),
+               "download": int(os.environ.get("COOLPILOT_DOWNLOADS_PER_MIN", "12"))}
+_dynamo = None
+# Serverless hosts: opening any page warms OpenCV and the recording files so the first replay is not the cold one.
+WARM = os.environ.get("COOLPILOT_WARM") == "1"
+_warmed = False
+
+
+def _warm():
+    import numpy as np
+    from .camera_health import analyze
+    analyze(np.zeros((960, 1280, 3), np.uint8), 320)
+    for camera in camera_comparison.CAMERAS:
+        try:
+            with open(camera_comparison.video_path(camera), "rb") as video:
+                while video.read(8 << 20):
+                    pass
+        except OSError:
+            pass
+
+
+def _start_warm():
+    global _warmed
+    if WARM and not _warmed:
+        _warmed = True
+        threading.Thread(target=_warm, daemon=True).start()
+
+
+def _heavy(request: Request) -> str | None:
+    path = request.url.path
+    if request.method == "POST" and path == "/api/camera-comparison/analyze":
+        return "replay"
+    if request.method == "GET" and path.endswith(("/video", "/export")):
+        # A seek or later chunk of the same video is not a new download.
+        wanted = request.headers.get("range", "")
+        return "download" if not wanted or wanted.startswith("bytes=0-") else None
+    return None
+
+
+def _take(bucket: str) -> bool:
+    """Spend one unit of this minute's budget. Fails closed: if the counter is unreachable, refuse."""
+    global _dynamo
+    import boto3
+    _dynamo = _dynamo or boto3.client("dynamodb")
+    minute = int(time.time() // 60)
+    try:
+        _dynamo.update_item(
+            TableName=RATE_TABLE, Key={"k": {"S": f"{bucket}#{minute}"}},
+            UpdateExpression="ADD n :one SET expires = :expires",
+            ConditionExpression="attribute_not_exists(n) OR n < :max",
+            ExpressionAttributeValues={":one": {"N": "1"}, ":max": {"N": str(RATE_LIMITS[bucket])},
+                                       ":expires": {"N": str(minute * 60 + 600)}})
+        return True
+    except _dynamo.exceptions.ConditionalCheckFailedException:
+        return False
+    except Exception:  # noqa: BLE001 - never run unmetered work because the meter is down
+        logging.getLogger(__name__).exception("Rate counter unavailable")
+        return False
+
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["localhost", "127.0.0.1", "[::1]", "testserver"],
+    allowed_hosts=["localhost", "127.0.0.1", "[::1]", "testserver", *EXTRA_HOSTS],
 )
+
+
+@app.middleware("http")
+async def deployment_guard(request: Request, call_next):
+    if BASIC_AUTH and request.url.path != "/api/health":
+        expected = "Basic " + base64.b64encode(BASIC_AUTH.encode()).decode()
+        if not hmac.compare_digest(request.headers.get("authorization", "").encode(), expected.encode()):
+            return JSONResponse({"detail": "Authentication required."}, status_code=401,
+                                headers={"WWW-Authenticate": 'Basic realm="COOLPILOT"'})
+    bucket = _heavy(request) if RATE_TABLE else None
+    if bucket and not await asyncio.to_thread(_take, bucket):
+        return JSONResponse({"detail": "This public demo is busy. Please try again in a minute."},
+                            status_code=429, headers={"Retry-After": "30"})
+    if READONLY and request.method == "POST" and request.url.path.startswith(MUTATING):
+        return JSONResponse({"detail": "This serverless deployment replays and inspects saved evidence. "
+                                       "Validation runs need an always-on server."}, status_code=409)
+    return await call_next(request)
+
 
 @app.exception_handler(RequestValidationError)
 async def invalid_request(_request: Request, error: RequestValidationError):
@@ -109,10 +200,12 @@ def health():
 
 @app.get("/api/system")
 def system():
+    _start_warm()
     facts = environment()
     facts.pop("opencv_build")
     return {
         "runtime": facts,
+        "readonly": READONLY,
         "camera_datasets": camera_dataset.catalog(),
         "agent": {
             "model": os.environ.get("NEBIUS_MODEL", ""),

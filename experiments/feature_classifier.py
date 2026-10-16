@@ -35,6 +35,9 @@ def fit_evaluate(x, labels, sessions, splits):
             or not set(labels) <= set(LABELS) or not set(splits) <= {"train", "test"}
             or any(not str(s).strip() for s in sessions)):
         raise ValueError("Invalid features, labels, session IDs or train/test splits.")
+    if not hasattr(cv2, "ml"):
+        raise RuntimeError("This OpenCV build has no cv2.ml (OpenCV 5 moved it out of the main module). "
+                           "Run the classifier in an environment whose cv2 provides it; do not install a second cv2 over a vendor build.")
     train, test = splits == "train", splits == "test"
     if not train.any() or not test.any() or set(sessions[train]) & set(sessions[test]):
         raise ValueError("Train and test need nonempty, disjoint capture sessions.")

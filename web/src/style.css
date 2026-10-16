@@ -615,3 +615,4 @@ input[type="range"]:disabled { opacity: 0.6; }
 .gates { max-height: 420px; overflow-y: auto; padding-right: 4px; }
 .hud-lg .hud-time { top: 18px; bottom: auto; }
 .hud-lg::before { bottom: 56px; }
+.callout { margin: 0 0 18px; padding: 12px 16px; border-radius: var(--r-sm); background: rgb(255 178 36 / 0.07); border: 1px solid rgb(255 178 36 / 0.3); color: var(--text-2); max-width: 78ch; }

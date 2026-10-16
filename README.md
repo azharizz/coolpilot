@@ -95,7 +95,7 @@ Two deployment approaches have different evidence requirements:
 
 Transfer the same package, verified dataset, request and configuration to that host. Use the vendor interpreter that imports its supplied `cv2`; preserve its NumPy ABI and do not install the standard OpenCV wheel over it. Install the remaining compatible app dependencies and run the same `python -m coolpilot.simulation.camera_benchmark` command. Repeat with ordinary OpenCV in a separate environment on the same host. Match source/data hashes, configurations and repetitions; retain both build reports and output differences. The `/opt/cool/` Linux ARM64 detection is a runtime-location hint, not license validation or proof of acceleration.
 
-The web app does not provision EC2, accept Marketplace terms, upload to S3, discover prices or deploy a cloud fleet. These are explicit remaining integrations, not simulated buttons. No AWS account access or licensed COOL environment was supplied or used.
+The web app does not provision EC2, accept Marketplace terms, upload to S3, discover prices or deploy a cloud fleet. These are explicit remaining integrations, not simulated buttons. No AWS account access or licensed COOL environment was supplied or used. Operator scripts in [deploy/aws](deploy/aws/README.md) launch a self-terminating Graviton instance and deploy this app over SSH; they were exercised on a stock Ubuntu Graviton2 host with ordinary OpenCV 5.0.0, not on COOL. `deploy/aws/lambda` deploys a read-only serverless edition (UI, live replay, history) to Lambda on Graviton with ordinary OpenCV 5.0.0, also not COOL.
 
 ## Camera-health development videos
 

@@ -61,6 +61,7 @@ export type CameraRunData = RunSummary & {
   }[];
 };
 export type System = {
+  readonly?: boolean;
   runtime: {
     architecture: string;
     system: string;

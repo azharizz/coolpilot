@@ -62,6 +62,7 @@ class ExperimentChecks(unittest.TestCase):
         with self.assertRaises(ValueError):
             Candidate("brisque")
 
+    @unittest.skipUnless(hasattr(cv2, "ml"), "this OpenCV build has no cv2.ml")
     def test_classifier_held_out_separation_and_train_only_scaling(self):
         x = np.zeros((6, 49), np.float32)
         x[:, 0] = [-2, -1, 1, 2, -100, 100]
@@ -78,11 +79,24 @@ class ExperimentChecks(unittest.TestCase):
             fit_evaluate(x, labels, ["a"] * 6, splits)
         with self.assertRaises(ValueError):
             fit_evaluate(x, labels[:-1] + ["glare"], sessions, splits)
+
+    def test_classifier_features_and_missing_ml_module_fails_explicitly(self):
         black = features(analyze(np.zeros((24, 32, 3), np.uint8), 320))
         white = features(analyze(np.full((24, 32, 3), 255, np.uint8), 320))
         self.assertEqual(float(black[-1]), 1)
         self.assertEqual(float(white[-1]), 0)
         self.assertEqual(float(white[2]), 1)
+        x = np.zeros((6, 49), np.float32)
+        args = (x, ["normal", "normal", "blur", "blur", "normal", "blur"], ["a"] * 4 + ["b"] * 2, ["train"] * 4 + ["test"] * 2)
+        saved = getattr(cv2, "ml", None)
+        if saved is not None:
+            del cv2.ml
+        try:
+            with self.assertRaises(RuntimeError):
+                fit_evaluate(*args)
+        finally:
+            if saved is not None:
+                cv2.ml = saved
 
     def test_build_comparison_flags_changed_alarms_and_refuses_unlike_inputs(self):
         def profile(conditions, sha="x", cpu=1.0):

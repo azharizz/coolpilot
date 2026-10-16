@@ -11,7 +11,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
-from coolpilot import store
+from coolpilot import api, store
 from coolpilot.agent import execute
 from coolpilot.api import app
 from coolpilot.models import CameraConfiguration, CameraProposal, RunRequest
@@ -157,6 +157,50 @@ class PersistenceContract(unittest.TestCase):
             response = client.get("/api/system")
             self.assertNotIn("NEBIUS_API_KEY", response.text)
             self.assertIn("frame-ancestors 'none'", response.headers["Content-Security-Policy"])
+
+    def test_serverless_switches_are_off_by_default_and_guard_when_set(self):
+        with TestClient(app) as client:
+            self.assertFalse(client.get("/api/system").json()["readonly"])
+            self.assertEqual(client.get("/api/history").status_code, 200)
+        with patch.object(api, "BASIC_AUTH", "judge:s3cret"), patch.object(api, "READONLY", True):
+            with TestClient(app) as client:
+                self.assertEqual(client.get("/api/health").status_code, 200)  # readiness probe stays open
+                denied = client.get("/api/history")
+                self.assertEqual(denied.status_code, 401)
+                self.assertIn("Basic", denied.headers["WWW-Authenticate"])
+                self.assertEqual(client.get("/api/history", auth=("judge", "wrong")).status_code, 401)
+                ok = client.get("/api/system", auth=("judge", "s3cret"))
+                self.assertEqual((ok.status_code, ok.json()["readonly"]), (200, True))
+                for path in ("/api/runs", "/api/runs/x/cancel", "/api/experiments/1/apply", "/api/active/rollback"):
+                    blocked = client.post(path, json={}, auth=("judge", "s3cret"))
+                    self.assertEqual(blocked.status_code, 409, path)
+                    self.assertIn("always-on", blocked.json()["detail"])
+                # Replay streaming is not a background job, so it must stay reachable (validation still applies).
+                self.assertEqual(client.post("/api/camera-comparison/analyze", json={"seed": -1}, auth=("judge", "s3cret")).status_code, 422)
+
+    def test_global_budget_limits_only_expensive_requests_and_only_when_enabled(self):
+        spent = []
+
+        def take(bucket):
+            spent.append(bucket)
+            return spent.count(bucket) <= 2
+
+        body = {"seed": -1}  # fails validation after the budget check, so no replay ever starts
+        with TestClient(app) as client:
+            for _ in range(5):  # disabled by default: unlimited
+                self.assertEqual(client.post("/api/camera-comparison/analyze", json=body).status_code, 422)
+        with patch.object(api, "RATE_TABLE", "t"), patch.object(api, "_take", take):
+            with TestClient(app) as client:
+                codes = [client.post("/api/camera-comparison/analyze", json=body).status_code for _ in range(4)]
+                self.assertEqual(codes, [422, 422, 429, 429])
+                self.assertIn("busy", client.post("/api/camera-comparison/analyze", json=body).json()["detail"])
+                self.assertEqual(client.get("/api/history").status_code, 200)  # cheap endpoints are never metered
+                self.assertNotEqual(client.get("/api/camera-comparison/left/video", headers={"Range": "bytes=500-"}).status_code, 429)
+                self.assertEqual(spent.count("download"), 0)  # a seek is not a new download
+                client.get("/api/camera-comparison/left/video")
+                client.get("/api/camera-comparison/left/video", headers={"Range": "bytes=0-99"})
+                self.assertEqual(client.get("/api/camera-comparison/left/video").status_code, 429)
+                self.assertEqual(client.get("/api/runs/x/export").status_code, 429)
 
 
 if __name__ == "__main__":
