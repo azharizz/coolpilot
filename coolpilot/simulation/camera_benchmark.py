@@ -19,6 +19,7 @@ from ..camera_dataset import checked, public
 from ..camera_health import Monitor, analyze, assess_health, score
 from ..decisions import current_review, review
 from ..models import CameraConfiguration, ReplayScenario, RunRequest
+from ..verify import ReplayVerifier
 
 
 class ReviewBudget:
@@ -135,6 +136,7 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
     producer = Thread(target=produce, daemon=True)
     producer.start()
     visual_monitor, delivery_monitor = Monitor(settings.thresholds), Monitor(settings.thresholds)
+    verifier = ReplayVerifier(getattr(settings, "verifier", "off"))
     local, unknown_intervals = set(), []
     evidence, observations, transitions, reviews = {}, [], [], []
     analysis_future = review_future = None
@@ -185,6 +187,8 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
                     regions = result["regions"]
                     if fresh_observation:
                         local, regions = visual_monitor.appearance(result, scheduled)
+                        local = verifier.filter(local)
+                        verifier.frame(scheduled, frame)
                     last_result = scheduled
                     review_frame = frame if fresh_observation else None
                     max_age = max(max_age, age)
@@ -282,6 +286,7 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
                 # Visual persistence advances only when a new analyzed frame arrives.
                 if fresh_observation:
                     visual_monitor.update(local, now, evidence)
+                verifier.step(visual_monitor, evidence.get("regions") or [], now)
                 delivery_monitor.update(conditions & {"interruption", "backlog"}, now, evidence)
                 health = assess_health(unavailable=unavailable, stale=stale,
                                        delivery_conditions=set(delivery_monitor.active),
@@ -315,7 +320,8 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
                         "review_cost": sum(c for c in costs if c is not None),
                         "review_cost_complete": all(c is not None for c in costs) and review_future is None,
                         "episodes": [{"type": e["type"], "observation": e["observation"],
-                                      "start_s": e["start_s"], "end_s": e["end_s"]}
+                                      "start_s": e["start_s"], "end_s": e["end_s"],
+                                      "verification": e.get("verification"), "dismissed": e.get("dismissed", False)}
                                      for e in visual_monitor.episodes + delivery_monitor.episodes],
                     }, display_frame)
                 previous_tick = now
@@ -332,6 +338,7 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
     finally:
         stop.set()
         producer.join()
+        verifier.close()
     if delivery["error"]:
         raise ValueError(delivery["error"])
     if settings.allow_image_requests and config.mode == "scheduled":
@@ -348,8 +355,10 @@ def replay(video: str, timestamps: list[int] | None, duration: float, scenario: 
     if backlog_started is not None:
         backlog_intervals.append({"type": "backlog", "start_s": backlog_started, "end_s": end_time,
                                   "provenance": "measured_queue_age", "severity": "configured backlog threshold"})
-    episodes = sorted(visual_monitor.episodes + delivery_monitor.episodes, key=lambda e: e["start_s"])
-    return {"episodes": episodes, "unknown_intervals": unknown_intervals, "backlog_intervals": backlog_intervals,
+    # Dismissed suspicions are evidence (kept in "verifications"), never alarms.
+    episodes = sorted((e for e in visual_monitor.episodes + delivery_monitor.episodes if not e.get("dismissed")),
+                      key=lambda e: e["start_s"])
+    return {"episodes": episodes, "verifications": verifier.log, "unknown_intervals": unknown_intervals, "backlog_intervals": backlog_intervals,
             "transitions": transitions, "observations": observations, "reviews": reviews,
             "duration_s": end_time, "cancelled": cancel is not None and cancel.is_set(),
             "expected_frames": expected, "decoded_frames": len(source_timestamps) if incremental else None,
@@ -369,8 +378,16 @@ def cost_per_camera_hour(elapsed_s: float, camera_s: float, host_rate: float,
     return ((host_rate + cool_rate) * elapsed_s / 3600 + image_cost) * 3600 / camera_s
 
 
+def merged_settings(settings, config: CameraConfiguration):
+    """This experiment's detector tuning over the run's frozen thresholds. Gates are untouched."""
+    if config.detector is None:
+        return settings
+    tuned = settings.thresholds.model_copy(update=config.detector.model_dump(exclude_none=True))
+    return settings.model_copy(update={"thresholds": tuned})
+
+
 def benchmark(request: RunRequest, config: CameraConfiguration, split: str) -> dict:
-    settings = request.camera
+    settings = merged_settings(request.camera, config)
     dataset = checked(settings)
     if config.mode != "local" and not (settings.allow_image_requests and settings.max_image_requests):
         raise ValueError("Remote configuration requires explicit permission and budget.")
@@ -420,6 +437,8 @@ def benchmark(request: RunRequest, config: CameraConfiguration, split: str) -> d
                 attempts = len(reviews)
                 successes = attempts - api_failures
                 row = {"clip": clip["id"], "repetition": repetition, "stream": stream, "by_fault": by_fault,
+                       # Which alarm type fired outside every labelled fault, and when: the evidence a search needs.
+                       "false_alarms": [{"type": f["type"], "start_s": round(f["start_s"], 2)} for f in scored["false_alarms"]],
                        **{k: result[k] for k in ("max_age_s", "unknown_fraction", "unfinished_frames", "dropped", "skipped", "processed", "max_queue", "max_delivery_lateness_s", "review_required")},
                        "api_failure_fraction": api_failures / attempts if attempts else 0.0,
                        "review_coverage": successes / result["review_required"] if result["review_required"] else None}
@@ -453,6 +472,7 @@ def benchmark(request: RunRequest, config: CameraConfiguration, split: str) -> d
                "freshness_basis": "Maximum age from scheduled source-frame time to completed local analysis; upstream capture/network age is unavailable.",
                "cost_exclusions": "Storage, network, optimizer tokens and operator time; unknown prices are never zero-filled."}
     return {"workload": "camera_health", "schema_version": 1, "config": config.model_dump(), "split": selected_split,
+            "thresholds": settings.thresholds.model_dump(),
             "repetitions": request.repetitions, "dataset_sha256": dataset["sha256"], "dataset": public(dataset),
             "metrics": metrics, "environment": environment(), "trace": {"streams": traces}}
 

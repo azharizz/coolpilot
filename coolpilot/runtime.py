@@ -8,6 +8,24 @@ from pathlib import Path
 import cv2
 
 
+COOL_ROOT = os.environ.get("COOLPILOT_COOL_ROOT", "/opt/cool")
+
+
+def distribution(system: str, machine: str, module_path: str) -> str:
+    """COOL ships as Graviton AMIs that install OpenCV under /opt/cool (venvs and site-packages)."""
+    root = COOL_ROOT.rstrip("/") + "/"
+    return "COOL" if system == "Linux" and machine in ("aarch64", "arm64") and module_path.startswith(root) else "OpenCV"
+
+
+def accelerators(build: str) -> list[str]:
+    """Hardware-acceleration layers this cv2 build reports (evidence, not a speed claim)."""
+    found = []
+    for name, marker in (("KleidiCV", "kleidicv"), ("Carotene", "carotene"), ("ARMPL", "armpl"), ("NEON", "neon")):
+        if marker in build.lower():
+            found.append(name)
+    return found
+
+
 def environment() -> dict:
     build = cv2.getBuildInformation()
     source = hashlib.sha256()
@@ -25,6 +43,7 @@ def environment() -> dict:
         "build_sha256": hashlib.sha256(build.encode()).hexdigest(),
         "opencv_build": build,
         # Vendor module location is a detection hint, not license or speedup verification.
-        "distribution": "COOL" if platform.system() == "Linux" and platform.machine() in ("aarch64", "arm64") and str(cv2.__file__).startswith("/opt/cool/") else "OpenCV",
+        "distribution": distribution(platform.system(), platform.machine(), str(cv2.__file__)),
+        "accelerators": accelerators(build),
         "hardware_note": "Measured on this host. Architecture alone does not establish Graviton performance.",
     }

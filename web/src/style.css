@@ -616,3 +616,27 @@ input[type="range"]:disabled { opacity: 0.6; }
 .hud-lg .hud-time { top: 18px; bottom: auto; }
 .hud-lg::before { bottom: 56px; }
 .callout { margin: 0 0 18px; padding: 12px 16px; border-radius: var(--r-sm); background: rgb(255 178 36 / 0.07); border: 1px solid rgb(255 178 36 / 0.3); color: var(--text-2); max-width: 78ch; }
+.config-grid .is-tuned { border-color: rgb(0 136 255 / 0.45); }
+.timeline { display: grid; gap: 10px; }
+.timeline li { position: relative; padding: 14px 16px 14px 22px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--line); animation: rise 0.45s var(--ease) both; animation-delay: calc(var(--i) * 40ms); }
+.timeline li::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 3px; background: var(--muted); }
+.timeline li.is-pass::before { background: var(--green); }
+.timeline li.is-fail::before { background: var(--red); }
+.timeline-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.timeline-kind { text-transform: capitalize; font-weight: 500; }
+.timeline-why { margin-top: 8px; color: var(--text-2); font-size: 13px; max-width: 90ch; }
+.timeline-measured { margin-top: 6px; color: var(--muted); font-size: 12px; }
+
+.verify-log { margin: 10px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--panel-2); }
+.verify-log h3 { font-size: 0.85rem; margin-bottom: 6px; }
+.verify-log ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.verify-log li { border-left: 3px solid var(--line-2); padding-left: 8px; overflow-wrap: anywhere; }
+.verify-log li.is-dismiss { border-left-color: var(--green, #2ecc71); }
+.verify-log li.is-confirm { border-left-color: var(--red, #ff3038); }
+.verify-log li.is-escalate, .verify-log li.is-verifying { border-left-color: var(--amber, #f5a623); }
+.verify-log .verify-verdict { text-transform: capitalize; }
+.verify-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.verify-log p b, .verify-log .chip { display: inline; }
+.verify-log .chip { padding: 0 6px; font-size: 0.75rem; }
+.footage-panel progress { width: 100%; margin-top: 8px; }
+.footage-panel .check { display: flex; gap: 8px; align-items: center; }

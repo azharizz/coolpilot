@@ -76,9 +76,11 @@ export type System = {
   camera_datasets: CameraDataset[];
 };
 
+export type DetectorTuning = Partial<Record<"glare_rise" | "dark_ratio" | "blur_ratio" | "obstruction_ratio" | "obstruction_s" | "hysteresis" | "persistence_s" | "recovery_s", number | null>>;
 export type CameraConfig = {
   width: number; sample_every: number; threads: number; queue_size: number;
   mode: "local" | "scheduled" | "hybrid"; review_interval_s: number;
+  detector?: DetectorTuning | null;
 };
 export type CameraSettings = {
   dataset: string; dataset_sha256: string; baseline: CameraConfig;
@@ -101,6 +103,7 @@ export type CameraMetrics = {
   peak_rss_mb: number; max_age_s: number; p95_ms: number | null; cost_per_camera_hour: number | null;
   image_requests: number; image_cost: number | null; streams_tested: number;
   evaluations: {clip: string; repetition: number; stream: number; unknown_fraction: number; dropped: number;
+    false_alarms?: {type: string; start_s: number}[];
     by_fault: Record<string, {events: number; missed: number; recall: number; detection_s: number | null; recovery_s: number | null; bad_recovery: number}>}[];
   repetition_evidence: {repetition: number; normal_seconds: number; false_alarms_per_hour: number | null; event_counts: Record<string, number>}[];
 };

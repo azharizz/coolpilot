@@ -95,7 +95,7 @@ Two deployment approaches have different evidence requirements:
 
 Transfer the same package, verified dataset, request and configuration to that host. Use the vendor interpreter that imports its supplied `cv2`; preserve its NumPy ABI and do not install the standard OpenCV wheel over it. Install the remaining compatible app dependencies and run the same `python -m coolpilot.simulation.camera_benchmark` command. Repeat with ordinary OpenCV in a separate environment on the same host. Match source/data hashes, configurations and repetitions; retain both build reports and output differences. The `/opt/cool/` Linux ARM64 detection is a runtime-location hint, not license validation or proof of acceleration.
 
-The web app does not provision EC2, accept Marketplace terms, upload to S3, discover prices or deploy a cloud fleet. These are explicit remaining integrations, not simulated buttons. No AWS account access or licensed COOL environment was supplied or used. Operator scripts in [deploy/aws](deploy/aws/README.md) launch a self-terminating Graviton instance and deploy this app over SSH; they were exercised on a stock Ubuntu Graviton2 host with ordinary OpenCV 5.0.0, not on COOL. `deploy/aws/lambda` deploys a read-only serverless edition (UI, live replay, history) to Lambda on Graviton with ordinary OpenCV 5.0.0, also not COOL.
+The web app does not provision EC2, accept Marketplace terms, upload to S3, discover prices or deploy a cloud fleet. These are explicit remaining integrations, not simulated buttons. The evaluation runs in [docs/EVALUATION.md](docs/EVALUATION.md) were measured on EC2 t4g.small (Graviton2) with standard OpenCV 5.0.0. No licensed COOL environment has been used yet; [docs/COOL.md](docs/COOL.md) is the migration guide and evidence checklist. Operator scripts in [deploy/aws](deploy/aws/README.md) launch a self-terminating Graviton instance and deploy this app over SSH; they were exercised on a stock Ubuntu Graviton2 host with ordinary OpenCV 5.0.0, not on COOL. `deploy/aws/lambda` deploys a read-only serverless edition (UI, live replay, history) to Lambda on Graviton with ordinary OpenCV 5.0.0, also not COOL.
 
 ## Camera-health development videos
 
@@ -116,6 +116,60 @@ python3 scripts/generate_camera_health_variants.py \
 The generator refuses an existing output directory. It uses temporary lossless colour PNGs, so allow about 1 GB of temporary working space plus final videos. Encoder/runtime identity is recorded; byte-identical outputs across different encoder builds are not promised.
 
 This is one development session, not independent tuning/held-out evidence. No physical-fault realism, broad detector accuracy, repair, live freshness, agent advantage or cloud savings is established. Timed interruption/backlog scenarios are supported by the replay code but were not exercised in the recorded browser run. Retain Oxford RobotCar attribution and applicable noncommercial/ShareAlike terms; local generation does not establish public or commercial distribution permission. See [camera-health improvement plan](IMPROVEMENT_PLAN.md) for remaining evaluation work.
+
+## Held-out cameras (`oxford-camera-holdout`)
+
+To check that calibration generalises, the same drive's other cameras get randomized faults: stereo left and right (GBRG Bayer) and mono rear (RGGB). Each clip draws its own onset, a 2-6 s duration, a strength of 0.7-1.3x and, for glare and obstruction, a position, all from a fixed seed and all recorded in the sidecar. The centre clips become the **tuning** split; the other cameras are the **validation** split. This is a camera-held-out split **within one recorded drive**, not an independent drive, and the manifest says so.
+
+```sh
+python3 scripts/generate_camera_health_variants.py --camera stereo/left  --split validation --seed 101 --output data/camera_health_build/left
+python3 scripts/generate_camera_health_variants.py --camera stereo/right --split validation --seed 202 --output data/camera_health_build/right
+python3 scripts/generate_camera_health_variants.py --camera mono_rear    --split validation --seed 303 --output data/camera_health_build/rear
+python3 scripts/build_holdout_dataset.py                       # hard-links tuning + validation, verifies hashes
+python3 -m experiments.calibrate --out calib.json             # sweep detector thresholds on development/tuning clips only
+python3 -m experiments.calibrate --dataset oxford-camera-holdout --split validation --defaults   # frozen defaults on held-out
+```
+
+`experiments/calibrate.py` refuses to sweep the validation split. Results, including what still fails, are in [docs/EVALUATION.md](docs/EVALUATION.md).
+
+## Second-stage verification (active perception, OpenCV 5 DNN)
+
+The always-on monitor is cheap and only says "these tiles lost detail while the rest of the view kept it". That is also what open sky, a featureless surface or a passing vehicle look like. So an **obstruction suspicion never alarms on its own**: the last second of frames goes to `coolpilot/verify.py`, which measures the scene causes on that moment only:
+
+- `texture`: was the tile ever detailed, and does it show open sky now (upper half, bright, unsaturated)?
+- `objects`: road users covering the tiles, from **NanoDet-Plus (OpenCV model zoo, Apache-2.0) on OpenCV 5's new DNN graph engine** (`coolpilot/objects.py`; outputs are paired by shape because the new engine orders them differently from the classic one)
+- `motion`: optical flow in the tiles against the rest of the view, as reviewer context
+
+Three arms are measured on the same suspicions (`experiments/verify_eval.py`): `none`, `rule` (fixed thresholds over the tools; the default) and `agent`. In the `agent` arm the Nebius model calls the same tools, then must **confirm, dismiss or escalate to a human**, citing measurements (`coolpilot/verify_agent.py`).
+
+Guardrails:
+- It cannot decide before measuring.
+- Any provider or tool error, or an exhausted turn budget, keeps the alarm.
+- A dismissed real fault counts as a miss.
+
+The live replay shows each verdict, its reason, the tools used and the latency. Escalations get operator buttons, which are browser-only on the read-only deployment. `CameraSettings.verifier` and `COOLPILOT_VERIFIER` select the mode. Benchmark subprocesses never receive the Nebius keys, so measured runs use `rule`. Limits were fixed on the tuning clips before any held-out evaluation; results are in [docs/EVALUATION.md](docs/EVALUATION.md).
+
+To get the model: download `object_detection_nanodet_2022nov.onnx` and its `LICENSE` from https://huggingface.co/opencv/object_detection_nanodet into `data/models/`. Without it, the `objects` tool reports itself unavailable and the rule decides on texture alone.
+
+## Check footage (camera-data quality gate)
+
+**Check footage** screens one short recording (at most 50 MB and 60 s) for camera-side problems: black, frozen, blurred, dark, glare, and verified obstruction. It returns segments with a thumbnail and reason for each, plus JSON/CSV downloads. The intended use is screening recorded fleet or robot video before labelling, training or incident review.
+
+- **On AWS:**
+  1. The browser posts the file straight to a private S3 prefix through a 5-minute presigned POST. The bucket allows browser uploads from the site's own origin only (CORS).
+  2. The Graviton Lambda (OpenCV 5.0.0) downloads it, analyses every frame once, and **deletes it from S3 and `/tmp` whether or not the analysis succeeds**.
+  3. A 1-day lifecycle rule removes anything left over, uploads are rate-limited per minute, and a `footage` EMF metric records duration and processing time.
+- **Locally:** the same flow uses a capped `PUT` to `data/uploads/`, deleted after analysis.
+
+The screen uses rules calibrated on one recorded drive. Other cameras, night, rain and real lens dirt are unvalidated, and a report is never a safety judgement.
+
+## Live camera (monitor only, untested on real hardware)
+
+`COOLPILOT_LIVE_SOURCES="dashcam=rtsp://host/stream,usb=0"` lets the server analyse operator-configured OpenCV `VideoCapture` sources. Clients choose a name and never a URL, so a public endpoint cannot be made to fetch arbitrary addresses. `POST /api/live/analyze` (at most 120 s; refused on the read-only deployment) streams pipeline and image health with wall-clock timing, reconnecting with backoff. The Live replay page shows a "Live camera" panel only when sources are configured. With no labels there is no recall or false-alarm score. Only file-backed tests exist (`tests/test_live.py`).
+
+## Metrics
+
+With `COOLPILOT_METRICS=1` (set on Lambda), each finished replay, live session and experiment prints one CloudWatch Embedded Metric Format line in namespace `COOLPilot`. `deploy/aws/lambda/deploy.sh` creates a `coolpilot` dashboard from them, alongside Lambda duration and errors.
 
 ## Camera-health workbench contract
 

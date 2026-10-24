@@ -6,24 +6,34 @@ import os
 import random
 import signal
 import sys
+import typing
 
 import httpx
 from pydantic import ValidationError
 
-from . import store
+from . import metrics, store
 from .runtime import environment
 from .dataset import DATA
 from .camera_dataset import checked, public
 from .camera_health import gate as camera_gate
-from .models import CameraConfiguration, CameraProposal, FinishProposal, RunRequest
+from .models import CameraConfiguration, CameraProposal, DetectorTuning, FinishProposal, RunRequest
 
-CAMERA_SYSTEM = """You optimize a timestamped camera-health replay, not camera hardware.
-Minimize measured CPU seconds per camera-second subject to EVERY declared gate.
-Use only the finite run_experiment schema. Never change thresholds, labels, splits,
-delivery schedules, stream count or acceptance limits. Image review requires explicit permission.
-Tool results contain tuning evidence only. Do not infer physical dirt or safety from image symptoms.
-Failures, unknown states and rejected candidates are evidence, not successful improvements.
-Call finish with a brief evidence-based summary. Held-out validation follows without further search.
+CAMERA_SYSTEM = """You tune a camera-health monitor for an ADAS camera pipeline replayed at true sensor timing.
+Each run_experiment call measures one configuration on the TUNING clips with OpenCV 5 and returns its
+evidence: per-fault recall, detection and recovery seconds, false alarms per hour, freshness and CPU
+seconds per camera-second, plus every gate check with pass/fail.
+You may change processing (width, sample_every, threads, queue_size) and the bounded "detector" tuning
+(relative glare/underexposure/blur/obstruction limits, hysteresis, persistence, recovery).
+Goal: pass EVERY declared gate first; among passing configurations, minimise CPU seconds per camera-second.
+Base each proposal on the measured results so far and say which result motivated it.
+Read which gate checks failed. For false alarms, each evaluation lists its false_alarms (alarm type and
+time): change the detector limits that govern that alarm type, because processing settings (width,
+threads, queue) change cost and freshness, not detection logic. Use the remaining budget unless every gate
+passes; a change that breaks other checks is evidence about the trade-off, report it.
+Never change gates, labels, splits, delivery schedules or stream count. Image review requires explicit
+permission. Do not infer physical dirt or safety from image symptoms. Failures and rejected candidates
+are evidence, not improvements. Call finish with a short evidence-based summary; held-out validation on
+other cameras follows without further search.
 Never claim COOL acceleration, AWS execution or agent advantage without matched measurements."""
 
 
@@ -57,7 +67,7 @@ class ProviderError(Exception):
 
 
 async def provider(
-    messages: list[dict], available_tools: list[dict]
+    messages: list[dict], available_tools: list[dict], temperature: float | None = None
 ) -> tuple[dict, dict]:
     settings = {
         name: os.environ.get(name, "")
@@ -79,6 +89,7 @@ async def provider(
                     "tools": available_tools,
                     "tool_choice": "auto",
                     "max_tokens": 8192,
+                    **({} if temperature is None else {"temperature": temperature}),
                 },
             )
         except httpx.RequestError as error:
@@ -165,6 +176,11 @@ async def measure(
         raise RuntimeError("Invalid benchmark output") from error
     (folder / f"{identifier}-result.json").write_bytes(stdout)
     store.finish_experiment(identifier, result, gate)
+    m = result["metrics"]
+    metrics.emit("experiment", {"Passed": int(gate["passed"]), "FailedChecks": sum(not c["passed"] for c in gate.get("checks", [])),
+                                "CpuPerCameraSecond": m.get("cpu_seconds_per_camera_second"), "MaxAgeSeconds": m.get("max_age_s"),
+                                "FalseAlarmsPerHour": max((r["false_alarms_per_hour"] for r in m.get("repetition_evidence", [])), default=None)},
+                 {"MaxAgeSeconds": "Seconds"})
     store.event(
         run_id,
         "experiment_completed",
@@ -183,6 +199,23 @@ def evidence(experiment: dict) -> dict:
         for k in ("id", "config", "metrics", "gate", "status", "error")
         if k in experiment
     }
+
+
+def nested_objects(arguments: dict) -> dict:
+    """Some models send a nested object as a JSON string; decode it so the bounded schema still decides."""
+    if isinstance(arguments.get("detector"), str):
+        try:
+            arguments = {**arguments, "detector": json.loads(arguments["detector"])}
+        except ValueError:
+            pass   # left as a string, schema validation rejects it with a field message
+    return arguments
+
+
+def recorded(run_id: str, used: int, text: str) -> str:
+    """Lead with what the store recorded; the model's own account follows and may be wrong."""
+    candidates = [e for e in store.get_run(run_id)["experiments"] if e["kind"] == "candidate"]
+    passed = sum(bool(e.get("gate") and e["gate"]["passed"]) for e in candidates)
+    return f"Recorded: baseline plus {used} agent candidates; {passed} passed every tuning gate. Agent summary: {text}"
 
 
 async def optimize(run_id: str, request: RunRequest, baseline: dict) -> str:
@@ -221,9 +254,16 @@ async def optimize(run_id: str, request: RunRequest, baseline: dict) -> str:
                 "candidates_remaining": request.budget - used,
             },
         )
-        answer, usage = await provider(
-            messages, tools if used < request.budget else tools[1:]
-        )
+        try:
+            answer, usage = await provider(
+                messages, tools if used < request.budget else tools[1:]
+            )
+        except ProviderError as error:
+            if used < request.budget:
+                raise
+            # The search itself is complete and recorded; only the model's closing summary failed.
+            store.event(run_id, "tool_error", {"error": f"No closing summary: {error}"})
+            return recorded(run_id, used, f"none ({error})")
         messages.append(answer)
         store.event(
             run_id, "model_response", {"usage": usage, "content": answer.get("content")}
@@ -231,7 +271,7 @@ async def optimize(run_id: str, request: RunRequest, baseline: dict) -> str:
         calls = answer.get("tool_calls", [])
         if not calls:
             if answer.get("content"):
-                return answer["content"]
+                return recorded(run_id, used, answer["content"])
             raise ProviderError("The model returned neither a tool call nor a summary.")
         finish_summary = None
         for call in calls:
@@ -246,7 +286,7 @@ async def optimize(run_id: str, request: RunRequest, baseline: dict) -> str:
                     and used < request.budget
                     and finish_summary is None
                 ):
-                    proposal = CameraProposal.model_validate(arguments)
+                    proposal = CameraProposal.model_validate(nested_objects(arguments))
                     config = CameraConfiguration.model_validate(proposal.model_dump(exclude={"rationale"}))
                     if config.mode != "local" and not (
                         request.camera.allow_image_requests and request.camera.max_image_requests
@@ -269,7 +309,7 @@ async def optimize(run_id: str, request: RunRequest, baseline: dict) -> str:
                     }
             except (ValueError, ValidationError) as error:
                 output = {
-                    "error": "Tool arguments violate the published schema.",
+                    "error": "Tool arguments violate the published schema. detector must be an object with values from its allowed lists.",
                     "type": type(error).__name__,
                 }
                 if isinstance(error, ValidationError):
@@ -286,7 +326,7 @@ async def optimize(run_id: str, request: RunRequest, baseline: dict) -> str:
                 }
             )
         if finish_summary is not None:
-            return finish_summary
+            return recorded(run_id, used, finish_summary)
     raise ProviderError(
         "The model-turn budget was reached without finishing. Completed evidence is preserved; start a new run after reviewing tool errors."
     )
@@ -316,6 +356,8 @@ async def execute(run_id: str):
                     queue_size=generator.choice([1, 2, 4]),
                     mode=generator.choice(["local", "scheduled", "hybrid"] if request.camera.allow_image_requests and request.camera.max_image_requests else ["local"]),
                     review_interval_s=generator.choice([1, 2, 5]),
+                    detector=DetectorTuning(**{name: generator.choice(typing.get_args(typing.get_args(field.annotation)[0]))
+                                               for name, field in DetectorTuning.model_fields.items()}),
                 )
                 await measure(
                     run_id,

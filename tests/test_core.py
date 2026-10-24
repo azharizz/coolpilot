@@ -202,6 +202,36 @@ class PersistenceContract(unittest.TestCase):
                 self.assertEqual(client.get("/api/camera-comparison/left/video").status_code, 429)
                 self.assertEqual(client.get("/api/runs/x/export").status_code, 429)
 
+    def test_agent_detector_sent_as_json_string_is_decoded_then_bounded(self):
+        from coolpilot.agent import nested_objects
+        proposal = CameraProposal.model_validate(nested_objects({"rationale": "r", "detector": '{"obstruction_s": 1.2}'}))
+        self.assertEqual(proposal.detector.obstruction_s, 1.2)
+        with self.assertRaises(ValidationError):
+            CameraProposal.model_validate(nested_objects({"rationale": "r", "detector": '{"obstruction_ratio": 0.2}'}))
+
+    def test_detector_tuning_is_bounded_and_applies_per_experiment_only(self):
+        from coolpilot.models import CameraConfiguration, CameraSettings, CameraThresholds
+        from coolpilot.simulation.camera_benchmark import merged_settings
+        with self.assertRaises(ValidationError):
+            CameraConfiguration.model_validate({"detector": {"glare_rise": 0.33}})     # off the finite grid
+        settings = CameraSettings.model_validate({**self.request["camera"], "thresholds": {"glare_rise": 0.4}})
+        plain = merged_settings(settings, CameraConfiguration())
+        self.assertIs(plain, settings)
+        tuned = merged_settings(settings, CameraConfiguration.model_validate({"detector": {"glare_rise": 0.25, "hysteresis": 0.7}}))
+        self.assertEqual((tuned.thresholds.glare_rise, tuned.thresholds.hysteresis), (0.25, 0.7))
+        self.assertEqual(settings.thresholds.glare_rise, 0.4)                          # the frozen run contract is untouched
+        self.assertEqual(tuned.goals, settings.goals)                                 # gates never change
+        self.assertEqual(tuned.thresholds.dark_ratio, CameraThresholds().dark_ratio)
+
+    def test_cool_detection_needs_linux_arm_and_the_vendor_path(self):
+        from coolpilot.runtime import accelerators, distribution
+        cv = "/opt/cool/python_3.12/site-packages/cv2/__init__.py"
+        self.assertEqual(distribution("Linux", "aarch64", cv), "COOL")
+        self.assertEqual(distribution("Linux", "aarch64", "/home/u/venv/site-packages/cv2/__init__.py"), "OpenCV")
+        self.assertEqual(distribution("Darwin", "arm64", cv), "OpenCV")
+        self.assertEqual(distribution("Linux", "x86_64", cv), "OpenCV")
+        self.assertEqual(accelerators("Custom HAL: YES (carotene (ver 0.0.1) KleidiCV (ver 26.03))"), ["KleidiCV", "Carotene"])
+
 
 if __name__ == "__main__":
     unittest.main()

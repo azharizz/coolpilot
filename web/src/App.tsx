@@ -5,6 +5,7 @@ import { Icon, Notice, PageHead, Pagination, RunRows } from "./ui";
 import { Runtime } from "./Runtime";
 import { CameraForm, CameraRun } from "./Camera";
 import { CameraCompare } from "./CameraCompare";
+import { Footage } from "./Footage";
 import { PipelineFlow, SensorField } from "./Diagrams";
 
 const subscribeRoute = (listener: () => void) => {
@@ -20,6 +21,7 @@ const getRoute = () => window.location.hash.slice(1) || "/";
 const links = [
   { href: "/", label: "Overview" },
   { href: "/camera-comparison", label: "Live replay" },
+  { href: "/footage", label: "Footage" },
   { href: "/camera", label: "Validate" },
   { href: "/history", label: "History" },
   { href: "/runtime", label: "Runtime" },
@@ -83,6 +85,8 @@ export function App() {
               <Runtime system={system.data} openRun={openRun} />
             ) : route === "/camera-comparison" ? (
               <CameraCompare />
+            ) : route === "/footage" ? (
+              <Footage />
             ) : route === "/camera" ? (
               <CameraForm key={draft?.camera ? JSON.stringify(draft) : "camera"} system={system.data} busy={busy}
                 initial={draft?.camera ? draft : undefined} onStart={openRun} />

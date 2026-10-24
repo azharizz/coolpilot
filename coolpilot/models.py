@@ -12,6 +12,22 @@ class Contract(BaseModel):
 FAULTS = ("blur", "underexposure", "glare", "obstruction", "blackout", "freeze", "interruption", "backlog")
 
 
+class DetectorTuning(Contract):
+    """Bounded detector calibration an experiment may try on TUNING clips. None keeps the run's value.
+
+    Gates (CameraGoals) never change; the winning tuning is frozen before held-out validation.
+    """
+    glare_rise: Literal[0.2, 0.25, 0.3, 0.4] | None = None
+    dark_ratio: Literal[0.45, 0.55, 0.65, 0.75] | None = None
+    blur_ratio: Literal[0.25, 0.35, 0.5] | None = None
+    obstruction_ratio: Literal[0.35, 0.45, 0.55, 0.65] | None = None
+    obstruction_s: Literal[0.5, 0.8, 1.2] | None = None
+    hysteresis: Literal[0.2, 0.3, 0.5, 0.7, 1.0] | None = None
+    obstruction_hysteresis: Literal[0.5, 0.8, 1.0] | None = None
+    persistence_s: Literal[0.2, 0.3, 0.5] | None = None
+    recovery_s: Literal[0.2, 0.3, 0.5] | None = None
+
+
 class CameraConfiguration(Contract):
     # The agent and random comparator use exactly this finite search space.
     width: Literal[320, 640, 960, 1280] = 640
@@ -20,6 +36,7 @@ class CameraConfiguration(Contract):
     queue_size: Literal[1, 2, 4] = 2
     mode: Literal["local", "scheduled", "hybrid"] = "local"
     review_interval_s: Literal[1, 2, 5] = 2
+    detector: DetectorTuning | None = None
 
 
 class FaultLimit(Contract):
@@ -50,13 +67,25 @@ class CameraThresholds(Contract):
     blur_variance: float = Field(default=60, gt=0)
     dark_mean: float = Field(default=35, ge=0, le=255)
     black_fraction: float = Field(default=0.98, gt=0, le=1)
-    glare_fraction: float = Field(default=0.35, gt=0, le=1)
-    obstruction_ratio: float = Field(default=0.25, gt=0, lt=1)
+    glare_fraction: float = Field(default=0.35, gt=0, le=1)   # retired absolute rule; kept so old runs still load
+    obstruction_ratio: float = Field(default=0.35, gt=0, lt=1)
+    # Relative rules: each camera against its own references. Defaults come from
+    # experiments/calibrate.py on the centre-camera tuning clips only (0/6 failed checks, 1 false alarm).
+    warmup_s: float = Field(default=1.0, ge=0, le=30)
+    reference_window_s: float = Field(default=3.0, gt=0, le=600)
+    glare_rise: float = Field(default=0.25, gt=0, le=1)
+    glare_tiles: int = Field(default=2, ge=1, le=16)
+    dark_ratio: float = Field(default=0.55, gt=0, lt=1)
+    blur_ratio: float = Field(default=0.35, gt=0, lt=1)
+    scene_keep_ratio: float = Field(default=0.85, gt=0, le=2)
+    obstruction_s: float = Field(default=0.5, ge=0, le=10)
+    hysteresis: float = Field(default=0.3, gt=0, le=1)   # 1 = none; smaller = stickier active alarms
+    obstruction_hysteresis: float = Field(default=0.8, gt=0, le=1)   # local loss: a light touch, or it never clears
     freeze_difference: float = Field(default=0.3, ge=0, le=255)
     # E-folding time: approximately the old 0.999 retention at 14 observations/s.
     reference_decay_s: float = Field(default=71.4, gt=0, le=3600)
     persistence_s: float = Field(default=0.3, gt=0, le=10)
-    recovery_s: float = Field(default=0.3, gt=0, le=10)
+    recovery_s: float = Field(default=0.5, gt=0, le=10)
     freeze_s: float = Field(default=1, gt=0, le=30)
     feed_timeout_s: float = Field(default=1, gt=0, le=30)
     backlog_s: float = Field(default=0.5, gt=0, le=30)
@@ -98,6 +127,9 @@ class CameraSettings(Contract):
     max_image_requests: int = Field(default=0, ge=0, le=100)
     api_timeout_s: float = Field(default=5, gt=0, le=30)
     cool_hourly_price: float | None = Field(default=None, ge=0)
+    # Second-stage check of obstruction suspicions (coolpilot.verify). "agent" needs the Nebius keys,
+    # which benchmark subprocesses never receive, so measured runs use "rule".
+    verifier: Literal["off", "rule", "agent"] = "rule"
 
 
 class CameraProposal(CameraConfiguration):

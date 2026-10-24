@@ -14,13 +14,55 @@ const configLabels: [keyof CameraConfig, string, string][] = [
   ["width", "Analysis width", "px"], ["sample_every", "Sample every", "frames"], ["threads", "Threads", ""],
   ["queue_size", "Queue", "frames"], ["mode", "Review mode", ""], ["review_interval_s", "Review interval", "s"],
 ];
+const detectorLabels: [string, string][] = [["glare_rise", "Glare rise"], ["dark_ratio", "Dark ratio"], ["blur_ratio", "Blur ratio"],
+  ["obstruction_ratio", "Obstruction ratio"], ["obstruction_s", "Obstruction hold s"], ["hysteresis", "Hysteresis"], ["persistence_s", "Persistence s"], ["recovery_s", "Recovery s"]];
 export function ConfigGrid({ config }: { config: CameraConfig }) {
+  const tuned = detectorLabels.filter(([k]) => config.detector?.[k as keyof typeof config.detector] != null);
   return (
     <dl className="config-grid">
       {configLabels.map(([key, label, unit]) => (
         <div key={key}><dt>{label}</dt><dd><b className="mono">{String(config[key])}</b>{unit && <small> {unit}</small>}</dd></div>
       ))}
+      {tuned.map(([key, label]) => (
+        <div key={key} className="is-tuned"><dt>{label}</dt><dd><b className="mono">{String(config.detector![key as keyof typeof config.detector])}</b></dd></div>
+      ))}
     </dl>
+  );
+}
+
+/** Each experiment as a step: what was proposed and why, then what OpenCV measured. */
+function ExperimentTimeline({ run }: { run: CameraRunData }) {
+  const frozen = run.events.find(e => e.kind === "search_frozen")?.payload as { selected_experiment?: number; reason?: string } | undefined;
+  if (!run.experiments.length) return null;
+  return (
+    <section className="panel">
+      <h2>How the search decided</h2>
+      <ol className="timeline">
+        {run.experiments.map((e, i) => {
+          const m = e.metrics, faults = m ? m.evaluations.flatMap(r => Object.values(r.by_fault)) : [];
+          const caught = faults.filter(f => f.missed === 0 && f.bad_recovery === 0).length;
+          const fah = m?.repetition_evidence[0]?.false_alarms_per_hour;
+          const failed = e.gate ? e.gate.checks.filter(c => !c.passed).length : null;
+          // First repetition only: replicas repeat the same clips. Older runs did not record alarm types.
+          const alarms = m ? m.evaluations.filter(r => r.repetition === 0 && r.stream === 0).flatMap(r => (r.false_alarms ?? []).map(f => `${f.type} at ${f.start_s}s in ${r.clip}`)) : [];
+          return (
+            <li key={e.id} className={e.gate ? (e.gate.passed ? "is-pass" : "is-fail") : ""} style={{ "--i": i } as CSSProperties}>
+              <div className="timeline-head">
+                <b className="mono">#{e.id}</b> <span className="timeline-kind">{e.kind.replaceAll("_", " ")}</span>
+                {e.gate && <span className={`chip ${e.gate.passed ? "chip-passed" : "chip-rejected"}`}>{e.gate.passed ? "All gates passed" : `${failed} gate checks failed`}</span>}
+                {frozen?.selected_experiment === e.id && <span className="chip chip-running">Selected for held-out validation</span>}
+              </div>
+              {e.rationale && <p className="timeline-why">{e.rationale}</p>}
+              {m && <p className="timeline-measured mono">
+                faults handled {caught}/{faults.length} · false alarms {fah == null ? "n/a" : `${number(fah, 0)}/h`} · CPU {number(m.cpu_seconds_per_camera_second, 4)} s/camera s · {e.config.width}px · every {e.config.sample_every}
+              </p>}
+              {alarms.length > 0 && <p className="timeline-measured mono">false alarm{alarms.length > 1 ? "s" : ""}: {alarms.join("; ")}</p>}
+            </li>
+          );
+        })}
+      </ol>
+      {frozen?.reason && <p className="hint">{frozen.reason}</p>}
+    </section>
   );
 }
 
@@ -166,7 +208,7 @@ export function CameraForm({ system, busy, initial, onStart }: { system: System;
           <dl>
             <div><dt>Recordings</dt><dd>{dataset ? `${dataset.clips.length} clips · ${number(total, 0)} s` : "None"}</dd></div>
             <div><dt>Strategy</dt><dd>{strategies.find(s => s.value === strategy)?.title}</dd></div>
-            <div><dt>Max experiments</dt><dd className="mono">{Number.isFinite(budget) ? budget + 3 : "—"}</dd></div>
+            <div><dt>Max experiments</dt><dd className="mono">{Number.isFinite(budget) ? budget + 3 : "n/a"}</dd></div>
             <div><dt>Apply</dt><dd>{dataset?.development_only ? "Disabled" : "After held-out pass"}</dd></div>
           </dl>
           {dataset?.sha256 && <code className="hash" title="Contract SHA-256">{dataset.sha256.slice(0, 16)}…</code>}
@@ -250,11 +292,11 @@ export function CameraRun({ identifier, busy, readonly, onEdit, openRun }: { ide
                         <span className="bar"><i style={{ "--w": e.metrics.cpu_seconds_per_camera_second / maxCpu } as CSSProperties} /></span>
                         <span className="mono">{number(e.metrics.cpu_seconds_per_camera_second, 4)}</span>
                       </span>
-                    ) : "—"}
+                    ) : "n/a"}
                   </td>
-                  <td className="mono">{e.metrics ? `${number(e.metrics.max_age_s, 3)} s` : "—"}</td>
+                  <td className="mono">{e.metrics ? `${number(e.metrics.max_age_s, 3)} s` : "n/a"}</td>
                   <td className="mono">{e.metrics?.cost_per_camera_hour == null ? "Unknown" : number(e.metrics.cost_per_camera_hour, 5)}</td>
-                  <td className="mono">{e.metrics?.image_requests ?? "—"}</td>
+                  <td className="mono">{e.metrics?.image_requests ?? "n/a"}</td>
                 </tr>
               ))}
             </tbody>
@@ -262,6 +304,8 @@ export function CameraRun({ identifier, busy, readonly, onEdit, openRun }: { ide
         </div>
         {!run.experiments.length && <p className="muted">Waiting for the first experiment…</p>}
       </section>
+
+      <ExperimentTimeline run={run} />
 
       {chosen && <CameraEvidence key={chosen.id} experiment={chosen} dataset={run.request.camera!.dataset} />}
 

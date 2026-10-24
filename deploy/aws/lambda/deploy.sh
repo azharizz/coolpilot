@@ -21,7 +21,7 @@ if ! aws s3api head-bucket --bucket "$BUCKET" 2>/dev/null; then
     --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
   aws s3api put-bucket-tagging --bucket "$BUCKET" --tagging 'TagSet=[{Key=Project,Value=coolpilot}]'
 fi
-python3 - "$ROOT/data/coolpilot.sqlite3" "$HERE/build/seed.sqlite3" <<'PY'
+python3 - "${COOLPILOT_SEED_DB:-$ROOT/data/coolpilot.sqlite3}" "$HERE/build/seed.sqlite3" <<'PY'
 import sqlite3, sys
 src, dst = sqlite3.connect(sys.argv[1]), sqlite3.connect(sys.argv[2])
 src.backup(dst); dst.execute("PRAGMA journal_mode=DELETE"); dst.close(); src.close()   # consistent single-file snapshot
@@ -29,6 +29,9 @@ PY
 aws s3 cp --only-show-errors "$HERE/build/seed.sqlite3" "s3://$BUCKET/data/coolpilot.sqlite3"
 aws s3 sync --only-show-errors "$ROOT/data/oxford_robotcar/videos" "s3://$BUCKET/data/oxford_robotcar/videos" --delete
 aws s3 sync --only-show-errors "$ROOT/data/oxford_robotcar/camera_health_development" "s3://$BUCKET/data/oxford_robotcar/camera_health_development" --delete
+aws s3 sync --only-show-errors "$ROOT/data/camera_health" "s3://$BUCKET/data/camera_health" --delete \
+  --exclude "oxford-camera-holdout-fresh/*"   # evaluation-only clips stay on the EC2 host; keeps Lambda cold starts lean
+aws s3 sync --only-show-errors "$ROOT/data/models" "s3://$BUCKET/data/models" --exclude "*.py" --delete   # NanoDet (Apache-2.0) + licence
 ZIPKEY="code/function-$(shasum "$HERE/build/function.zip" | cut -c1-12).zip"
 aws s3 cp --only-show-errors "$HERE/build/function.zip" "s3://$BUCKET/$ZIPKEY"
 
@@ -51,6 +54,7 @@ fi
 aws iam put-role-policy --role-name "$ROLE" --policy-name read-data --policy-document "{\"Version\":\"2012-10-17\",\"Statement\":[
  {\"Effect\":\"Allow\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::$BUCKET/data/*\"},
  {\"Effect\":\"Allow\",\"Action\":\"s3:ListBucket\",\"Resource\":\"arn:aws:s3:::$BUCKET\",\"Condition\":{\"StringLike\":{\"s3:prefix\":\"data/*\"}}},
+ {\"Effect\":\"Allow\",\"Action\":[\"s3:PutObject\",\"s3:GetObject\",\"s3:DeleteObject\"],\"Resource\":\"arn:aws:s3:::$BUCKET/uploads/*\"},
  {\"Effect\":\"Allow\",\"Action\":\"dynamodb:UpdateItem\",\"Resource\":\"arn:aws:dynamodb:$AWS_REGION:$ACCOUNT:table/$TABLE\"}]}"
 
 # Open by default. COOLPILOT_LOGIN=1 adds a generated username and password (the app enforces it).
@@ -69,7 +73,7 @@ env = {"AWS_LAMBDA_EXEC_WRAPPER": "/opt/bootstrap", "AWS_LWA_INVOKE_MODE": "resp
        "COOLPILOT_ALLOWED_HOSTS": f"*.lambda-url.{region}.on.aws",
        "COOLPILOT_WARM": "1", "COOLPILOT_RATE_TABLE": table, "COOLPILOT_REPLAYS_PER_MIN": os.environ.get("COOLPILOT_REPLAYS_PER_MIN", "6"),
        "COOLPILOT_DOWNLOADS_PER_MIN": os.environ.get("COOLPILOT_DOWNLOADS_PER_MIN", "12"),
-       "OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1"}
+       "COOLPILOT_METRICS": "1", "OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1"}
 if os.path.exists(cred):
     env["COOLPILOT_BASIC_AUTH"] = open(cred).read().strip()
 json.dump({"Variables": env}, open(out, "w"))
@@ -78,7 +82,7 @@ chmod 600 "$STATE/env.json"
 
 echo "== function $FN"
 COMMON=(--function-name "$FN" --runtime python3.12 --handler run.sh --memory-size 2048 --timeout 60
-        --ephemeral-storage Size=1024 --layers "$LAYER" --environment "file://$STATE/env.json")
+        --ephemeral-storage Size=2048 --layers "$LAYER" --environment "file://$STATE/env.json")
 if aws lambda get-function --function-name "$FN" >/dev/null 2>&1; then
   aws lambda update-function-code --function-name "$FN" --s3-bucket "$BUCKET" --s3-key "$ZIPKEY" --architectures arm64 >/dev/null
   aws lambda wait function-updated --function-name "$FN"
@@ -102,4 +106,16 @@ aws lambda add-permission --function-name "$FN" --statement-id public-url --acti
 aws lambda add-permission --function-name "$FN" --statement-id public-invoke --action lambda:InvokeFunction \
   --principal '*' --invoked-via-function-url >/dev/null 2>&1 || true
 echo "$URL" > "$STATE/url"
+
+echo "== footage uploads (browser POST to S3 from this site only; leftovers expire after 1 day)"
+ORIGIN="${URL%/}"
+aws s3api put-bucket-cors --bucket "$BUCKET" --cors-configuration "{\"CORSRules\":[{\"AllowedOrigins\":[\"$ORIGIN\"],\"AllowedMethods\":[\"POST\"],\"AllowedHeaders\":[\"*\"],\"MaxAgeSeconds\":600}]}"
+aws s3api put-bucket-lifecycle-configuration --bucket "$BUCKET" --lifecycle-configuration '{"Rules":[{"ID":"expire-uploads","Status":"Enabled","Filter":{"Prefix":"uploads/"},"Expiration":{"Days":1}}]}'
+
+echo "== dashboard (metrics come from EMF log lines; COOLPILOT_METRICS=1)"
+W='"type":"metric","width":12,"height":6,"properties":{"region":"'"$AWS_REGION"'","view":"timeSeries","period":300'
+aws cloudwatch put-dashboard --dashboard-name coolpilot --dashboard-body "{\"widgets\":[
+ {$W,\"title\":\"Replays (count) and cameras unavailable\",\"stat\":\"Sum\",\"metrics\":[[\"COOLPilot\",\"Cancelled\",\"Event\",\"replay\"],[\".\",\"CamerasUnavailable\",\".\",\".\"],[\".\",\"WallSeconds\",\".\",\".\",{\"stat\":\"SampleCount\",\"label\":\"Replays\"}]]}},
+ {$W,\"title\":\"Replay CPU and wall seconds\",\"stat\":\"Average\",\"metrics\":[[\"COOLPilot\",\"CpuSeconds\",\"Event\",\"replay\"],[\".\",\"WallSeconds\",\".\",\".\"]]}},
+ {$W,\"title\":\"Lambda duration and errors\",\"metrics\":[[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"$FN\",{\"stat\":\"p95\"}],[\".\",\"Errors\",\".\",\".\",{\"stat\":\"Sum\"}],[\".\",\"Throttles\",\".\",\".\",{\"stat\":\"Sum\"}]]}}]}" >/dev/null
 echo "URL: $URL"; [ ! -f "$CRED" ] || echo "Login is in $CRED (user:password, mode 600)"

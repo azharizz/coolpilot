@@ -1,0 +1,184 @@
+{
+ "dataset": "oxford-development",
+ "split": "development_only",
+ "grid": {
+  "glare_rise": [
+   0.25,
+   0.3
+  ],
+  "glare_tiles": [
+   2
+  ],
+  "dark_ratio": [
+   0.55,
+   0.65
+  ],
+  "blur_ratio": [
+   0.35
+  ],
+  "obstruction_ratio": [
+   0.35,
+   0.45
+  ],
+  "scene_keep_ratio": [
+   0.85
+  ],
+  "obstruction_s": [
+   0.5,
+   0.8
+  ],
+  "reference_window_s": [
+   3.0,
+   6.0
+  ],
+  "warmup_s": [
+   1.0
+  ],
+  "hysteresis": [
+   0.3,
+   0.4,
+   0.5
+  ],
+  "obstruction_hysteresis": [
+   0.5,
+   0.8,
+   1.0
+  ],
+  "recovery_s": [
+   0.3,
+   0.5
+  ]
+ },
+ "thresholds": {
+  "glare_rise": 0.25,
+  "glare_tiles": 2,
+  "dark_ratio": 0.55,
+  "blur_ratio": 0.35,
+  "obstruction_ratio": 0.35,
+  "scene_keep_ratio": 0.85,
+  "obstruction_s": 0.5,
+  "reference_window_s": 3.0,
+  "warmup_s": 1.0,
+  "hysteresis": 0.3,
+  "obstruction_hysteresis": 0.8,
+  "recovery_s": 0.5
+ },
+ "result": {
+  "failed_fault_checks": 0,
+  "fault_checks": 6,
+  "false_alarms": 1,
+  "false_alarms_per_hour": 36.78638400227192,
+  "normal_seconds": 97.86229600000001,
+  "clips": [
+   {
+    "clip": "centre_reference",
+    "camera": "stereo/centre",
+    "checks": [],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.37
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "centre_blur",
+    "camera": "stereo/centre",
+    "checks": [
+     {
+      "type": "blur",
+      "detected": true,
+      "detection_s": 0.5624369999999992,
+      "recovery_s": 0.43748399999999954,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "centre_underexposure",
+    "camera": "stereo/centre",
+    "checks": [
+     {
+      "type": "underexposure",
+      "detected": true,
+      "detection_s": 0.4999449999999994,
+      "recovery_s": 0.18749799999999794,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "centre_glare",
+    "camera": "stereo/centre",
+    "checks": [
+     {
+      "type": "glare",
+      "detected": true,
+      "detection_s": 0.5624369999999992,
+      "recovery_s": 1.812327999999999,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "centre_obstruction",
+    "camera": "stereo/centre",
+    "checks": [
+     {
+      "type": "obstruction",
+      "detected": true,
+      "detection_s": 0.43745099999999937,
+      "recovery_s": 1.3123809999999985,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "centre_blackout",
+    "camera": "stereo/centre",
+    "checks": [
+     {
+      "type": "blackout",
+      "detected": true,
+      "detection_s": 0.3124709999999995,
+      "recovery_s": 0.5624709999999986,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "centre_freeze",
+    "camera": "stereo/centre",
+    "checks": [
+     {
+      "type": "freeze",
+      "detected": true,
+      "detection_s": 1.3747859999999994,
+      "recovery_s": 0.5624709999999986,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   }
+  ]
+ },
+ "note": "Selected on this split only. Report held-out numbers separately with --params."
+}

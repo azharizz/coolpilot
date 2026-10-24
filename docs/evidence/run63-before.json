@@ -1,0 +1,391 @@
+{
+ "source": "local Mac database (data/coolpilot.sqlite3, gitignored), experiment 63, before this work",
+ "run_id": "885e9f50754145b9988bd4d0361331be",
+ "kind": "baseline",
+ "created": "2026-10-15T13:29:07.595553+00:00",
+ "environment": {
+  "distribution": "OpenCV",
+  "opencv_version": "4.13.0",
+  "architecture": "arm64",
+  "system": "Darwin"
+ },
+ "gate": {
+  "passed": false,
+  "checks": [
+   {
+    "metric": "centre_reference r1 s1: maximum source-schedule-to-result age seconds",
+    "actual": 0.15349016588073994,
+    "operator": "<=",
+    "limit": 0.5,
+    "passed": true
+   },
+   {
+    "metric": "centre_reference r1 s1: unknown evidence fraction",
+    "actual": 0.00488546394801262,
+    "operator": "<=",
+    "limit": 0.1,
+    "passed": true
+   },
+   {
+    "metric": "centre_reference r1 s1: unfinished frames",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "centre_blur r1 s1: blur recall",
+    "actual": 1.0,
+    "operator": ">=",
+    "limit": 1.0,
+    "passed": true
+   },
+   {
+    "metric": "centre_blur r1 s1: blur detection seconds",
+    "actual": 1.030811874604523,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": true
+   },
+   {
+    "metric": "centre_blur r1 s1: blur recovery seconds",
+    "actual": null,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_blur r1 s1: blur premature/uncleared",
+    "actual": 1,
+    "operator": "<=",
+    "limit": 0,
+    "passed": false
+   },
+   {
+    "metric": "centre_blur r1 s1: maximum source-schedule-to-result age seconds",
+    "actual": 0.1500824579159019,
+    "operator": "<=",
+    "limit": 0.5,
+    "passed": true
+   },
+   {
+    "metric": "centre_blur r1 s1: unknown evidence fraction",
+    "actual": 0.004118021211818337,
+    "operator": "<=",
+    "limit": 0.1,
+    "passed": true
+   },
+   {
+    "metric": "centre_blur r1 s1: unfinished frames",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "centre_underexposure r1 s1: underexposure recall",
+    "actual": 0.0,
+    "operator": ">=",
+    "limit": 1.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_underexposure r1 s1: underexposure detection seconds",
+    "actual": null,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_underexposure r1 s1: underexposure recovery seconds",
+    "actual": null,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_underexposure r1 s1: underexposure premature/uncleared",
+    "actual": 1,
+    "operator": "<=",
+    "limit": 0,
+    "passed": false
+   },
+   {
+    "metric": "centre_underexposure r1 s1: maximum source-schedule-to-result age seconds",
+    "actual": 0.15356479062187844,
+    "operator": "<=",
+    "limit": 0.5,
+    "passed": true
+   },
+   {
+    "metric": "centre_underexposure r1 s1: unknown evidence fraction",
+    "actual": 0.00375424154461097,
+    "operator": "<=",
+    "limit": 0.1,
+    "passed": true
+   },
+   {
+    "metric": "centre_underexposure r1 s1: unfinished frames",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "centre_glare r1 s1: glare recall",
+    "actual": 0.0,
+    "operator": ">=",
+    "limit": 1.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_glare r1 s1: glare detection seconds",
+    "actual": null,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_glare r1 s1: glare recovery seconds",
+    "actual": null,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_glare r1 s1: glare premature/uncleared",
+    "actual": 1,
+    "operator": "<=",
+    "limit": 0,
+    "passed": false
+   },
+   {
+    "metric": "centre_glare r1 s1: maximum source-schedule-to-result age seconds",
+    "actual": 0.15460925014832583,
+    "operator": "<=",
+    "limit": 0.5,
+    "passed": true
+   },
+   {
+    "metric": "centre_glare r1 s1: unknown evidence fraction",
+    "actual": 0.003559589712563197,
+    "operator": "<=",
+    "limit": 0.1,
+    "passed": true
+   },
+   {
+    "metric": "centre_glare r1 s1: unfinished frames",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "centre_obstruction r1 s1: obstruction recall",
+    "actual": 0.0,
+    "operator": ">=",
+    "limit": 1.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_obstruction r1 s1: obstruction detection seconds",
+    "actual": null,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_obstruction r1 s1: obstruction recovery seconds",
+    "actual": null,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": false
+   },
+   {
+    "metric": "centre_obstruction r1 s1: obstruction premature/uncleared",
+    "actual": 1,
+    "operator": "<=",
+    "limit": 0,
+    "passed": false
+   },
+   {
+    "metric": "centre_obstruction r1 s1: maximum source-schedule-to-result age seconds",
+    "actual": 0.15510466722297522,
+    "operator": "<=",
+    "limit": 0.5,
+    "passed": true
+   },
+   {
+    "metric": "centre_obstruction r1 s1: unknown evidence fraction",
+    "actual": 0.0038544688119631063,
+    "operator": "<=",
+    "limit": 0.1,
+    "passed": true
+   },
+   {
+    "metric": "centre_obstruction r1 s1: unfinished frames",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "centre_blackout r1 s1: blackout recall",
+    "actual": 1.0,
+    "operator": ">=",
+    "limit": 1.0,
+    "passed": true
+   },
+   {
+    "metric": "centre_blackout r1 s1: blackout detection seconds",
+    "actual": 0.3367833750683067,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": true
+   },
+   {
+    "metric": "centre_blackout r1 s1: blackout recovery seconds",
+    "actual": 0.3546897918244891,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": true
+   },
+   {
+    "metric": "centre_blackout r1 s1: blackout premature/uncleared",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "centre_blackout r1 s1: maximum source-schedule-to-result age seconds",
+    "actual": 0.16708008406218866,
+    "operator": "<=",
+    "limit": 0.5,
+    "passed": true
+   },
+   {
+    "metric": "centre_blackout r1 s1: unknown evidence fraction",
+    "actual": 0.0038983484876836455,
+    "operator": "<=",
+    "limit": 0.1,
+    "passed": true
+   },
+   {
+    "metric": "centre_blackout r1 s1: unfinished frames",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "centre_freeze r1 s1: freeze recall",
+    "actual": 1.0,
+    "operator": ">=",
+    "limit": 1.0,
+    "passed": true
+   },
+   {
+    "metric": "centre_freeze r1 s1: freeze detection seconds",
+    "actual": 1.4167911251436172,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": true
+   },
+   {
+    "metric": "centre_freeze r1 s1: freeze recovery seconds",
+    "actual": 0.47849816738423634,
+    "operator": "<=",
+    "limit": 2.0,
+    "passed": true
+   },
+   {
+    "metric": "centre_freeze r1 s1: freeze premature/uncleared",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "centre_freeze r1 s1: maximum source-schedule-to-result age seconds",
+    "actual": 0.1536358753791447,
+    "operator": "<=",
+    "limit": 0.5,
+    "passed": true
+   },
+   {
+    "metric": "centre_freeze r1 s1: unknown evidence fraction",
+    "actual": 0.005114552013070108,
+    "operator": "<=",
+    "limit": 0.1,
+    "passed": true
+   },
+   {
+    "metric": "centre_freeze r1 s1: unfinished frames",
+    "actual": 0,
+    "operator": "<=",
+    "limit": 0,
+    "passed": true
+   },
+   {
+    "metric": "r1: blur event denominator",
+    "actual": 1,
+    "operator": ">=",
+    "limit": 1,
+    "passed": true
+   },
+   {
+    "metric": "r1: underexposure event denominator",
+    "actual": 1,
+    "operator": ">=",
+    "limit": 1,
+    "passed": true
+   },
+   {
+    "metric": "r1: glare event denominator",
+    "actual": 1,
+    "operator": ">=",
+    "limit": 1,
+    "passed": true
+   },
+   {
+    "metric": "r1: obstruction event denominator",
+    "actual": 1,
+    "operator": ">=",
+    "limit": 1,
+    "passed": true
+   },
+   {
+    "metric": "r1: blackout event denominator",
+    "actual": 1,
+    "operator": ">=",
+    "limit": 1,
+    "passed": true
+   },
+   {
+    "metric": "r1: freeze event denominator",
+    "actual": 1,
+    "operator": ">=",
+    "limit": 1,
+    "passed": true
+   },
+   {
+    "metric": "r1: normal seconds",
+    "actual": 97.30421529092632,
+    "operator": ">=",
+    "limit": 30.0,
+    "passed": true
+   },
+   {
+    "metric": "r1: false alarms/hour",
+    "actual": 1331.9052994005829,
+    "operator": "<=",
+    "limit": 0.0,
+    "passed": false
+   }
+  ]
+ },
+ "false_alarms_per_hour": [
+  1331.9052994005829
+ ]
+}

@@ -1,0 +1,1917 @@
+{
+ "dataset": "oxford-camera-holdout",
+ "split": "validation",
+ "opencv": "5.0.0",
+ "arms": [
+  {
+   "arm": "none",
+   "failed_fault_checks": "5/18",
+   "pass_by_fault": {
+    "blackout": "3/3",
+    "blur": "3/3",
+    "freeze": "3/3",
+    "glare": "1/3",
+    "obstruction": "0/3",
+    "underexposure": "3/3"
+   },
+   "false_alarms": 26,
+   "false_alarms_per_hour": 283.0,
+   "suspicions": 26,
+   "dismissed": 0,
+   "escalated": 0,
+   "max_latency_s": 0.0,
+   "decisions": [
+    {
+     "clip": "left_blackout",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_blur",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_freeze",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_glare",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_obstruction",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_reference",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_underexposure",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_blackout",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_blur",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_glare",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_obstruction",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_reference",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_underexposure",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_blackout",
+     "time_s": 9.63,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "blackout",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_blackout",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_blur",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 2.0,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "freeze",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 8.0,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_glare",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_glare",
+     "time_s": 12.82,
+     "tiles": [
+      1,
+      2,
+      3,
+      6
+     ],
+     "truth_at_time": "glare",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_obstruction",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_obstruction",
+     "time_s": 13.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_reference",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_reference",
+     "time_s": 13.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_underexposure",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    }
+   ],
+   "clips": [
+    {
+     "clip": "left_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.06
+      }
+     ]
+    },
+    {
+     "clip": "left_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.06
+      }
+     ]
+    },
+    {
+     "clip": "left_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.06
+      }
+     ]
+    },
+    {
+     "clip": "left_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.06
+      }
+     ]
+    },
+    {
+     "clip": "left_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.06
+      }
+     ]
+    },
+    {
+     "clip": "left_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.06
+      }
+     ]
+    },
+    {
+     "clip": "left_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.06
+      }
+     ]
+    },
+    {
+     "clip": "right_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.37
+      }
+     ]
+    },
+    {
+     "clip": "right_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.37
+      }
+     ]
+    },
+    {
+     "clip": "right_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.37
+      }
+     ]
+    },
+    {
+     "clip": "right_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.37
+      }
+     ]
+    },
+    {
+     "clip": "right_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.37
+      }
+     ]
+    },
+    {
+     "clip": "right_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.37
+      }
+     ]
+    },
+    {
+     "clip": "rear_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 9.63
+      },
+      {
+       "type": "obstruction",
+       "start_s": 13.36
+      }
+     ]
+    },
+    {
+     "clip": "rear_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 13.36
+      }
+     ]
+    },
+    {
+     "clip": "rear_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 2.0
+      },
+      {
+       "type": "obstruction",
+       "start_s": 8.0
+      },
+      {
+       "type": "obstruction",
+       "start_s": 13.36
+      }
+     ]
+    },
+    {
+     "clip": "rear_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 7.91
+      },
+      {
+       "type": "obstruction",
+       "start_s": 12.82
+      }
+     ]
+    },
+    {
+     "clip": "rear_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 7.91
+      },
+      {
+       "type": "obstruction",
+       "start_s": 13.18
+      }
+     ]
+    },
+    {
+     "clip": "rear_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 7.91
+      },
+      {
+       "type": "obstruction",
+       "start_s": 13.18
+      }
+     ]
+    },
+    {
+     "clip": "rear_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 7.91
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "arm": "rule",
+   "failed_fault_checks": "5/18",
+   "pass_by_fault": {
+    "blackout": "3/3",
+    "blur": "3/3",
+    "freeze": "3/3",
+    "glare": "1/3",
+    "obstruction": "0/3",
+    "underexposure": "3/3"
+   },
+   "false_alarms": 1,
+   "false_alarms_per_hour": 10.9,
+   "suspicions": 26,
+   "dismissed": 25,
+   "escalated": 0,
+   "max_latency_s": 0.139,
+   "decisions": [
+    {
+     "clip": "left_blackout",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.139,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_blur",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.113,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_freeze",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_glare",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.113,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_obstruction",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.117,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_reference",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.114,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_underexposure",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.117,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_blackout",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.113,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_blur",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_glare",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.114,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_obstruction",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.117,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_reference",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.117,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_underexposure",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.117,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_blackout",
+     "time_s": 9.63,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "blackout",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.124,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_blackout",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.124,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_blur",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.124,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 2.0,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "freeze",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.136,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 8.0,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.124,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.124,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_glare",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.125,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_glare",
+     "time_s": 12.82,
+     "tiles": [
+      1,
+      2,
+      3,
+      6
+     ],
+     "truth_at_time": "glare",
+     "verdict": "confirm",
+     "reason": "No measured scene cause explains the local loss of detail.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_obstruction",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_obstruction",
+     "time_s": 13.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.124,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_reference",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.125,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_reference",
+     "time_s": 13.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_underexposure",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.125,
+     "tool_calls": null
+    }
+   ],
+   "clips": [
+    {
+     "clip": "left_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 12.94
+      }
+     ]
+    },
+    {
+     "clip": "rear_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    }
+   ]
+  },
+  {
+   "arm": "agent",
+   "failed_fault_checks": "5/18",
+   "pass_by_fault": {
+    "blackout": "3/3",
+    "blur": "3/3",
+    "freeze": "3/3",
+    "glare": "1/3",
+    "obstruction": "0/3",
+    "underexposure": "3/3"
+   },
+   "false_alarms": 11,
+   "false_alarms_per_hour": 119.7,
+   "suspicions": 26,
+   "dismissed": 14,
+   "escalated": 12,
+   "max_latency_s": 13.382,
+   "decisions": [
+    {
+     "clip": "left_blackout",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows low relative texture (0.812) and is flagged as unsuitable because it now shows open sky (brightness 1.72, saturation 0.1). The open sky condition exceeds the sky_brightness limit of 1.25, meaning the loss of detail is due to the scene (open sky) rather than a lens fault. Road user coverage for tile 1 is 0.0 (covered_fraction 0.0, well below the 0.4 limit), so moving objects do not explain the loss. Optical flow shows tile 1 has 0.0 px motion vs 5.8 px median for other tiles, consistent with a static scene change (sky) rather than lens motion. All measured scene causes account for ",
+     "latency_s": 2.917,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "left_blur",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows low relative texture (0.812) and is flagged as unsuitable because it now shows open sky (brightness 1.72, saturation 0.1). The open\u2011sky condition matches the unsuitable\u2011tiles list, meaning the detail loss is scene\u2011driven, not lens\u2011related. However, detect_road_users reports 0% coverage of tile 1 by road users (covered_fraction 0.0, well below the 0.4 limit). measure_motion shows 0.0 px flow in tile 1 versus 5.78 px median for other tiles, indicating the tile is static while the rest of the image moves\u2014consistent with a fixed lens obstruction or a scene change. The combination of o",
+     "latency_s": 3.163,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "left_freeze",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows low relative texture (0.812) and is flagged as unsuitable because it now shows open sky (brightness 1.72, saturation 0.1). The scene cause (open sky) explains the loss of detail, but the measurement tools also show no road user coverage (covered_fraction 0.0) and zero motion flow in the tile, which conflicts with a pure scene-change explanation. The measurements are insufficient to fully confirm or dismiss the suspicion, so escalation is required for human review.",
+     "latency_s": 7.643,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "left_glare",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows low relative texture (0.812) and is flagged as unsuitable because it now shows open sky (brightness 1.72, saturation 0.1). The open sky condition exceeds the sky_brightness limit of 1.25, meaning the loss of detail is due to the scene (open sky) rather than a lens obstruction. Road user coverage for this tile is 0% (covered_fraction 0.0, well below the 0.4 limit). Motion measurement shows zero flow in the tile, consistent with a static scene change (sky) rather than a lens issue. All measured scene causes explain the observed detail loss.",
+     "latency_s": 2.727,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "left_obstruction",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows low relative texture (0.812) and is flagged as unsuitable because it now shows open sky (brightness 1.72, saturation 0.1). The open\u2011sky condition matches the unsuitable\u2011tiles list, meaning the detail loss is scene\u2011driven, not lens\u2011related. However, detect_road_users reports 0% coverage of tile 1 (covered_fraction 0.0, well below the 0.4 limit), so road users are not obscuring the tile. measure_motion shows 0.0 px flow in tile 1 versus a median of 5.75 px for other tiles, indicating the tile is static while the rest of the image moves\u2014consistent with a fixed lens smudge or a scene ",
+     "latency_s": 3.054,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "left_reference",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows relative_texture 0.812 (below typical detail) and sky_now brightness 1.72, saturation 0.1, flagged as open_sky_tiles and unsuitable_tiles. The detect_road_users coverage for tile 1 is 0.0 (covered_fraction 0.0 < limit 0.4), so road users do not explain the loss. measure_motion shows tile_flow_px 0.0 for tile 1 while other tiles have median 5.75 px, indicating no motion in the suspected tile, consistent with a static lens obstruction or scene change. The combination of low relative texture, open-sky flag, and zero motion does not point to a single clear scene cause that explains th",
+     "latency_s": 3.279,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "left_underexposure",
+     "time_s": 4.06,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 has relative_texture 0.812 (below the low_texture limit of 0.15? Actually 0.812 > 0.15, but it is listed in unsuitable_tiles because sky_now shows brightness 1.72 > sky_brightness limit 1.25 and saturation 0.1 < sky_saturation limit 20, indicating open sky). The detect_road_users coverage for tile 1 is 0.0, well below the 0.4 limit, so road users do not explain the loss. measure_motion shows 0.0 px flow in tile 1 vs 5.76 px median for other tiles, consistent with a fixed lens obstruction or scene change. The combination of open sky now (unsuitable) and zero motion while other tiles move",
+     "latency_s": 2.897,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "right_blackout",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows low relative texture (0.935) and is flagged as unsuitable because it now shows open sky (brightness 1.31, saturation 0.4). The open\u2011sky condition matches the limits (sky_brightness 1.25, sky_saturation 20), indicating the detail loss is due to the scene change, not a lens fault. Road\u2011user coverage for this tile is 0.0 (well below the 0.4 limit). Motion measurement shows zero flow in the tile, consistent with a static scene under open sky. The combination of open\u2011sky classification and lack of road\u2011user coverage means the measured scene cause explains the suspected tile\u2019s detail lo",
+     "latency_s": 3.999,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "right_blur",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows low relative texture (0.935) and is flagged as unsuitable because it now shows open sky (brightness 1.31, saturation 0.4). The open\u2011sky condition matches the limits (sky_brightness 1.25, sky_saturation 20), indicating the detail loss is due to the scene change, not a lens fault. Road\u2011user coverage is 0\u202f% (covered_fraction 0.0, limit 0.4), so moving objects are not the cause. Optical flow shows tile\u202f1 has 0\u202fpx motion vs 4.84\u202fpx median for other tiles, consistent with a static scene that includes open sky. The measurements explain the suspected tile\u2019s behaviour, but the combination ",
+     "latency_s": 12.612,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "right_glare",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows relative_texture 0.935 (near median) but open_sky_now with brightness 1.31 and saturation 0.4, and is listed in unsuitable_tiles because it now shows open sky. The scene changed (open sky replaced a previously detailed area), not a lens fault. However, detect_road_users reports covered_fraction 0.0 (no road user covers tile 1), and measure_motion shows 0.0 flow (tile static). The combination of open sky now and no road user coverage means the texture loss is scene\u2011driven, but the measurements are not fully conclusive about a lens issue, so escalation is appropriate for human revie",
+     "latency_s": 2.871,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "right_obstruction",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows low relative texture (0.935) and is flagged as unsuitable because it now shows open sky (brightness 1.31, saturation 0.4). However, detect_road_users reports covered_fraction 0.0 (well below the 0.4 limit), so road users do not explain the loss. measure_motion shows zero flow in tile 1 while other tiles have median 4.84 px/s, consistent with a fixed lens obstruction or a scene change (open sky). The measurements conflict: the tile is marked unsuitable due to open sky, yet the lack of motion could also indicate a lens smudge. A human reviewer should resolve whether the cause is sce",
+     "latency_s": 12.862,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "right_reference",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "escalate",
+     "reason": "Tile 1 shows relative_texture 0.935 (near median) and sky_now brightness 1.31, saturation 0.4, but is flagged as unsuitable because it shows open sky now. However, detect_road_users reports covered_fraction 0.0 (well below the 0.4 limit), so road users do not explain the loss. measure_motion shows tile_flow_px 0.0 for tile 1 while other tiles have median 4.84 px, indicating the tile is stationary relative to the camera\u2014consistent with a lens obstruction or fixed smudge rather than scene motion. The combination of open\u2011sky flag, zero motion, and no road\u2011user coverage means the measured scene ca",
+     "latency_s": 12.677,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "right_underexposure",
+     "time_s": 4.37,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.31, saturation 0.4) and is listed in unsuitable_tiles, meaning the scene changed (open sky replaced a previously detailed area). Relative texture is 0.935, well above the low_texture limit of 0.15. Road-user coverage is 0% (covered_fraction 0.0, far below the 0.4 limit). Motion is minimal (0.0 px flow vs 4.78 px median), consistent with a static scene. The loss of detail is due to the scene (open sky), not a lens fault.",
+     "latency_s": 3.15,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_blackout",
+     "time_s": 9.63,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "blackout",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows relative_texture 0.0 (no detail) and sky_now brightness 1.76, saturation 0.0, placing it in unsuitable_tiles. The scene is open sky, which explains the loss of detail without any lens or hardware fault. Road-user coverage is 0.0 (covered_fraction 0.0 < limit 0.4), so moving objects are not the cause. Motion measurement shows 0.0 px flow in the tile vs 1.4 px median for other tiles, consistent with a static sky background. All measured scene causes (open sky) account for the observed detail loss.",
+     "latency_s": 3.483,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_blackout",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.7, saturation 0.0) and is listed in unsuitable_tiles, meaning the scene changed (open sky replaced a previously detailed area). The relative_texture is 0.007, well below the low_texture limit of 0.15, confirming the tile never retained detail under the current sky. Road-user coverage is 0% (covered_fraction 0.0, far below the 0.4 limit). Motion is negligible (0.0 px vs 1.92 px median). All measured scene causes explain the loss, so the suspicion is dismissed.",
+     "latency_s": 5.882,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_blur",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.7, saturation 0.0) and has low relative texture (0.006, well below the low_texture limit of 0.15). It is listed in unsuitable_tiles, meaning the loss of detail is due to the scene (open sky) rather than a lens fault. Road\u2011user coverage is 0\u202f% (covered_fraction 0.0, far below the 0.4 limit). Motion is negligible (0\u202fpx vs 1.91\u202fpx median). All measured scene causes explain the observed loss, so the suspicion can be dismissed.",
+     "latency_s": 13.382,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 2.0,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "freeze",
+     "verdict": "escalate",
+     "reason": "Tile 2 shows relative_texture 0.0 (no detail) and sky_now brightness 1.89, saturation 0.0, matching unsuitable_tiles. However, detect_road_users reports covered_fraction 0.0 (no road user overlap). measure_motion shows tile_flow_px 0.0 for tile 2 vs other tiles median 1.71 px, indicating the tile is stationary while other tiles have motion; the note mentions a lens smudge fixed to the camera, which is evidence for the reviewer. The combination of lost detail, open sky, no road user coverage, and zero motion within the tile suggests a lens obstruction or scene change that cannot be resolved by ",
+     "latency_s": 5.088,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 8.0,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.66, saturation 0) and has low relative texture (0.003). It is listed in unsuitable_tiles, meaning the scene changed (open sky replaced a previously detailed area). No lens obstruction or road-user coverage explains the loss; the measurements confirm a scene cause.",
+     "latency_s": 3.234,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_freeze",
+     "time_s": 13.36,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.7, saturation 0.0) and its relative_texture (0.008) is well below the low_texture limit of 0.15, placing it in unsuitable_tiles. The scene changed: the tile previously had detail and now shows open sky, which explains the lost detail without any lens or hardware fault. Road\u2011user coverage is 0\u202f% (covered_fraction 0.0, far below the 0.4 limit). Motion is negligible (0\u202fpx vs 1.92\u202fpx median). All measured scene causes fully account for the suspicion.",
+     "latency_s": 4.124,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_glare",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.66, saturation 0) and is listed in unsuitable_tiles, meaning the scene changed (open sky replaced a previously detailed area). Relative texture is 0.013, well below the low_texture limit of 0.15, confirming the tile never retained detail under open sky. Road-user coverage is 0% (covered_fraction 0.0, limit 0.4), so moving objects are not the cause. Motion measurement shows 0 px flow in the tile vs 1.46 px median elsewhere, consistent with a static scene under open sky. All measured scene causes explain the loss, so the suspicion is dismissed.",
+     "latency_s": 3.141,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_glare",
+     "time_s": 12.82,
+     "tiles": [
+      1,
+      2,
+      3,
+      6
+     ],
+     "truth_at_time": "glare",
+     "verdict": "escalate",
+     "reason": "Texture analysis shows tiles 1, 2, 6 have very low relative texture (0.013, 0.365, 2.561) well below the low_texture limit of 0.15, while tile 3 is at 1.311 (above limit). Sky\u2011now indicates tiles 1, 2, 6 are currently open sky (brightness ~1.5\u20111.6, saturation 0\u20112.7), classifying them as unsuitable_tiles: the scene changed (open sky) rather than a lens fault. Road\u2011user coverage is negligible (covered_fraction 0.002 << limit 0.4). Motion flow is modest: tile 3 has 5.6\u202fpx, tile 6 3.4\u202fpx, other\u2011tiles median 2.71\u202fpx \u2013 no abnormal motion that would explain a lens obstruction. The combination of low ",
+     "latency_s": 3.97,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_obstruction",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.66, saturation 0) and is listed in unsuitable_tiles, meaning the scene changed (open sky replaced previous detail). Relative texture is 0.013, well below the low_texture limit of 0.15, confirming the tile never retained detail in the current view. Road-user coverage is 0% (covered_fraction 0.0, far below the 0.4 limit), so moving objects do not explain the loss. Optical flow shows tile 1 has 0 px motion vs 1.46 px median for other tiles, consistent with a static scene change rather than lens obstruction. All measured scene causes account for the suspecte",
+     "latency_s": 8.52,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_obstruction",
+     "time_s": 13.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.69, saturation 0) and is listed in unsuitable_tiles, meaning the loss of detail is due to the scene (open sky) rather than a lens fault. The relative_texture of 0.012 is well below the low_texture limit of 0.15, confirming the tile was never detailed in this view. Road\u2011user coverage is 0% (covered_fraction 0.0 < limit 0.4), and motion is negligible (0.0 px vs 2.41 px for other tiles). All measured scene causes explain the observed loss, so the suspicion can be dismissed.",
+     "latency_s": 3.338,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_reference",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.66, saturation 0) and is listed in unsuitable_tiles, meaning the scene changed (open sky replaced a previously detailed area). The relative_texture is 0.013, well below the low_texture limit of 0.15, confirming loss of detail due to the scene, not a lens fault. Road\u2011user coverage is 0% (covered_fraction 0.0 < limit 0.4), and motion is negligible (0.0 px vs 1.46 px median). All measured scene causes explain the texture loss, so the suspicion is dismissed.",
+     "latency_s": 3.583,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_reference",
+     "time_s": 13.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.69, saturation 0) and is listed in unsuitable_tiles, meaning the loss of detail is due to the scene (open sky) rather than a lens fault. The relative_texture of 0.012 is well below the low_texture limit of 0.15, confirming the tile never retained detail under open sky. Road\u2011user coverage is 0% (covered_fraction 0.0 < 0.4 limit), so moving objects are not the cause. Motion measurement shows 0 px flow in the tile, consistent with a static open\u2011sky scene. All measured scene causes explain the observed loss, so the suspicion is dismissed.",
+     "latency_s": 3.827,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    },
+    {
+     "clip": "rear_underexposure",
+     "time_s": 7.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Tile 1 shows open sky now (brightness 1.66, saturation 0) and is listed in unsuitable_tiles, meaning the scene changed (open sky replaced a previously detailed area). The relative_texture is 0.013, well below the low_texture limit of 0.15, confirming loss of detail. Road-user coverage is 0% (covered_fraction 0.0, far below the 0.4 limit), so moving objects do not explain the loss. Optical flow shows tile 1 has 0 px motion vs 1.46 px median for other tiles, consistent with a static scene change rather than lens motion. The measured scene cause (open sky) explains the texture loss for this tile,",
+     "latency_s": 3.915,
+     "tool_calls": [
+      "inspect_texture",
+      "detect_road_users",
+      "measure_motion",
+      "decide"
+     ]
+    }
+   ],
+   "clips": [
+    {
+     "clip": "left_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 7.23
+      }
+     ]
+    },
+    {
+     "clip": "left_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 11.71
+      }
+     ]
+    },
+    {
+     "clip": "left_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 7.34
+      }
+     ]
+    },
+    {
+     "clip": "left_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 6.96
+      }
+     ]
+    },
+    {
+     "clip": "right_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.37
+      }
+     ]
+    },
+    {
+     "clip": "right_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 16.99
+      }
+     ]
+    },
+    {
+     "clip": "right_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 7.25
+      }
+     ]
+    },
+    {
+     "clip": "right_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 17.24
+      }
+     ]
+    },
+    {
+     "clip": "right_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 17.05
+      }
+     ]
+    },
+    {
+     "clip": "right_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 7.09
+      }
+     ]
+    },
+    {
+     "clip": "rear_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 16.79
+      }
+     ]
+    },
+    {
+     "clip": "rear_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    }
+   ]
+  }
+ ]
+}

@@ -12,5 +12,6 @@ aws iam delete-role-policy --role-name coolpilot-lambda --policy-name read-data 
 aws iam detach-role-policy --role-name coolpilot-lambda --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole 2>/dev/null
 aws iam delete-role --role-name coolpilot-lambda 2>/dev/null
 aws s3 rb "s3://$BUCKET" --force 2>/dev/null
+aws cloudwatch delete-dashboards --dashboard-names coolpilot 2>/dev/null
 aws logs delete-log-group --log-group-name /aws/lambda/coolpilot 2>/dev/null
 rm -rf "$HERE/.state"; echo "Removed."

@@ -29,6 +29,10 @@ from .runtime import environment
 from .models import CameraConfiguration, Contract, RunRequest
 from . import camera_dataset
 from . import decisions
+from . import live_source
+from . import metrics
+from . import footage
+from .dataset import DATA as DATA_DIR
 from .simulation import camera_comparison
 
 _app_env = Path(__file__).resolve().parent.parent / ".env"
@@ -83,7 +87,11 @@ EXTRA_HOSTS = [h.strip() for h in os.environ.get("COOLPILOT_ALLOWED_HOSTS", "").
 # counter per minute. No login: when the budget is spent, anyone gets 429 until the next minute.
 RATE_TABLE = os.environ.get("COOLPILOT_RATE_TABLE", "")
 RATE_LIMITS = {"replay": int(os.environ.get("COOLPILOT_REPLAYS_PER_MIN", "6")),
-               "download": int(os.environ.get("COOLPILOT_DOWNLOADS_PER_MIN", "12"))}
+               "download": int(os.environ.get("COOLPILOT_DOWNLOADS_PER_MIN", "12")),
+               "upload": int(os.environ.get("COOLPILOT_UPLOADS_PER_MIN", "4"))}
+# Footage uploads: S3 (presigned POST, deleted after analysis, 1-day lifecycle backstop) or local disk.
+UPLOAD_BUCKET = os.environ.get("COOLPILOT_S3_BUCKET", "")
+UPLOAD_ORIGIN = f" https://{UPLOAD_BUCKET}.s3.amazonaws.com" if UPLOAD_BUCKET else ""   # the browser posts the file there
 _dynamo = None
 # Serverless hosts: opening any page warms OpenCV and the recording files so the first replay is not the cold one.
 WARM = os.environ.get("COOLPILOT_WARM") == "1"
@@ -112,8 +120,10 @@ def _start_warm():
 
 def _heavy(request: Request) -> str | None:
     path = request.url.path
-    if request.method == "POST" and path == "/api/camera-comparison/analyze":
+    if request.method == "POST" and path in ("/api/camera-comparison/analyze", "/api/live/analyze"):
         return "replay"
+    if request.method == "POST" and path == "/api/footage":
+        return "upload"
     if request.method == "GET" and path.endswith(("/video", "/export")):
         # A seek or later chunk of the same video is not a new download.
         wanted = request.headers.get("range", "")
@@ -184,7 +194,8 @@ async def browser_boundary(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "same-origin"
     response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
+        f"connect-src 'self'{UPLOAD_ORIGIN}; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
     )
     if request.url.path.startswith("/api/"):
         response.headers["Cache-Control"] = "no-store"
@@ -357,8 +368,13 @@ async def analyze_camera_comparison(request: CameraCompareRequest):
         global comparison_active
         try:
             config = CameraConfiguration(width=320, mode=request.mode, review_interval_s=request.review_interval_s)
-            return await asyncio.to_thread(camera_comparison.compare, request.faults, config,
-                                           request.review_limit, request.api_timeout_s, emit, cancel, request.seed)
+            result = await asyncio.to_thread(camera_comparison.compare, request.faults, config,
+                                             request.review_limit, request.api_timeout_s, emit, cancel, request.seed)
+            m = result["measurement"]
+            metrics.emit("replay", {"WallSeconds": m["wall_seconds"], "CpuSeconds": m["cpu_seconds"],
+                                    "CamerasUnavailable": sum(p.get("status") == "unavailable" for p in result["profiles"]),
+                                    "Cancelled": int(result["cancelled"])}, {"WallSeconds": "Seconds", "CpuSeconds": "Seconds"})
+            return result
         finally:
             comparison_active = False
 
@@ -393,6 +409,172 @@ async def analyze_camera_comparison(request: CameraCompareRequest):
 
     return StreamingResponse(stream(), media_type="application/x-ndjson",
                              headers={"X-Accel-Buffering": "no"})
+
+
+class LiveRequest(Contract):
+    source: str = Field(min_length=1, max_length=64)
+    seconds: float = Field(default=20, gt=0, le=120)
+
+
+@app.get("/api/live")
+def live_sources():
+    # Names only: the operator's URLs (which may embed credentials) never leave the server.
+    return {"sources": [] if READONLY else sorted(live_source.sources())}
+
+
+@app.post("/api/live/analyze")
+async def analyze_live(request: LiveRequest):
+    global comparison_active
+    target = live_source.sources().get(request.source)
+    if READONLY or target is None:
+        raise HTTPException(404, "Live source is not configured on this server.")
+    if comparison_active or tasks:
+        raise HTTPException(409, "Another measurement is active. Wait for it to finish.")
+    comparison_active = True
+    cancel, lock, latest = Event(), Lock(), []
+
+    def emit(message):
+        with lock:
+            latest[:] = [message]   # keep only the newest status: a slow browser never stalls capture
+
+    async def measure():
+        global comparison_active
+        try:
+            result = await asyncio.to_thread(live_source.monitor, target, request.seconds, emit, cancel)
+            metrics.emit("live", {"Frames": result["frames"], "Fps": result["fps"], "Reconnects": result["reconnects"],
+                                  "Episodes": len(result["episodes"])})
+            return result
+        finally:
+            comparison_active = False
+
+    worker = asyncio.create_task(measure())
+
+    async def stream():
+        try:
+            while True:
+                done = worker.done()
+                with lock:
+                    messages, latest[:] = list(latest), []
+                for message in messages:
+                    yield json.dumps(message, allow_nan=False) + "\n"
+                if done:
+                    yield json.dumps(await worker, allow_nan=False) + "\n"
+                    break
+                await asyncio.sleep(0.2)
+        except Exception as error:
+            logging.getLogger(__name__).exception("Live analysis failed")
+            yield json.dumps({"type": "error", "error": f"Live analysis failed ({type(error).__name__})."}) + "\n"
+        finally:
+            cancel.set()
+            worker.add_done_callback(lambda task: task.exception() if not task.cancelled() else None)
+
+    return StreamingResponse(stream(), media_type="application/x-ndjson", headers={"X-Accel-Buffering": "no"})
+
+
+def _footage_id(identifier: str) -> str:
+    if not (len(identifier) == 32 and all(c in "0123456789abcdef" for c in identifier)):
+        raise HTTPException(404, "Unknown upload.")
+    return identifier
+
+
+@app.post("/api/footage", status_code=201)
+def footage_slot():
+    """One upload slot. The file is analysed once and then deleted; nothing is kept."""
+    import uuid
+    identifier = uuid.uuid4().hex
+    if UPLOAD_BUCKET:
+        import boto3
+        post = boto3.client("s3").generate_presigned_post(
+            UPLOAD_BUCKET, f"uploads/{identifier}.video",
+            Conditions=[["content-length-range", 1, footage.MAX_BYTES]], ExpiresIn=300)
+        return {"id": identifier, "upload": {"method": "POST", "url": post["url"], "fields": post["fields"]},
+                "max_bytes": footage.MAX_BYTES, "max_seconds": footage.MAX_SECONDS}
+    return {"id": identifier, "upload": {"method": "PUT", "url": f"/api/footage/{identifier}"},
+            "max_bytes": footage.MAX_BYTES, "max_seconds": footage.MAX_SECONDS}
+
+
+@app.put("/api/footage/{identifier}", status_code=204)
+async def footage_put(identifier: str, request: Request):
+    if UPLOAD_BUCKET:
+        raise HTTPException(404, "Uploads go to S3 on this deployment.")
+    path = (DATA_DIR / "uploads" / f"{_footage_id(identifier)}.video")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    size = 0
+    with path.open("wb") as out:
+        async for chunk in request.stream():
+            size += len(chunk)
+            if size > footage.MAX_BYTES:
+                out.close(); path.unlink(missing_ok=True)
+                raise HTTPException(413, "The file is larger than 50 MB.")
+            out.write(chunk)
+
+
+@app.post("/api/footage/{identifier}/analyze")
+async def footage_analyze(identifier: str):
+    global comparison_active
+    identifier = _footage_id(identifier)
+    if comparison_active or tasks:
+        raise HTTPException(409, "Another measurement is active. Wait for it to finish.")
+    local = DATA_DIR / "uploads" / f"{identifier}.video"
+    if UPLOAD_BUCKET:
+        import boto3
+        import botocore.exceptions
+        local = Path("/tmp") / f"{identifier}.video"
+        try:
+            await asyncio.to_thread(boto3.client("s3").download_file, UPLOAD_BUCKET, f"uploads/{identifier}.video", str(local))
+        except botocore.exceptions.ClientError:
+            raise HTTPException(404, "Upload not found or expired.") from None
+    elif not local.is_file():
+        raise HTTPException(404, "Upload not found.")
+    comparison_active = True
+    cancel, lock, latest = Event(), Lock(), []
+
+    def emit(message):
+        with lock:
+            latest[:] = [message]
+
+    def measure():
+        try:
+            return footage.screen(str(local), emit)
+        finally:
+            local.unlink(missing_ok=True)   # never retained, success or failure
+            if UPLOAD_BUCKET:
+                import boto3
+                boto3.client("s3").delete_object(Bucket=UPLOAD_BUCKET, Key=f"uploads/{identifier}.video")
+
+    async def run():
+        global comparison_active
+        try:
+            result = await asyncio.to_thread(measure)
+            metrics.emit("footage", {"Seconds": result["duration_s"], "ProcessingSeconds": result["processing_s"],
+                                     "Segments": len(result["segments"])})
+            return result
+        finally:
+            comparison_active = False
+
+    worker = asyncio.create_task(run())
+
+    async def stream():
+        try:
+            while True:
+                done = worker.done()
+                with lock:
+                    messages, latest[:] = list(latest), []
+                for message in messages:
+                    yield json.dumps(message, allow_nan=False) + "\n"
+                if done:
+                    yield json.dumps(await worker, allow_nan=False) + "\n"
+                    break
+                await asyncio.sleep(0.2)
+        except ValueError as error:   # unreadable or over-long video: a clear message, not a stack trace
+            yield json.dumps({"type": "error", "error": str(error)}) + "\n"
+        except Exception as error:
+            logging.getLogger(__name__).exception("Footage screening failed")
+            yield json.dumps({"type": "error", "error": f"Screening failed ({type(error).__name__})."}) + "\n"
+        finally:
+            worker.add_done_callback(lambda task: task.exception() if not task.cancelled() else None)
+
+    return StreamingResponse(stream(), media_type="application/x-ndjson", headers={"X-Accel-Buffering": "no"})
 
 
 @app.get("/api/active")

@@ -8,7 +8,9 @@ type Sources = {
   sources: { id: CameraId; label: string; video_url: string }[];
   faults: string[]; decision_configured: boolean; distribution: string; opencv_version: string;
 };
-type Episode = { type: string; observation: string; start_s: number; end_s: number | null };
+type Verification = { status: "pending" | "done"; mode: string; requested_s: number; received_s?: number; tiles: number[];
+  verdict?: "confirm" | "dismiss" | "escalate"; reason?: string; tool_calls?: string[] | null; summary?: { objects: string[] | null; engine: string | null } };
+type Episode = { type: string; observation: string; start_s: number; end_s: number | null; verification?: Verification | null; dismissed?: boolean };
 type Injection = { kind: string; start_s: number; end_s: number; delay_ms?: number; max_delay_ms?: number; analysis_width_multiplier?: number };
 type Review = {
   status: string; pts_s?: number; requested_s?: number; received_s?: number;
@@ -50,7 +52,7 @@ type Complete = Omit<Ready, "type"> & {
 type Message = Frame | Ready | Complete | { type: "error"; error: string } |
   { type: "camera_error"; camera: CameraId; error: string };
 const ids: CameraId[] = ["left", "centre", "right"];
-const number = (value: number | null | undefined, digits = 2) => value == null ? "—" : value.toFixed(digits);
+const number = (value: number | null | undefined, digits = 2) => value == null ? "n/a" : value.toFixed(digits);
 
 type Metric = { label: string; unit: string; value: (frame: Frame) => number | null | undefined };
 const metricGroups: { label: string; metrics: Metric[] }[] = [
@@ -218,7 +220,7 @@ export function CameraCompare() {
     <PageHead title="Live replay" lead="Three forward views, one brief random fault each. Pipeline and image health are judged separately.">
       <span className={`sys-chip${distribution === "COOL" ? " is-cool" : ""}`}>
         <span className="sys-dot" aria-hidden="true" />
-        {distribution ?? "Checking"} <b className="mono">{ready?.environment.opencv_version ?? source.data?.opencv_version ?? "—"}</b>
+        {distribution ?? "Checking"} <b className="mono">{ready?.environment.opencv_version ?? source.data?.opencv_version ?? "n/a"}</b>
         {distribution === "COOL" ? " · speedup unverified" : " · COOL not on this host"}
       </span>
     </PageHead>
@@ -309,7 +311,7 @@ export function CameraCompare() {
               <span className={`hud-pill tone-${status === "healthy" ? "ok" : status === "unknown" ? "unknown" : "alarm"}`}>Pipeline · {status === "healthy" ? "on time" : status.replaceAll("_", " ")}</span>
               <span className={`hud-pill tone-${quality === "no_issue_detected" ? "ok" : quality === "suspected" ? "alarm" : "unknown"}`}>Image · {quality === "suspected" ? "check" : quality === "no_issue_detected" ? "no flag" : "unknown"}</span>
             </div>
-            <span className="hud-time mono">{snapshot ? `${number(snapshot.evidence.pts_s, 2)} s · f${snapshot.evidence.frame ?? "—"}` : "—"}</span>
+            <span className="hud-time mono">{snapshot ? `${number(snapshot.evidence.pts_s, 2)} s · f${snapshot.evidence.frame ?? "n/a"}` : "n/a"}</span>
             {injecting && <span className="hud-inject">Injected · {injecting}</span>}
           </div>
 
@@ -387,7 +389,7 @@ export function CameraCompare() {
           </div>
 
           <details className="disclosure"><summary>Diagnostics</summary>
-            <p className="small">Report {number(snapshot?.time_s, 3)} s · frame {snapshot?.evidence.frame ?? "—"} · injection at report: {snapshot?.injection.current ?? "none"} ({number(snapshot ? snapshot.injection.strength * 100 : null, 0)}%). Observations: {snapshot?.visual_observations.join(", ") || "none"}. Suspected causes, not diagnoses: {snapshot?.visual_conditions.join(", ") || "none"}.</p>
+            <p className="small">Report {number(snapshot?.time_s, 3)} s · frame {snapshot?.evidence.frame ?? "n/a"} · injection at report: {snapshot?.injection.current ?? "none"} ({number(snapshot ? snapshot.injection.strength * 100 : null, 0)}%). Observations: {snapshot?.visual_observations.join(", ") || "none"}. Suspected causes, not diagnoses: {snapshot?.visual_conditions.join(", ") || "none"}.</p>
           </details>
           {runMode !== "local" && <details className="disclosure"><summary>Decisions · {adviceStatus}{snapshot?.review_pending ? " · pending" : ""}</summary>
             <p className="small">{snapshot?.review_pending ? `Pending: frame PTS ${number(snapshot.review_pending.pts_s, 3)} s` : "No request pending."} Latest slot: {snapshot?.review_slot?.status ?? "waiting"} · attempts {snapshot?.review_attempts ?? 0} · charges ${number(snapshot?.review_cost, 6)}{snapshot?.review_cost_complete ? "" : " (incomplete)"}</p>
@@ -395,6 +397,7 @@ export function CameraCompare() {
               {adviceValid && <div className="meters">{Object.entries(advice?.probabilities ?? {}).map(([kind, score]) => <label key={kind}><span>{kind}</span><meter min="0" max="1" value={score} /><b className="mono">{number(score * 100, 1)}%</b></label>)}</div>}</>}
             <p className="hint">Advisory only. Advice expires with source age, cannot detect freeze or interruption, and scores are not calibrated probabilities.</p>
           </details>}
+          <VerifyLog camera={camera.id} episodes={episodes} />
           <details className="disclosure"><summary>Injections and detections</summary>
             <div className="table-scroll"><table className="compact"><thead><tr><th>Signal</th><th>Onset s</th><th>End s</th></tr></thead><tbody>
               {ready?.schedule[camera.id].map((event, i) => <tr key={`injection-${i}`}><td><span className="fault-tag">{event.kind}</span>{event.delay_ms != null && ` ${event.delay_ms} ms`}{event.max_delay_ms != null && ` 0–${event.max_delay_ms} ms`}{event.analysis_width_multiplier != null && ` ${event.analysis_width_multiplier}× width`}</td><td className="mono">{number(event.start_s, 3)}</td><td className="mono">{number(event.end_s, 3)}</td></tr>)}
@@ -413,7 +416,7 @@ export function CameraCompare() {
               </dl>}
               {runMode !== "local" && <>
                 <p className="small">Attempts {finalReviews.filter(r => r.attempted).length} · covered slots {finalReviews.filter(r => r.valid_on_arrival).length}/{profile.trace?.review_required ?? 0}. Late or expired results do not count.</p>
-                <div className="table-scroll"><table className="compact"><thead><tr><th>PTS s</th><th>Outcome</th><th>$</th></tr></thead><tbody>{finalReviews.map((r, i) => <tr key={i}><td className="mono">{number(r.pts_s, 3)}</td><td>{r.status}{r.attempted && !r.valid_on_arrival ? " · not valid on arrival" : ""}{r.late ? " · late" : ""}{r.error && <><br />{r.error}</>}</td><td className="mono">{r.attempted ? number(r.cost, 6) : "—"}</td></tr>)}</tbody></table></div>
+                <div className="table-scroll"><table className="compact"><thead><tr><th>PTS s</th><th>Outcome</th><th>$</th></tr></thead><tbody>{finalReviews.map((r, i) => <tr key={i}><td className="mono">{number(r.pts_s, 3)}</td><td>{r.status}{r.attempted && !r.valid_on_arrival ? " · not valid on arrival" : ""}{r.late ? " · late" : ""}{r.error && <><br />{r.error}</>}</td><td className="mono">{r.attempted ? number(r.cost, 6) : "n/a"}</td></tr>)}</tbody></table></div>
               </>}
             </div>}
           </details>
@@ -457,5 +460,88 @@ export function CameraCompare() {
       </dl>
       <details className="disclosure"><summary>Runtime identity, configuration and traces</summary><pre className="code">{JSON.stringify(result, null, 2)}</pre></details>
     </section>}
+    <LiveCamera />
   </section>;
+}
+
+type LiveStatus = { type: "live"; elapsed_s: number; frames: number; reconnects: number; pipeline_status: string; quality_status: string; visual_observations: string[] };
+type LiveResult = { type: "result"; frames: number; seconds: number; fps: number; reconnects: number; episodes: Episode[]; note: string };
+
+// Operator-configured cameras only (COOLPILOT_LIVE_SOURCES). Hidden when the server lists none.
+function LiveCamera() {
+  const live = useResource<{ sources: string[] }>("/api/live", 60000);
+  const [name, setName] = useState("");
+  const [seconds, setSeconds] = useState(20);
+  const [status, setStatus] = useState<LiveStatus>();
+  const [result, setResult] = useState<LiveResult>();
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const sources = live.data?.sources ?? [];
+  if (!sources.length) return null;
+  const chosen = name || sources[0];
+  async function start() {
+    setBusy(true); setError(""); setStatus(undefined); setResult(undefined);
+    try {
+      const response = await fetch("/api/live/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ source: chosen, seconds }) });
+      if (!response.ok || !response.body) throw new Error((await response.json()).detail ?? "Live analysis refused.");
+      const reader = response.body.getReader(), decoder = new TextDecoder();
+      let buffer = "";
+      for (;;) {
+        const { value, done } = await reader.read();
+        buffer += decoder.decode(value, { stream: !done });
+        const lines = buffer.split("\n"); buffer = lines.pop() ?? "";
+        for (const line of lines.filter(Boolean)) {
+          const message = JSON.parse(line);
+          if (message.type === "error") throw new Error(message.error);
+          if (message.type === "live") setStatus(message);
+          if (message.type === "result") setResult(message);
+        }
+        if (done) break;
+      }
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : "Live analysis failed.");
+    } finally { setBusy(false); }
+  }
+  return <section className="panel">
+    <h2>Live camera</h2>
+    <p className="muted">Monitor only: a live feed has no labels, so recall and false alarms are not measured here.</p>
+    <fieldset disabled={busy} className="deck-settings">
+      <label className="field">Source
+        <select value={chosen} onChange={e => setName(e.target.value)}>{sources.map(s => <option key={s}>{s}</option>)}</select>
+      </label>
+      <label className="field">Seconds
+        <input type="number" min="1" max="120" value={seconds} onChange={e => setSeconds(e.target.valueAsNumber)} />
+      </label>
+      <button type="button" className="btn btn-primary" onClick={start} disabled={!(seconds > 0 && seconds <= 120)}><Icon name="play" /> Analyze live feed</button>
+    </fieldset>
+    {error && <p className="notice" role="alert">{error}</p>}
+    {status && <p role="status" className="mono">{status.elapsed_s}s · {status.frames} frames · pipeline {status.pipeline_status} · image {status.quality_status}{status.visual_observations.length ? `: ${status.visual_observations.join(", ")}` : ""}{status.reconnects ? ` · ${status.reconnects} reconnects` : ""}</p>}
+    {result && <p role="status">{result.frames} frames in {result.seconds}s ({result.fps} fps), {result.episodes.length} suspicion episodes. {result.note}</p>}
+  </section>;
+}
+
+
+// Second stage: each obstruction suspicion is investigated (OpenCV tools, optionally the agent) before it alarms.
+function VerifyLog({ camera, episodes }: { camera: string; episodes: Episode[] }) {
+  const [human, setHuman] = useState<Record<string, "confirm" | "dismiss">>({});
+  const checked = episodes.filter(e => e.verification);
+  if (!checked.length) return null;
+  return <div className="verify-log" aria-live="polite">
+    <h3>Second-stage check</h3>
+    <ol>{checked.map(e => {
+      const v = e.verification!, key = `${camera}-${v.requested_s}`;
+      const verdict = v.status === "pending" ? "verifying" : v.verdict;
+      return <li key={key} className={`is-${verdict}`}>
+        <p><b>Obstruction suspected</b> at {number(v.requested_s, 2)} s, tiles {v.tiles.join(", ")} · <span className="chip">{v.mode}</span>
+          {" "}<b className="verify-verdict">{verdict}</b>{v.received_s != null && <span className="mono"> after {number(v.received_s - v.requested_s, 2)} s</span>}</p>
+        {v.reason && <p className="small">{v.reason}</p>}
+        {v.tool_calls && <p className="hint">Tools: {v.tool_calls.join(" → ")}{v.summary?.engine && ` · DNN engine: ${v.summary.engine}`}{v.summary?.objects && ` · road users: ${v.summary.objects.length ? v.summary.objects.join(", ") : "none"}`}</p>}
+        {v.verdict === "escalate" && (human[key]
+          ? <p className="small">Operator decision: <b>{human[key]}</b> (recorded in this browser session only).</p>
+          : <p className="verify-actions">Operator review needed:
+              <button type="button" className="btn" onClick={() => setHuman(h => ({ ...h, [key]: "confirm" }))}>Confirm alarm</button>
+              <button type="button" className="btn" onClick={() => setHuman(h => ({ ...h, [key]: "dismiss" }))}>Dismiss</button></p>)}
+      </li>;
+    })}</ol>
+  </div>;
 }

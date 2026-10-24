@@ -97,7 +97,8 @@ def compare(faults: dict[str, str], config: CameraConfiguration, review_limit: i
     sources = {camera: _source(camera, cancel) for camera in CAMERAS}
     schedule = fault_schedule(faults, min(s["source_seconds"] for s in sources.values()), seed)
     thresholds = CameraThresholds()
-    settings = SimpleNamespace(thresholds=thresholds, allow_image_requests=config.mode != "local", api_timeout_s=timeout_s)
+    settings = SimpleNamespace(thresholds=thresholds, allow_image_requests=config.mode != "local", api_timeout_s=timeout_s,
+                               verifier=os.environ.get("COOLPILOT_VERIFIER", "rule"))
     facts = environment()
     metadata = {"type": "ready", "sources": list(sources.values()), "environment": facts,
                 "configuration": config.model_dump(), "thresholds": thresholds.model_dump(),

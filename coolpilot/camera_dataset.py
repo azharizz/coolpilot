@@ -30,8 +30,8 @@ def load(identifier: str, verify: bool = False) -> dict:
     if manifest.get("schema_version") != 1:
         raise ValueError("Unsupported camera dataset schema.")
     artifacts = manifest["artifacts"]
-    if not 1 <= len(artifacts) <= 32:
-        raise ValueError("A dataset needs 1 to 32 clips.")
+    if not 1 <= len(artifacts) <= 64:
+        raise ValueError("A dataset needs 1 to 64 clips.")
     digest = hashlib.sha256(raw)
     clips, groups, sources, ids = [], {}, {}, set()
     for artifact in artifacts:

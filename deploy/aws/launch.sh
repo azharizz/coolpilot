@@ -9,8 +9,15 @@ case "$MODE" in plain) TTL="${3:-120}";; cool) TTL="${3:-240}";; *) echo "mode m
 [ ! -f "$STATE" ] || { echo "An instance is already recorded in $STATE. Run teardown.sh first." >&2; exit 1; }
 
 if [ "$MODE" = cool ]; then
+  # COOLPILOT_COOL_GEN picks the Marketplace product you subscribed to (see docs/COOL.md).
+  case "${COOLPILOT_COOL_GEN:-2}" in
+    2) PATTERN="COOL-graviton2-v2-prod-*"; [ -n "${2:-}" ] || TYPE=c6g.xlarge ;;
+    3) PATTERN="COOL-graviton3-v3-prod-*"; [ -n "${2:-}" ] || TYPE=c7g.xlarge ;;
+    4) PATTERN="COOL-Graviton4-v2-AMI-prod-*"; [ -n "${2:-}" ] || TYPE=c8g.xlarge ;;
+    *) echo "COOLPILOT_COOL_GEN must be 2, 3 or 4" >&2; exit 2 ;;
+  esac
   AMI="${COOLPILOT_AMI:-$(aws ec2 describe-images --owners aws-marketplace \
-    --filters "Name=name,Values=COOL-graviton2-v2-prod-*" "Name=architecture,Values=arm64" \
+    --filters "Name=name,Values=$PATTERN" "Name=architecture,Values=arm64" \
     --query 'sort_by(Images,&CreationDate)[-1].ImageId' --output text)}"
   DISK=()
 else

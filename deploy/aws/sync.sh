@@ -7,7 +7,7 @@ remote 'mkdir -p ~/coolpilot/data ~/coolpilot/results && command -v rsync >/dev/
 rsync -azR --delete --exclude __pycache__ --exclude '*.pyc' -e "ssh ${SSH_OPTS[*]}" \
   coolpilot tests experiments scripts requirements.txt web/dist deploy/aws/remote_setup.sh \
   "$SSH_USER@$IP:coolpilot/"
-rsync -azR -e "ssh ${SSH_OPTS[*]}" \
-  data/oxford_robotcar/videos data/oxford_robotcar/camera_health_development \
+rsync -azRH -e "ssh ${SSH_OPTS[*]}" \
+  data/oxford_robotcar/videos data/oxford_robotcar/camera_health_development data/camera_health data/models \
   "$SSH_USER@$IP:coolpilot/"
 echo "Synced to $SSH_USER@$IP"

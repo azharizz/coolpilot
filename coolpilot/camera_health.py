@@ -56,11 +56,23 @@ def assess_health(*, unavailable: bool, stale: bool, delivery_conditions: set[st
 
 
 class Monitor:
+    """Per-camera appearance rules. Each camera is compared with its own recent normal.
+
+    Absolute limits alone mis-fire on real scenes (a bright sky is always clipped), so the
+    main rules are relative to per-tile references learned while the camera looks healthy.
+    """
+
     def __init__(self, thresholds: CameraThresholds):
         self.thresholds = thresholds
         self.previous = None
         self.reference_detail = None
+        self.reference_mean = None
+        self.reference_clipped = None
+        self.recent_detail = None
+        self.low_since = None
+        self.frozen_since = None
         self.reference_time_s = None
+        self.started_s = None
         self.unchanged_since = None
         self.pending = {}
         self.clearing = {}
@@ -75,33 +87,116 @@ class Monitor:
             raise ValueError("Appearance requires finite, increasing source timestamps.")
         regions = measurements["regions"]
         detail = np.array([r["detail"] for r in regions], dtype=float)
-        means = np.array([r["mean"] for r in regions])
+        means = np.array([r["mean"] for r in regions], dtype=float)
+        clipped = np.array([r["clipped"] for r in regions], dtype=float)
+        if self.started_s is None:
+            self.started_s = time_s
+        warm = time_s - self.started_s >= t.warmup_s
         conditions = set()
-        if measurements["black_fraction"] >= t.black_fraction:
+        # Absolute rules: valid without any reference (a camera that starts broken).
+        blackout = measurements["black_fraction"] >= t.black_fraction
+        if blackout:
             conditions.add("blackout")
         if float(means.mean()) < t.dark_mean:
             conditions.add("underexposure")
-        if any(r["clipped"] >= t.glare_fraction for r in regions):
-            conditions.add("glare")
         if np.mean(detail < t.blur_variance) >= 0.75:
             conditions.add("blur")
+        affected = np.zeros(len(regions), dtype=bool)
+        low = affected
         if self.reference_detail is not None:
             elapsed = time_s - self.reference_time_s
             self.reference_detail *= math.exp(-elapsed / t.reference_decay_s)
-            affected = detail < self.reference_detail * t.obstruction_ratio
-            # Regional loss is suspicion only; scenes and shadows can produce the same evidence.
-            if 1 <= int(affected.sum()) <= 10:
-                conditions.add("obstruction")
-            for region, changed in zip(regions, affected):
-                region["suspected_obstruction"] = bool(changed)
+            if warm:
+                # Relative rules against this camera's own references. Hysteresis: an active alarm
+                # stays on until the signal is well back inside normal, so a fading fault is not
+                # declared recovered while it is still visible.
+                on = lambda kind, limit: 1 - (1 - limit) * t.hysteresis if kind in self.active else limit
+                if float(means.mean()) < on("underexposure", t.dark_ratio) * float(self.reference_mean.mean()):
+                    conditions.add("underexposure")
+                rise = clipped - self.reference_clipped >= (t.glare_rise * t.hysteresis if "glare" in self.active else t.glare_rise)
+                if int(rise.sum()) >= t.glare_tiles:   # one sky tile drifting against a frozen reference must not hold it on
+                    conditions.add("glare")
+                # Detail is compared with its recent healthy average, not the all-time peak: a
+                # building that has passed must not make the open road look obstructed.
+                ratio = detail / np.maximum(self.recent_detail, 1e-6)
+                if float(np.median(ratio)) < on("blur", t.blur_ratio):
+                    conditions.add("blur")
+                # Obstruction sits on the lens: the SAME tiles stay low while the rest of the view
+                # keeps its detail. A passing scene moves across tiles and resets this clock.
+                low = ratio < (1 - (1 - t.obstruction_ratio) * t.obstruction_hysteresis if "obstruction" in self.active else t.obstruction_ratio)
+                if self.low_since is None:
+                    self.low_since = np.full(len(regions), np.nan)
+                if conditions or (set(self.active) - {"obstruction"}):
+                    low = np.zeros(len(regions), dtype=bool)   # local loss only counts while the view is otherwise healthy
+                self.low_since[~low] = np.nan
+                self.low_since[low & np.isnan(self.low_since)] = time_s
+                affected = low & (time_s - np.nan_to_num(self.low_since, nan=time_s) >= t.obstruction_s)
+                others = ratio[~low]
+                if 1 <= int(affected.sum()) <= 6 and (not len(others) or float(np.median(others)) >= t.scene_keep_ratio):
+                    conditions.add("obstruction")
+                else:
+                    affected[:] = False
             self.reference_detail = np.maximum(self.reference_detail, detail)
         else:
             self.reference_detail = detail.copy()
+        for region, changed in zip(regions, affected):
+            region["suspected_obstruction"] = bool(changed)
+        # One cause explains the others: a black frame has no detail; a dark frame looks soft.
+        if blackout:
+            conditions &= {"blackout"}
+        if "underexposure" in conditions:
+            conditions.discard("blur")
+            conditions.discard("obstruction")
+        if "glare" in conditions or "glare" in self.active:
+            conditions.discard("obstruction")   # washed-out highlights also lose local detail
+        # A global fault (blackout, blur, dark, glare, freeze) just ended after a long freeze of the
+        # references: the scene has moved on, so re-learn from this view before judging local loss.
+        rebaseline = (warm and self.frozen_since is not None and time_s - self.frozen_since > min(t.reference_window_s, 1.5)
+                      and not (conditions - {"obstruction"}) and not (set(self.active) - {"obstruction"}))
+        if rebaseline:
+            conditions.discard("obstruction")
+            if self.low_since is not None:
+                self.low_since[:] = np.nan
+            for region in regions:
+                region["suspected_obstruction"] = False
+        # Brightness and clipping references only learn while the view looks healthy, so a
+        # developing fault is never absorbed into "normal".
+        if self.reference_mean is None:
+            self.reference_mean, self.reference_clipped, self.recent_detail = means.copy(), clipped.copy(), detail.copy()
+        else:
+            k = -math.expm1(-(time_s - self.reference_time_s) / t.reference_window_s)
+            local = (conditions | set(self.pending) | set(self.active)) <= {"obstruction"}
+            if rebaseline:
+                k, keep = 1.0, np.ones(len(regions), dtype=bool)
+                self.frozen_since = None
+            elif not warm or not (conditions or self.pending or self.active):
+                if self.frozen_since is not None and time_s - self.frozen_since > min(t.reference_window_s, 1.5):
+                    k = 1.0   # after a long fault the scene has moved on: re-learn from the current view
+                self.frozen_since = None
+                keep = np.ones(len(regions), dtype=bool)
+            elif local:
+                # A local suspicion only freezes the suspected tiles; the rest of the view keeps
+                # learning, so a scene-driven false alarm cannot sustain itself.
+                keep = ~(low if warm and self.low_since is not None else affected)
+            else:
+                keep = np.zeros(len(regions), dtype=bool)
+                if self.frozen_since is None:
+                    self.frozen_since = time_s
+            if local and not rebaseline:
+                # Suspected tiles still re-learn, only slowly: a lasting smudge stays flagged for many
+                # seconds, but a scene change that merely looks like one fades instead of sticking forever.
+                slow = -math.expm1(-(time_s - self.reference_time_s) / (4 * t.reference_window_s))
+                rate = np.where(keep, k, slow)
+            else:
+                rate = k * keep
+            self.reference_mean += rate * (means - self.reference_mean)
+            self.reference_clipped += rate * (clipped - self.reference_clipped)
+            self.recent_detail += rate * (detail - self.recent_detail)
         self.reference_time_s = time_s
         image = measurements["thumbnail"]
         if self.previous is not None:
             difference = float(cv2.absdiff(image, self.previous).mean())
-            if difference <= t.freeze_difference:
+            if difference <= t.freeze_difference and not blackout:
                 if self.unchanged_since is None:
                     self.unchanged_since = time_s
                 if time_s - self.unchanged_since >= t.freeze_s:

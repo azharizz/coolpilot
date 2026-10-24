@@ -46,22 +46,27 @@ class CameraChecks(unittest.TestCase):
         self.assertNotIn("freeze", first)
         monitor.appearance(black, 0.1)
         later, _ = monitor.appearance(black, 1.2)
-        self.assertIn("freeze", later)
+        self.assertEqual(later, {"blackout"})   # one cause, one flag: black frames are not also "frozen"
+        still = Monitor(CameraThresholds(freeze_s=1))
+        grey = analyze(np.full((240, 320, 3), 120, dtype=np.uint8), 320)
+        still.appearance(grey, 0)
+        still.appearance(grey, 0.1)
+        frozen, _ = still.appearance(grey, 1.2)
+        self.assertIn("freeze", frozen)
 
     def test_health_separates_scene_suspicions_and_preserves_freshness(self):
-        monitor = Monitor(CameraThresholds())
+        monitor = Monitor(CameraThresholds(obstruction_ratio=0.5, obstruction_s=0.5))
         for i in range(271):
-            # A scene change, not an injected obstruction: preserve the suspicion
-            # without asserting that a functioning input/processing path has failed.
-            regions = [{"detail": 100.0 if i and j == 0 else 1000.0,
-                        "mean": 120.0, "clipped": 0.36 if j == 1 else 0.0}
-                       for j in range(16)]
+            # Lens-fixed regional loss after the camera has learned its normal view: a suspicion,
+            # not evidence that a functioning input/processing path has failed.
+            regions = [{"detail": 100.0 if i > 40 and j == 0 else 1000.0 + (i % 7),
+                        "mean": 120.0, "clipped": 0.0} for j in range(16)]
             conditions, _ = monitor.appearance(
                 {"regions": regions, "black_fraction": 0.0,
                  "thumbnail": np.full((60, 80), i % 256, dtype=np.uint8)}, i / 14)
             monitor.update(conditions, i / 14, {})
         visual = set(monitor.active)
-        self.assertEqual(visual, {"glare", "obstruction"})
+        self.assertEqual(visual, {"obstruction"})
         for unavailable, stale, delivery, pipeline, quality in (
             (False, False, set(), "healthy", "suspected"),
             (False, False, {"backlog"}, "degraded", "suspected"),
@@ -106,6 +111,57 @@ class CameraChecks(unittest.TestCase):
         measured["regions"][0]["detail"] = 50
         conditions, _ = monitor.appearance(measured, 20)
         self.assertNotIn("obstruction", conditions)
+
+    @staticmethod
+    def frames(fn, seconds=19.0, rate=14):
+        """Synthetic tile measurements from fn(t, tile) -> (mean, detail, clipped)."""
+        for i in range(int(seconds * rate)):
+            t = i / rate
+            regions = [dict(zip(("mean", "detail", "clipped"), fn(t, j))) for j in range(16)]
+            yield t, {"regions": regions, "black_fraction": float(np.mean([r["mean"] < 8 for r in regions])),
+                      "thumbnail": np.full((60, 80), i % 251, dtype=np.uint8)}
+
+    def run_monitor(self, fn, **thresholds):
+        monitor, seen = Monitor(CameraThresholds(**thresholds)), set()
+        for t, measured in self.frames(fn):
+            conditions, _ = monitor.appearance(measured, t)
+            monitor.update(conditions, t, {})
+            seen |= conditions
+        return monitor, seen
+
+    def test_a_permanently_bright_sky_is_not_glare(self):
+        # The old absolute rule flagged any tile >= 35% clipped, i.e. every frame with sky in it.
+        _, seen = self.run_monitor(lambda t, j: (140.0, 900.0 + 50 * np.sin(t + j), 0.9 if j in (1, 2) else 0.02))
+        self.assertNotIn("glare", seen)
+
+    def test_new_glare_on_several_tiles_is_detected_and_clears(self):
+        glare = lambda t, j: (140.0, 900.0, 0.85 if 6 <= t < 10 and j in (2, 3, 6, 7) else 0.02)
+        monitor, seen = self.run_monitor(glare)
+        self.assertIn("glare", seen)
+        episode = next(e for e in monitor.episodes if e["type"] == "glare")
+        self.assertTrue(6 <= episode["start_s"] < 7)
+        self.assertIsNotNone(episode["end_s"])
+
+    def test_relative_underexposure_above_the_absolute_floor(self):
+        # 130 -> 55 is clearly underexposed for this camera, yet above the absolute dark_mean of 35.
+        _, seen = self.run_monitor(lambda t, j: (55.0 if 6 <= t < 10 else 130.0, 900.0, 0.0))
+        self.assertIn("underexposure", seen)
+
+    def test_blackout_explains_blur_and_freeze(self):
+        black = lambda t, j: (0.0, 0.0, 0.0) if 6 <= t < 10 else (120.0, 900.0 + j, 0.0)
+        monitor, seen = self.run_monitor(black)
+        self.assertIn("blackout", seen)
+        self.assertEqual({e["type"] for e in monitor.episodes}, {"blackout"})
+
+    def test_no_local_false_alarm_right_after_a_global_fault(self):
+        # After a blackout the scene has moved on; one tile is now plain road. That must re-baseline,
+        # not be reported as an obstruction against the stale pre-fault reference.
+        def scene(t, j):
+            if 6 <= t < 10:
+                return (0.0, 0.0, 0.0)
+            return (120.0, (60.0 if t >= 10 and j == 11 else 900.0), 0.0)
+        monitor, _ = self.run_monitor(scene, obstruction_ratio=0.35, obstruction_s=0.8)
+        self.assertNotIn("obstruction", {e["type"] for e in monitor.episodes})
 
     def test_advice_expires_from_source_time_and_preserves_history(self):
         original = {"status": "ok", "pts_s": 2.0, "received_s": 2.25,
