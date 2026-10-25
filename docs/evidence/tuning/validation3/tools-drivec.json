@@ -1,0 +1,6372 @@
+{
+ "dataset": "DRIVE-C core v1 (CC BY 4.0, doi:10.5281/zenodo.19656444)",
+ "opencv": "5.0.0",
+ "thresholds": {
+  "blur_variance": 30,
+  "dark_mean": 35,
+  "black_fraction": 0.98,
+  "glare_fraction": 0.35,
+  "obstruction_ratio": 0.35,
+  "warmup_s": 1.0,
+  "reference_window_s": 3.0,
+  "glare_rise": 0.25,
+  "glare_tiles": 2,
+  "dark_ratio": 0.65,
+  "blur_ratio": 0.35,
+  "blur_quantile": 0.5,
+  "scene_keep_ratio": 0.85,
+  "obstruction_s": 1.2,
+  "obstruction_max_tiles": 6,
+  "obstruction_leak": 0,
+  "lowlight_dark_ratio": 0,
+  "lowlight_saturation_rise": 1.4,
+  "lowlight_noise_rise": 1.15,
+  "adaptive_k": 3.0,
+  "adaptive_floor_dark": 0.2,
+  "adaptive_floor_blur": 0.4,
+  "adaptive_window_s": 10.0,
+  "dark_at_start_alarm": true,
+  "hysteresis": 0.3,
+  "obstruction_hysteresis": 0.8,
+  "freeze_difference": 0.3,
+  "reference_decay_s": 71.4,
+  "persistence_s": 0.3,
+  "recovery_s": 0.5,
+  "freeze_s": 1,
+  "feed_timeout_s": 1,
+  "backlog_s": 0.5
+ },
+ "protocols": "Evaluate the frozen COOLPilot screen on DRIVE-C (independent: other country, camera and corruption code).\n\n    python -m experiments.drivec_eval --root ~/drivec/drivec_core_v1 --out results/drivec.json\n\nDRIVE-C clips (128 frames, 30 fps) are corrupted from their first frame. Two protocols:\n    onset  - the scene's clean clip, then the corrupted clip: the fault starts at the join (our use case).\n             Pass = an alarm of the mapped class starting within 2 s after the join, none before it.\n    alone  - the corrupted clip by itself: a camera that starts broken; only absolute rules can fire.\nClean clips alone: any alarm is a false alarm. Thresholds: the frozen defaults, or --params (validation of a joint calibration).\n",
+ "clean_clips_with_alarm": 4,
+ "clean_clips": 10,
+ "by_split": {
+  "dev": {
+   "our_classes_onset_pass": "101/150",
+   "clean_clips_with_alarm": "0/5",
+   "joined_clips_alarming_before_onset": "0/150",
+   "night_scenes": []
+  },
+  "test": {
+   "our_classes_onset_pass": "18/150",
+   "clean_clips_with_alarm": "4/5",
+   "joined_clips_alarming_before_onset": "120/150",
+   "night_scenes": [
+    "S06_video_003_clean.mp4",
+    "S07_video_006_clean.mp4",
+    "S08_video_007_clean.mp4"
+   ]
+  }
+ },
+ "summary": {
+  "defocus_blur/s1": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 1,
+   "fired_after_join": {}
+  },
+  "defocus_blur/s2": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 1,
+   "fired_after_join": {}
+  },
+  "defocus_blur/s3": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 1,
+   "fired_after_join": {}
+  },
+  "defocus_blur/s4": {
+   "n": 10,
+   "onset_pass": 5,
+   "alone_alarm": 1,
+   "fired_after_join": {
+    "blur": 5
+   }
+  },
+  "defocus_blur/s5": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 1,
+   "fired_after_join": {
+    "blur": 6
+   }
+  },
+  "glare_flare/s1": {
+   "n": 10,
+   "onset_pass": 4,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "glare": 5
+   }
+  },
+  "glare_flare/s2": {
+   "n": 10,
+   "onset_pass": 4,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "glare": 5
+   }
+  },
+  "glare_flare/s3": {
+   "n": 10,
+   "onset_pass": 5,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "glare": 6,
+    "blur": 1
+   }
+  },
+  "glare_flare/s4": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 5,
+   "fired_after_join": {
+    "glare": 7,
+    "blur": 2
+   }
+  },
+  "glare_flare/s5": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 5,
+   "fired_after_join": {
+    "glare": 7,
+    "blur": 3
+   }
+  },
+  "lens_occlusion/s1": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {}
+  },
+  "lens_occlusion/s2": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {}
+  },
+  "lens_occlusion/s3": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {}
+  },
+  "lens_occlusion/s4": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 4
+   }
+  },
+  "lens_occlusion/s5": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 5
+   }
+  },
+  "low_light/s1": {
+   "n": 10,
+   "onset_pass": 4,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "underexposure": 5
+   }
+  },
+  "low_light/s2": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "underexposure": 7
+   }
+  },
+  "low_light/s3": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 3,
+   "fired_after_join": {
+    "underexposure": 7
+   }
+  },
+  "low_light/s4": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 3,
+   "fired_after_join": {
+    "underexposure": 7,
+    "blackout": 1
+   }
+  },
+  "low_light/s5": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "underexposure": 7
+   }
+  },
+  "motion_blur/s1": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 6
+   }
+  },
+  "motion_blur/s2": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 6
+   }
+  },
+  "motion_blur/s3": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 6
+   }
+  },
+  "motion_blur/s4": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 3,
+   "fired_after_join": {
+    "blur": 6
+   }
+  },
+  "motion_blur/s5": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 6,
+   "fired_after_join": {
+    "blur": 6
+   }
+  },
+  "underexposure/s1": {
+   "n": 10,
+   "onset_pass": 1,
+   "alone_alarm": 3,
+   "fired_after_join": {
+    "blur": 1,
+    "underexposure": 1
+   }
+  },
+  "underexposure/s2": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 3,
+   "fired_after_join": {
+    "underexposure": 7
+   }
+  },
+  "underexposure/s3": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 3,
+   "fired_after_join": {
+    "underexposure": 7
+   }
+  },
+  "underexposure/s4": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 3,
+   "fired_after_join": {
+    "underexposure": 7
+   }
+  },
+  "underexposure/s5": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "underexposure": 7
+   }
+  }
+ },
+ "clips": [
+  {
+   "clip": "S01_video_018_clean.mp4",
+   "kind": "clean",
+   "split": "dev",
+   "night": false,
+   "alarms": []
+  },
+  {
+   "clip": "S02_video_017_clean.mp4",
+   "kind": "clean",
+   "split": "dev",
+   "night": false,
+   "alarms": []
+  },
+  {
+   "clip": "S03_video_013_clean.mp4",
+   "kind": "clean",
+   "split": "dev",
+   "night": false,
+   "alarms": []
+  },
+  {
+   "clip": "S04_video_016_clean.mp4",
+   "kind": "clean",
+   "split": "dev",
+   "night": false,
+   "alarms": []
+  },
+  {
+   "clip": "S05_video_009_clean.mp4",
+   "kind": "clean",
+   "split": "dev",
+   "night": false,
+   "alarms": []
+  },
+  {
+   "clip": "S06_video_003_clean.mp4",
+   "kind": "clean",
+   "split": "test",
+   "night": true,
+   "alarms": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_video_006_clean.mp4",
+   "kind": "clean",
+   "split": "test",
+   "night": true,
+   "alarms": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_video_007_clean.mp4",
+   "kind": "clean",
+   "split": "test",
+   "night": true,
+   "alarms": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S09_video_014_clean.mp4",
+   "kind": "clean",
+   "split": "test",
+   "night": false,
+   "alarms": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S10_video_020_clean.mp4",
+   "kind": "clean",
+   "split": "test",
+   "night": false,
+   "alarms": []
+  },
+  {
+   "clip": "S01_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.6
+    ]
+   ]
+  },
+  {
+   "clip": "S01_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.57
+    ]
+   ]
+  },
+  {
+   "clip": "S01_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ],
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ],
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     4.23
+    ]
+   ]
+  },
+  {
+   "clip": "S01_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ],
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     4.17
+    ]
+   ]
+  },
+  {
+   "clip": "S01_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S01_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S01_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S01_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S01_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S01_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S01_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_low_light_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.87
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_low_light_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_low_light_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_low_light_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_low_light_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_underexposure_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ],
+    [
+     "underexposure",
+     5.07
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_underexposure_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_underexposure_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_underexposure_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S01_underexposure_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     3.33
+    ]
+   ]
+  },
+  {
+   "clip": "S02_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ],
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     3.2
+    ]
+   ]
+  },
+  {
+   "clip": "S02_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ],
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     3.2
+    ]
+   ]
+  },
+  {
+   "clip": "S02_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S02_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S02_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S02_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S02_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S02_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S02_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S02_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S02_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_low_light_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     5.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_low_light_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_low_light_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_low_light_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_low_light_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_underexposure_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S02_underexposure_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_underexposure_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_underexposure_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S02_underexposure_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": [
+    [
+     "glare",
+     3.57
+    ]
+   ]
+  },
+  {
+   "clip": "S03_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": [
+    [
+     "glare",
+     3.1
+    ]
+   ]
+  },
+  {
+   "clip": "S03_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     3.07
+    ]
+   ]
+  },
+  {
+   "clip": "S03_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     3.07
+    ]
+   ]
+  },
+  {
+   "clip": "S03_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     3.1
+    ],
+    [
+     "blur",
+     3.47
+    ]
+   ]
+  },
+  {
+   "clip": "S03_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     3.6
+    ]
+   ]
+  },
+  {
+   "clip": "S03_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     3.53
+    ]
+   ]
+  },
+  {
+   "clip": "S03_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_low_light_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_low_light_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     5.3
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_low_light_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_low_light_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_low_light_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_underexposure_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S03_underexposure_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_underexposure_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_underexposure_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S03_underexposure_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     0.33
+    ]
+   ]
+  },
+  {
+   "clip": "S04_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S04_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S04_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S04_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S04_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S04_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S04_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.8
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.63
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_low_light_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     5.13
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_low_light_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     5.0
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_low_light_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_low_light_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_low_light_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_underexposure_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S04_underexposure_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     5.07
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_underexposure_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_underexposure_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S04_underexposure_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     6.23
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.93
+    ]
+   ]
+  },
+  {
+   "clip": "S05_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     6.23
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.93
+    ]
+   ]
+  },
+  {
+   "clip": "S05_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     6.23
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.93
+    ]
+   ]
+  },
+  {
+   "clip": "S05_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     2.0
+    ]
+   ]
+  },
+  {
+   "clip": "S05_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ],
+    [
+     "blur",
+     4.77
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     2.07
+    ]
+   ]
+  },
+  {
+   "clip": "S05_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S05_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S05_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S05_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S05_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.73
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S05_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S05_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S05_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S05_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.73
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_low_light_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     3.9
+    ]
+   ]
+  },
+  {
+   "clip": "S05_low_light_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     5.33
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_low_light_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_low_light_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_low_light_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "low_light",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_underexposure_s1",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S05_underexposure_s2",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_underexposure_s3",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_underexposure_s4",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S05_underexposure_s5",
+   "kind": "corrupted",
+   "split": "dev",
+   "type": "underexposure",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S06_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ],
+    [
+     "underexposure",
+     3.93
+    ]
+   ]
+  },
+  {
+   "clip": "S06_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.4
+    ]
+   ]
+  },
+  {
+   "clip": "S06_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_low_light_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 1,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_low_light_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 2,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.57
+    ]
+   ]
+  },
+  {
+   "clip": "S06_low_light_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 3,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.77
+    ]
+   ]
+  },
+  {
+   "clip": "S06_low_light_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 4,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [
+    [
+     "blackout",
+     4.8
+    ]
+   ],
+   "alone": [
+    [
+     "blackout",
+     0.5
+    ],
+    [
+     "underexposure",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S06_low_light_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 5,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     1.17
+    ]
+   ]
+  },
+  {
+   "clip": "S06_underexposure_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 1,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_underexposure_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 2,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_underexposure_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 3,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_underexposure_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 4,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S06_underexposure_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 5,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_low_light_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 1,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_low_light_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 2,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_low_light_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 3,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_low_light_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 4,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_low_light_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 5,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_underexposure_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 1,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_underexposure_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 2,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_underexposure_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 3,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_underexposure_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 4,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S07_underexposure_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 5,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": true,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": true,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": true,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_low_light_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 1,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_low_light_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 2,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_low_light_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 3,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_low_light_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 4,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_low_light_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 5,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_underexposure_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 1,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_underexposure_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 2,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_underexposure_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 3,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_underexposure_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 4,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S08_underexposure_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 5,
+   "night": true,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "underexposure",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S09_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "glare",
+     5.67
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.43
+    ],
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "glare",
+     5.63
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.43
+    ],
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "glare",
+     5.33
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.3
+    ],
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "glare",
+     5.17
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.3
+    ],
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "glare",
+     1.3
+    ],
+    [
+     "blur",
+     1.93
+    ]
+   ]
+  },
+  {
+   "clip": "S09_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S09_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S09_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S09_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S09_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.4
+    ]
+   ]
+  },
+  {
+   "clip": "S09_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S09_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_low_light_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.9
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_low_light_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.77
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_low_light_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_low_light_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S09_low_light_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S09_underexposure_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_underexposure_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_underexposure_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_underexposure_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S09_underexposure_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [
+    [
+     "blur",
+     2.33
+    ]
+   ],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.33
+    ]
+   ]
+  },
+  {
+   "clip": "S10_glare_flare_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 1,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_glare_flare_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 2,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_glare_flare_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 3,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_glare_flare_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 4,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_glare_flare_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "glare_flare",
+   "severity": 5,
+   "night": false,
+   "expected": "glare",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "glare",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_motion_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_motion_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_motion_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_motion_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     2.1
+    ]
+   ]
+  },
+  {
+   "clip": "S10_motion_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "motion_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "blur",
+     0.3
+    ]
+   ]
+  },
+  {
+   "clip": "S10_defocus_blur_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 1,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_defocus_blur_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 2,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_defocus_blur_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 3,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_defocus_blur_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 4,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     5.1
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_defocus_blur_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "defocus_blur",
+   "severity": 5,
+   "night": false,
+   "expected": "blur",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_lens_occlusion_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 1,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_lens_occlusion_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 2,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_lens_occlusion_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 3,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_lens_occlusion_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 4,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     5.1
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_lens_occlusion_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "lens_occlusion",
+   "severity": 5,
+   "night": false,
+   "expected": "obstruction",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [
+    [
+     "blur",
+     4.63
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_low_light_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     6.03
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_low_light_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "underexposure",
+     3.57
+    ]
+   ]
+  },
+  {
+   "clip": "S10_low_light_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_low_light_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_low_light_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "low_light",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "underexposure",
+     3.67
+    ]
+   ]
+  },
+  {
+   "clip": "S10_underexposure_s1",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 1,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": false,
+   "before_join": [],
+   "after_join": [],
+   "alone": []
+  },
+  {
+   "clip": "S10_underexposure_s2",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 2,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_underexposure_s3",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 3,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_underexposure_s4",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 4,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": []
+  },
+  {
+   "clip": "S10_underexposure_s5",
+   "kind": "corrupted",
+   "split": "test",
+   "type": "underexposure",
+   "severity": 5,
+   "night": false,
+   "expected": "underexposure",
+   "onset_pass": true,
+   "before_join": [],
+   "after_join": [
+    [
+     "underexposure",
+     4.6
+    ]
+   ],
+   "alone": [
+    [
+     "underexposure",
+     3.67
+    ]
+   ]
+  }
+ ]
+}

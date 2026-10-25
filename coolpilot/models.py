@@ -64,21 +64,33 @@ class CameraGoals(Contract):
 
 class CameraThresholds(Contract):
     """Development calibration, frozen for a run; not validated safety limits."""
-    blur_variance: float = Field(default=60, gt=0)
+    blur_variance: float = Field(default=30, gt=0)
     dark_mean: float = Field(default=35, ge=0, le=255)
     black_fraction: float = Field(default=0.98, gt=0, le=1)
     glare_fraction: float = Field(default=0.35, gt=0, le=1)   # retired absolute rule; kept so old runs still load
     obstruction_ratio: float = Field(default=0.35, gt=0, lt=1)
-    # Relative rules: each camera against its own references. Defaults come from
-    # experiments/calibrate.py on the centre-camera tuning clips only (0/6 failed checks, 1 false alarm).
+    # Relative rules: each camera against its own references. Defaults come from joint tuning
+    # (experiments/joint_calibrate.py, round 4) on Oxford centre tuning clips + DRIVE-C dev scenes only,
+    # minus the two round-4 choices that failed validation (blur_ratio 0.5, a low-light rule since removed).
     warmup_s: float = Field(default=1.0, ge=0, le=30)
     reference_window_s: float = Field(default=3.0, gt=0, le=600)
     glare_rise: float = Field(default=0.25, gt=0, le=1)
     glare_tiles: int = Field(default=2, ge=1, le=16)
-    dark_ratio: float = Field(default=0.55, gt=0, lt=1)
-    blur_ratio: float = Field(default=0.35, gt=0, lt=1)
+    dark_ratio: float = Field(default=0.65, gt=0, lt=1)
+    blur_ratio: float = Field(default=0.35, gt=0, lt=1)   # 0.5 tuned better on DRIVE-C dev but alarmed on a clean test scene
+    blur_quantile: float = Field(default=0.5, gt=0, lt=1)   # which tile percentile must lose detail; 0.5 = median
     scene_keep_ratio: float = Field(default=0.85, gt=0, le=2)
-    obstruction_s: float = Field(default=0.5, ge=0, le=10)
+    obstruction_s: float = Field(default=1.2, ge=0, le=10)
+    obstruction_max_tiles: int = Field(default=6, ge=1, le=15)   # more tiles than this = a global fault, not a local one
+    # Self-calibrating limits (section 6c): 0 keeps the fixed dark_ratio / blur_ratio. Otherwise a drop must exceed
+    # adaptive_k x this camera's normal swing of the log ratio (learned while healthy) and at least the floor.
+    adaptive_k: float = Field(default=0, ge=0, le=20)
+    adaptive_floor_dark: float = Field(default=0.2, ge=0, le=3)
+    adaptive_floor_blur: float = Field(default=0.4, ge=0, le=5)
+    adaptive_window_s: float = Field(default=10, gt=0, le=600)
+    # False (shipped, section 6c): a camera dark since its first frame is its own normal (night), not a fault. Known gap:
+    # a camera broken-dark from power-on is not flagged; reports say "dark since start, verify" instead.
+    dark_at_start_alarm: bool = False
     hysteresis: float = Field(default=0.3, gt=0, le=1)   # 1 = none; smaller = stickier active alarms
     obstruction_hysteresis: float = Field(default=0.8, gt=0, le=1)   # local loss: a light touch, or it never clears
     freeze_difference: float = Field(default=0.3, ge=0, le=255)

@@ -1,0 +1,6 @@
+{
+ "source": "shipped defaults + night policy",
+ "thresholds": {
+  "dark_at_start_alarm": false
+ }
+}

@@ -1,0 +1,2 @@
+{"obstruction_ratio": [0.25, 0.35, 0.45], "obstruction_s": [0.5, 0.8, 1.2], "scene_keep_ratio": [0.85, 1.0],
+ "blur_quantile": [0.5, 0.35, 0.25], "blur_ratio": [0.35, 0.5], "dark_ratio": [0.55, 0.65, 0.75]}

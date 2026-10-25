@@ -1,0 +1,2584 @@
+{
+ "analyze_options": {
+  "operator": "laplacian",
+  "keep_aspect": false,
+  "detail_width": 320
+ },
+ "note": "Selected on Oxford tuning + DRIVE-C dev only. Validate with calibrate.py --split validation and drivec_eval.py --params.",
+ "grid": {
+  "obstruction_ratio": [
+   0.35,
+   0.5
+  ],
+  "obstruction_s": [
+   1.2
+  ],
+  "obstruction_max_tiles": [
+   6,
+   8,
+   10
+  ],
+  "scene_keep_ratio": [
+   0.7,
+   0.85
+  ],
+  "dark_ratio": [
+   0.8
+  ],
+  "blur_quantile": [
+   0.5
+  ],
+  "blur_ratio": [
+   0.5
+  ],
+  "blur_variance": [
+   40
+  ]
+ },
+ "candidates": 12,
+ "allowed_by_oxford_constraint": 6,
+ "defaults": {
+  "thresholds": {
+   "blur_variance": 60,
+   "dark_mean": 35,
+   "black_fraction": 0.98,
+   "glare_fraction": 0.35,
+   "obstruction_ratio": 0.35,
+   "warmup_s": 1.0,
+   "reference_window_s": 3.0,
+   "glare_rise": 0.25,
+   "glare_tiles": 2,
+   "dark_ratio": 0.55,
+   "blur_ratio": 0.35,
+   "blur_quantile": 0.5,
+   "scene_keep_ratio": 0.85,
+   "obstruction_s": 0.5,
+   "obstruction_max_tiles": 6,
+   "hysteresis": 0.3,
+   "obstruction_hysteresis": 0.8,
+   "freeze_difference": 0.3,
+   "reference_decay_s": 71.4,
+   "persistence_s": 0.3,
+   "recovery_s": 0.5,
+   "freeze_s": 1,
+   "feed_timeout_s": 1,
+   "backlog_s": 0.5
+  },
+  "oxford_failed": "0/6",
+  "oxford_false_alarms": 1,
+  "drivec_dev_passed": "39/150",
+  "drivec_dev_false_alarms": 62,
+  "drivec": {
+   "passed": 39,
+   "failed": 111,
+   "false_alarms": 62,
+   "clips": [
+    {
+     "clip": "S01_video_018_clean.mp4",
+     "alarms": []
+    },
+    {
+     "clip": "S02_video_017_clean.mp4",
+     "alarms": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S03_video_013_clean.mp4",
+     "alarms": []
+    },
+    {
+     "clip": "S04_video_016_clean.mp4",
+     "alarms": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S05_video_009_clean.mp4",
+     "alarms": []
+    },
+    {
+     "clip": "S01_glare_flare_s1",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_glare_flare_s2",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_glare_flare_s3",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_glare_flare_s4",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_glare_flare_s5",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s1",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s2",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s3",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s4",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s5",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s4",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_glare_flare_s1",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_glare_flare_s2",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_glare_flare_s3",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_glare_flare_s4",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_glare_flare_s5",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_motion_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_motion_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_motion_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_motion_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_motion_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_low_light_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_low_light_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_low_light_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_low_light_s4",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_low_light_s5",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_underexposure_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_underexposure_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_underexposure_s4",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S02_underexposure_s5",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.7
+      ]
+     ]
+    },
+    {
+     "clip": "S03_glare_flare_s1",
+     "expected": "glare",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s2",
+     "expected": "glare",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s3",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s4",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s5",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s1",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s2",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s3",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s4",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s5",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s4",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_glare_flare_s1",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_glare_flare_s2",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_glare_flare_s3",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_glare_flare_s4",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_glare_flare_s5",
+     "expected": "glare",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_motion_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_motion_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_motion_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_motion_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_motion_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_low_light_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_low_light_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_low_light_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_low_light_s4",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_low_light_s5",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_underexposure_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_underexposure_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_underexposure_s4",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S04_underexposure_s5",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": [
+      [
+       "obstruction",
+       3.83
+      ]
+     ]
+    },
+    {
+     "clip": "S05_glare_flare_s1",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s2",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s3",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s4",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s5",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s1",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s2",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s3",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s4",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s5",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s4",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s5",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s3",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    }
+   ]
+  },
+  "oxford": {
+   "failed_fault_checks": 0,
+   "fault_checks": 6,
+   "false_alarms": 1,
+   "false_alarms_per_hour": 36.78638400227192,
+   "normal_seconds": 97.86229600000001,
+   "clips": [
+    {
+     "clip": "centre_blackout",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "blackout",
+       "detected": true,
+       "detection_s": 0.3124709999999995,
+       "recovery_s": 0.5624709999999986,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_blur",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "blur",
+       "detected": true,
+       "detection_s": 0.5624369999999992,
+       "recovery_s": 0.43748399999999954,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_freeze",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "freeze",
+       "detected": true,
+       "detection_s": 1.3747859999999994,
+       "recovery_s": 0.5624709999999986,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_glare",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "glare",
+       "detected": true,
+       "detection_s": 0.5624369999999992,
+       "recovery_s": 1.812327999999999,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_obstruction",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "obstruction",
+       "detected": true,
+       "detection_s": 0.43745099999999937,
+       "recovery_s": 1.3123809999999985,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_reference",
+     "camera": "stereo/centre",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.37
+      }
+     ],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_underexposure",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "underexposure",
+       "detected": true,
+       "detection_s": 0.4999449999999994,
+       "recovery_s": 0.18749799999999794,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    }
+   ]
+  }
+ },
+ "thresholds": {
+  "obstruction_ratio": 0.35,
+  "obstruction_s": 1.2,
+  "obstruction_max_tiles": 6,
+  "scene_keep_ratio": 0.85,
+  "dark_ratio": 0.8,
+  "blur_quantile": 0.5,
+  "blur_ratio": 0.5,
+  "blur_variance": 40
+ },
+ "selected": {
+  "oxford_failed": "0/6",
+  "oxford_false_alarms": 1,
+  "drivec_dev_passed": "90/150",
+  "drivec_dev_false_alarms": 0,
+  "drivec": {
+   "passed": 90,
+   "failed": 60,
+   "false_alarms": 0,
+   "clips": [
+    {
+     "clip": "S01_video_018_clean.mp4",
+     "alarms": []
+    },
+    {
+     "clip": "S02_video_017_clean.mp4",
+     "alarms": []
+    },
+    {
+     "clip": "S03_video_013_clean.mp4",
+     "alarms": []
+    },
+    {
+     "clip": "S04_video_016_clean.mp4",
+     "alarms": []
+    },
+    {
+     "clip": "S05_video_009_clean.mp4",
+     "alarms": []
+    },
+    {
+     "clip": "S01_glare_flare_s1",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_glare_flare_s2",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_glare_flare_s3",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_glare_flare_s4",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_glare_flare_s5",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s1",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s2",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s3",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s4",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_motion_blur_s5",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s1",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_low_light_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S01_underexposure_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_glare_flare_s1",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_glare_flare_s2",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_glare_flare_s3",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_glare_flare_s4",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_glare_flare_s5",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_motion_blur_s1",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_motion_blur_s2",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_motion_blur_s3",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_motion_blur_s4",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_motion_blur_s5",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S02_low_light_s1",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_low_light_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_low_light_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_low_light_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_low_light_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_underexposure_s1",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_underexposure_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_underexposure_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_underexposure_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S02_underexposure_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s1",
+     "expected": "glare",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s2",
+     "expected": "glare",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s3",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s4",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_glare_flare_s5",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s1",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s2",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s3",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s4",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_motion_blur_s5",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_low_light_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S03_underexposure_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_glare_flare_s1",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_glare_flare_s2",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_glare_flare_s3",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_glare_flare_s4",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_glare_flare_s5",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_motion_blur_s1",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_motion_blur_s2",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_motion_blur_s3",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_motion_blur_s4",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_motion_blur_s5",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_low_light_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_low_light_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_low_light_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_low_light_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_low_light_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S04_underexposure_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_underexposure_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_underexposure_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S04_underexposure_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s1",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s2",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s3",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s4",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_glare_flare_s5",
+     "expected": "glare",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s1",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s2",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s3",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s4",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_motion_blur_s5",
+     "expected": "blur",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s1",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s2",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s3",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s4",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_defocus_blur_s5",
+     "expected": "blur",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s1",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s2",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s3",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s4",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_lens_occlusion_s5",
+     "expected": "obstruction",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s2",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_low_light_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s1",
+     "expected": "underexposure",
+     "passed": false,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s2",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s3",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s4",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    },
+    {
+     "clip": "S05_underexposure_s5",
+     "expected": "underexposure",
+     "passed": true,
+     "before_join": []
+    }
+   ]
+  },
+  "oxford": {
+   "failed_fault_checks": 0,
+   "fault_checks": 6,
+   "false_alarms": 1,
+   "false_alarms_per_hour": 36.78638400227192,
+   "normal_seconds": 97.86229600000001,
+   "clips": [
+    {
+     "clip": "centre_blackout",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "blackout",
+       "detected": true,
+       "detection_s": 0.3124709999999995,
+       "recovery_s": 0.5624709999999986,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_blur",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "blur",
+       "detected": true,
+       "detection_s": 0.4999449999999994,
+       "recovery_s": 0.43748399999999954,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_freeze",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "freeze",
+       "detected": true,
+       "detection_s": 1.3747859999999994,
+       "recovery_s": 0.5624709999999986,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_glare",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "glare",
+       "detected": true,
+       "detection_s": 0.5624369999999992,
+       "recovery_s": 1.812327999999999,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_obstruction",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "obstruction",
+       "detected": true,
+       "detection_s": 0.43745099999999937,
+       "recovery_s": 1.3123809999999985,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_reference",
+     "camera": "stereo/centre",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ],
+     "end_s": 19.059891
+    },
+    {
+     "clip": "centre_underexposure",
+     "camera": "stereo/centre",
+     "checks": [
+      {
+       "type": "underexposure",
+       "detected": true,
+       "detection_s": 0.3124709999999995,
+       "recovery_s": 0.3124849999999988,
+       "premature_clear": false,
+       "passed": true
+      }
+     ],
+     "false_alarms": [],
+     "end_s": 19.059891
+    }
+   ]
+  }
+ },
+ "top10": [
+  {
+   "thresholds": {
+    "obstruction_ratio": 0.35,
+    "obstruction_s": 1.2,
+    "obstruction_max_tiles": 6,
+    "scene_keep_ratio": 0.85,
+    "dark_ratio": 0.8,
+    "blur_quantile": 0.5,
+    "blur_ratio": 0.5,
+    "blur_variance": 40
+   },
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 1,
+   "drivec_dev_passed": "90/150",
+   "drivec_dev_false_alarms": 0
+  },
+  {
+   "thresholds": {
+    "obstruction_ratio": 0.35,
+    "obstruction_s": 1.2,
+    "obstruction_max_tiles": 8,
+    "scene_keep_ratio": 0.85,
+    "dark_ratio": 0.8,
+    "blur_quantile": 0.5,
+    "blur_ratio": 0.5,
+    "blur_variance": 40
+   },
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 1,
+   "drivec_dev_passed": "90/150",
+   "drivec_dev_false_alarms": 0
+  },
+  {
+   "thresholds": {
+    "obstruction_ratio": 0.35,
+    "obstruction_s": 1.2,
+    "obstruction_max_tiles": 10,
+    "scene_keep_ratio": 0.85,
+    "dark_ratio": 0.8,
+    "blur_quantile": 0.5,
+    "blur_ratio": 0.5,
+    "blur_variance": 40
+   },
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 1,
+   "drivec_dev_passed": "90/150",
+   "drivec_dev_false_alarms": 0
+  },
+  {
+   "thresholds": {
+    "obstruction_ratio": 0.35,
+    "obstruction_s": 1.2,
+    "obstruction_max_tiles": 6,
+    "scene_keep_ratio": 0.7,
+    "dark_ratio": 0.8,
+    "blur_quantile": 0.5,
+    "blur_ratio": 0.5,
+    "blur_variance": 40
+   },
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 2,
+   "drivec_dev_passed": "90/150",
+   "drivec_dev_false_alarms": 0
+  },
+  {
+   "thresholds": {
+    "obstruction_ratio": 0.35,
+    "obstruction_s": 1.2,
+    "obstruction_max_tiles": 8,
+    "scene_keep_ratio": 0.7,
+    "dark_ratio": 0.8,
+    "blur_quantile": 0.5,
+    "blur_ratio": 0.5,
+    "blur_variance": 40
+   },
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 2,
+   "drivec_dev_passed": "90/150",
+   "drivec_dev_false_alarms": 0
+  },
+  {
+   "thresholds": {
+    "obstruction_ratio": 0.35,
+    "obstruction_s": 1.2,
+    "obstruction_max_tiles": 10,
+    "scene_keep_ratio": 0.7,
+    "dark_ratio": 0.8,
+    "blur_quantile": 0.5,
+    "blur_ratio": 0.5,
+    "blur_variance": 40
+   },
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 2,
+   "drivec_dev_passed": "90/150",
+   "drivec_dev_false_alarms": 0
+  }
+ ]
+}

@@ -1,0 +1,29 @@
+cached 5264 frames from 21 validation clips
+{
+ "split": "validation",
+ "failed_fault_checks": "4/18",
+ "false_alarms": 22,
+ "false_alarms_per_hour": 244.20352485402802,
+ "thresholds": "given"
+}
+  lefts5101_blackout           blackout:ok  false=[('obstruction', 4.5)]
+  lefts5101_blur               blur:ok  false=[('obstruction', 4.5)]
+  lefts5101_freeze             freeze:ok  false=[('obstruction', 4.5)]
+  lefts5101_glare              glare:ok  false=[('obstruction', 4.5)]
+  lefts5101_obstruction        obstruction:MISS  false=[('obstruction', 4.5)]
+  lefts5101_reference            false=[('obstruction', 4.5)]
+  lefts5101_underexposure      underexposure:ok  false=[('obstruction', 4.5)]
+  rears5303_blackout           blackout:ok  false=[('obstruction', 8.18)]
+  rears5303_blur               blur:ok  false=[('obstruction', 8.18)]
+  rears5303_freeze             freeze:ok  false=[('obstruction', 8.18), ('obstruction', 14.09)]
+  rears5303_glare              glare:ok  false=[('obstruction', 15.54)]
+  rears5303_obstruction        obstruction:MISS  false=[('obstruction', 8.18), ('obstruction', 15.63)]
+  rears5303_reference            false=[('obstruction', 8.18), ('obstruction', 15.63)]
+  rears5303_underexposure      underexposure:ok  false=[('obstruction', 15.54)]
+  rights5202_blackout          blackout:ok
+  rights5202_blur              blur:ok  false=[('obstruction', 4.56)]
+  rights5202_freeze            freeze:ok  false=[('obstruction', 4.56)]
+  rights5202_glare             glare:late/uncleared  false=[('obstruction', 4.56)]
+  rights5202_obstruction       obstruction:MISS  false=[('obstruction', 4.56)]
+  rights5202_reference           false=[('obstruction', 4.56)]
+  rights5202_underexposure     underexposure:ok

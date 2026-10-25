@@ -2,7 +2,7 @@
 
 A running record of what changed and what it measurably did. Every number comes from a stored run or an evidence file in `docs/evidence/`. Items marked **pending** are still being measured. This file is updated when they finish.
 
-Last updated: 2026-10-24 12:30 UTC. Graviton verification and DRIVE-C evaluations complete; audited against the evidence files.
+Last updated: 2026-10-25 03:25 UTC. Graviton verification and DRIVE-C evaluations complete (including a failed, reverted night fix); joint Oxford + DRIVE-C dev tuning done, validated, shipped with two choices dropped (section 6b); audited against the evidence files.
 
 ## At a glance
 
@@ -15,8 +15,9 @@ Last updated: 2026-10-24 12:30 UTC. Graviton verification and DRIVE-C evaluation
 | OpenCV 5 features used | none beyond 4.x functions | **new DNN graph engine** (NanoDet on CPU) inside the verifier |
 | Agent role | tuning settings only | tuning **plus** a runtime verifier that measures, then confirms, dismisses or escalates to a human |
 | Measured on AWS Graviton (OpenCV 5.0.0) | no; all evidence from a Mac | yes: baseline, random search, three agent runs, paced held-out runs |
-| Tests | 37 at the first QA check of this work (3 failing mid-change) | 57 passing locally on OpenCV 4.13 (53 confirmed on Graviton before the footage and concurrency tests were added) |
+| Tests | 37 at the first QA check of this work (3 failing mid-change) | 61 passing locally (OpenCV 4.13) and on Graviton (OpenCV 5.0.0) |
 | Independent data (DRIVE-C, no tuning) | not tested | day scenes: **78/210 (37%)** of our fault classes caught at onset (motion blur and strong under-exposure transfer; defocus 0/50); **night scenes false-alarm on darkness** (3/3) |
+| Joint tuning (Oxford + DRIVE-C dev), section 6b–6c | n/a | shipped: detail at 640 px, `obstruction_s` 1.2, night policy. DRIVE-C test (seen) day **13 → 28/60**, night **0 → 29/90**; never-inspected Oxford fresh2/fresh3: 4/18 failed, **0 false alarms/h with the verifier**. Self-calibration and the diagnostic autopilot are built and tested; neither beat the shipped defaults or random search on unbiased data |
 | Product surface | dashboard + replay | + **Check footage**: upload a clip → S3 → Graviton Lambda → segment report, file deleted after |
 
 ## 1. Detector (per-camera relative rules)
@@ -148,6 +149,21 @@ Detection at onset, by type and severity (s1 = mildest … s5 = strongest; each 
 
 Out-of-class corruptions at severity 3 (fog, rain, snow, sensor noise, JPEG, overexposure): 19 of 60 clips raise something after the join, mostly "blur" (10), then glare (7) and obstruction (2).
 
+By DRIVE-C's own split (scene-level; dev = S01–S05, all daytime; test = S06–S10, which holds **all three night scenes**):
+
+| Split | Our fault classes caught at onset | Clean clips with an alarm | Joined clips alarming before the fault |
+|---|---|---|---|
+| dev (5 day scenes) | 65/150 (43%) | 0/5 | 0/180 |
+| test (2 day + 3 night scenes) | 13/150 (9%): day 13/60, night 0/90 | 4/5 | 144/180 (108 underexposure, 36 obstruction) |
+
+**Night fix attempted, failed, reverted.** The idea came from a principle: alarm on absolute darkness only when the frame is also featureless, because night is dark but detailed. Order of work:
+1. The failure mode was first seen on the DRIVE-C test split.
+2. The rule was then written without fitting numbers to night clips.
+3. It was checked on dev: every Oxford split gave identical results.
+4. It was run once on the test split.
+
+Result: **no change**. All three clean night scenes still alarm within 0.3–0.43 s, and night detection stays 0/90. At our analysis scale DRIVE-C's night footage is dark **and** low-detail, which is also exactly what a camera that starts too dark looks like. Frame statistics alone cannot separate the two when a clip starts dark. Exposure metadata, time of day or a learned model would be needed. The change gave no measured benefit and was reverted. The test split is now considered seen for night, so no further night tuning was done on it. Evidence: `docs/evidence/aws/drivec-nightfix.json`.
+
 What it changes in the claims:
 - **Night is out of scope today.** The absolute darkness fallback (mean brightness below 35, meant for a camera that starts broken) fires on normal night driving. It was never exercised on our daytime Oxford drive.
 - **"Blur" means whole-frame blur.** Partial, depth-dependent defocus is missed.
@@ -155,11 +171,198 @@ What it changes in the claims:
 
 Evidence: `docs/evidence/aws/drivec.json` (per clip and per cell).
 
+## 6b. Joint tuning: Oxford + DRIVE-C dev (round-4 freeze failed validation; shipped setup drops two choices)
+
+After section 6, the detector is being tuned on **Oxford tuning clips plus DRIVE-C dev scenes (S01–S05, all daytime)** together, in rounds (`experiments/joint_calibrate.py`, Graviton t4g.small, OpenCV 5.0.0).
+- **Unpaced and detector only**, without the verifier, so obstruction is judged strictly.
+- **Constraint:** Oxford tuning may not fail more checks than the defaults (0/6).
+- **DRIVE-C protocol:** the onset protocol from section 6.
+- **Validation only once, after the last round:** Oxford held-out cameras and DRIVE-C test scenes (S06–S10, which include all night scenes) are not read until then. The numbers below are therefore **tuning-data numbers, not generalisation**.
+
+| Round | Change | Oxford tuning failed | Oxford false alarms | DRIVE-C dev detected | DRIVE-C dev false alarms |
+|---|---|---|---|---|---|
+| 0 | Baseline: current defaults | 0/6 | 1 | 39/150 | 62 |
+| 1 | Values only (324 combos): `obstruction_s` 0.5 → 1.2, `dark_ratio` 0.55 → 0.75 | 0/6 | 1 | 82/150 | 0 |
+| 2 | Code: detail operator (Laplacian ksize 1 / 3, Tenengrad on the KleidiCV Sobel path), aspect-preserving resize. **None helped, none adopted.** Values: `dark_ratio` → 0.8 | 0/6 | 1 | 90/150 | 0 |
+| 3A | Code: obstruction tile limit made a setting (was fixed at 6), `scene_keep_ratio` in the grid. **No effect** | 0/6 | 1 | 90/150 | 0 |
+| 3B | Code: detail measured at 640 px instead of 320. Defocus 0 → 7/25 | 1/6 (only `centre_obstruction`, see below) | 1 | 97/150 | 0 |
+| 4 | Code: low-light rule (darker than 0.9× **and** saturation ×1.4 or noise ×1.15), so `dark_ratio` goes **back down** to 0.65; accumulated obstruction score (tried, not adopted). **Frozen** | 0/5 guarded (`centre_obstruction` excluded) | 1 | 97/150 | 0 |
+
+Per class on DRIVE-C dev, round 0 → 2 → 4 (frozen):
+
+| Class | Round 0 | Round 2 | Round 4 |
+|---|---|---|---|
+| motion blur | 15 | 25 | 25 |
+| glare | 13 | 23 | 23 |
+| underexposure | 6 | 21 | 18 |
+| low light | 2 | 21 | 24 |
+| defocus | 0 | 0 | 7 |
+| lens occlusion | 3 | 0 | 0 |
+
+Findings so far:
+- **The 62 false alarms were one cause:** obstruction firing on 2 of 5 clean dev scenes before any fault. That alone failed every fault clip from those scenes. A longer `obstruction_s` removed it.
+- **Two measurement problems, found by comparing each corrupted clip with its clean original frame by frame:**
+  - **Defocus:** our 320-pixel detail scale hides it (s5 keeps 0.76 of clean detail). At 640 pixels it keeps 0.40, and at native 1280 pixels 0.12.
+  - **Lens occlusion:** it lowers up to 7 tiles, but the obstruction rule was hard-coded to accept at most 6.
+  - Round 3 tests both fixes.
+- **Occlusion (round 3):** DRIVE-C's blob covers tiles only partly, so each tile's detail flickers around the limit and the "same tiles low for 1.2 s" clock keeps resetting. Round 4 tests an accumulated per-tile score instead (rises while low, leaks away otherwise), as in published soiling detectors.
+- **Rule change after round 3 (user decision: one setup for all footage):** the guard no longer protects the Oxford `centre_obstruction` check, which section 1 already documents as a sky coincidence (the clean reference flags the same tile at the same moment). The other 5 Oxford checks must still pass and Oxford false alarms still count. Ties go to the candidate closest to the defaults.
+- **Round 4 choice, made on purpose:** a tie (97) with `dark_ratio` 0.8 and no low-light rule. The tie-break would have picked 0.8; it was overridden because a specific rule (low light also raises saturation or noise, measured frame by frame) should fail less on unseen footage than a broad 20% darkening threshold. The cost on dev: 3 mild plain-underexposure clips that look like a cloud.
+- **Occlusion stays unsolved:** settings loose enough to catch DRIVE-C's occlusion fire on the clean part first, and severe occlusion is reported as blur. Defocus s1–s3 and underexposure s1 are at the limit of the signal. Tuning stopped after round 4.
+- **Frozen:** detail measured at 640 px everywhere (smaller analysis widths are raised to it), plus the round 4 values, as the `CameraThresholds` defaults. 60 tests pass on the Mac and on Graviton.
+- **Overfitting risk (rounds 1–2):** `dark_ratio` 0.8 alarms on a 20% brightness drop, which clouds, shadows or tunnels can also cause. It is capped at 0.8; held-out validation decides.
+
+**Validation of the round-4 freeze (run once, data never used in tuning): failed on DRIVE-C test.**
+
+| Data | Before tuning | Round-4 freeze |
+|---|---|---|
+| Oxford held-out (21 clips): failed checks, false alarms/h detector, with verifier | 5/18, 283, 10.9 | 5/18, 272, 10.9 |
+| Oxford fresh (42 clips) | 11/36, 232, 0 | 10/36, 221, 0 |
+| **DRIVE-C test, day scenes** | **13/60** | **0/60** |
+| DRIVE-C test, night scenes | 0/90 | 0/90 |
+| DRIVE-C test, clean day scenes with an alarm | 1/2 | **2/2** |
+
+It overfit to the 5 dev scenes. An alarm on a clean scene fails every fault clip of that scene, so two new false alarms cost all 60 day test clips. One change at a time on the clean test scenes:
+- **S09:** "blur" comes from `blur_ratio` 0.5 at the 640 scale. With 0.35 there is no alarm.
+- **S10:** "underexposure" comes from the low-light rule, the round-4 choice made over the tie-break. With the rule off there is no alarm.
+
+**Decision (user):** drop exactly those two choices: the low-light rule goes off (the code stays, off by default) and `blur_ratio` returns to 0.35. Detail at 640 and `obstruction_s` 1.2 stay. Nothing is re-tuned on dev. Because this was decided after looking at DRIVE-C test, **DRIVE-C test is now seen**: its next number is reported as "after seeing test", not as independent evidence.
+
+**Re-validation of the shipped setup (round-4 freeze minus the two failed choices):**
+
+| Data | Before tuning | Round-4 freeze | **Shipped** |
+|---|---|---|---|
+| Oxford held-out, **unbiased**: failed checks, false alarms/h (detector / verifier) | 5/18, 283 / 10.9 | 5/18, 272 / 10.9 | **5/18, 272 / 10.9** |
+| Oxford fresh, **unbiased** | 11/36, 232 / 0 | 10/36, 221 / 0 | **10/36, 221 / 0** |
+| DRIVE-C dev (tuning data, with verifier) | 65/150 | 97/150 | **77/150** |
+| DRIVE-C test, day (**seen**) | 13/60 | 0/60 | **28/60** |
+| DRIVE-C test, night | 0/90 | 0/90 | 0/90 |
+| DRIVE-C test, clean day scenes with an alarm | 1/2 | 2/2 | **0/2** |
+
+DRIVE-C test day by class, before → shipped:
+
+| Class | Before | Shipped |
+|---|---|---|
+| motion blur | 5 | 10 |
+| glare | 5 | 7 |
+| underexposure | 2 | 6 |
+| low light | 1 | 5 |
+| defocus | 0 | 0 |
+| occlusion | 0 | 0 |
+
+What this supports:
+- **On unbiased data (Oxford), the gain is small but real:** one more passed check on fresh, and about 5% fewer detector false alarms. With the verifier, the false-alarm rates are unchanged.
+- **DRIVE-C test improved, but it is seen data**, so it is not independent evidence. The clearest mechanism: `obstruction_s` 1.2 removed the clean-scene obstruction alarm on S10.
+- **Unchanged:** night (normal night driving still alarms as underexposure), defocus on test, and occlusion.
+
+**Cost of measuring detail at 640 px** (Graviton t4g.small, one thread, OpenCV 5.0.0): analysis goes from 1.46 to 3.38 ms per frame on a 1280×960 Oxford frame, and from 1.91 to 3.62 ms on a 1280×720 DRIVE-C frame. That is about 1.8 ms more per frame, roughly 2.5% of one core per camera at the replay's ~14 frames per second.
+
+**Lesson:** five daytime dev scenes are too few to select rule changes. Choices without a measured mechanism (the low-light rule, a looser blur ratio) fit dev and broke on test. The defaults now shipped are this setup.
+
+
+Evidence: `docs/evidence/tuning/rounds.json` (one entry per round) and `round*.json` (per-clip results).
+
+## 6c. Plan: self-calibrating detector + diagnostic autopilot (Ideas 2 + 1)
+
+**Why:** tonight's real gains came from diagnosis, not search: the frame-by-frame paired comparison found the detail-scale problem, one-change ablation found the S09/S10 causes, and per-frame traces explained the occlusion misses. Those were done by hand. Both validation failures came from fixed values meeting a scene with a different normal.
+
+**Idea 2: self-calibrating thresholds (pattern-based).**
+- Each camera learns the normal **spread** of its brightness ratio and its detail ratio while healthy: an exponentially weighted mean absolute deviation of the log ratio.
+- Underexposure and blur fire when the ratio drops by more than `adaptive_k` × spread, and by at least a minimum effect (`adaptive_floor_dark`, `adaptive_floor_blur`). A busy scene widens its own band; a calm scene narrows it.
+- `adaptive_k` = 0 keeps today's fixed ratios.
+- **Night regime:** night clips alarmed at 0.3 s from the absolute darkness rule. New setting `dark_at_start_alarm`: when false, a camera that has been dark since its first frame is treated as its own normal, and the relative rules still apply after warm-up. Cost, stated up front: a camera that is broken-dark from power-on is not flagged.
+- **Not planned:** CUSUM for occlusion. Round 4 showed that settings loose enough to accumulate DRIVE-C's flicker fire on clean scenes first.
+
+**Idea 1: diagnostic autopilot.** An LLM agent (Nebius, temperature 0) works on the tuning data only (Oxford tuning + DRIVE-C dev), with OpenCV 5 tools:
+- `evaluate(settings)`: per class and per scene, with the failing clips listed.
+- `explain_failure(clip, settings)`: a per-frame trace around onset showing which rule fired or was blocked.
+- `paired_compare(fault)`: per-tile change in detail, brightness, saturation and noise against the clean original, same frames.
+- `ablate(settings, name, values)`: one change at a time.
+- `propose(settings, rationale)`: written as a **pending proposal**. It is applied only after explicit human approval (`--approve`).
+
+Every tool result and decision goes into a trace file.
+
+**Fair comparison, same evaluation budget:** agent with diagnostic tools, agent with only `evaluate`, and seeded random search.
+
+**Validation, once, after both:**
+- a **new Oxford holdout** (new seeds, never inspected)
+- Oxford fresh
+- DRIVE-C test (seen since section 6b, so labelled that way)
+
+The shipped defaults change only if the agent-approved settings beat the current defaults on the unseen Oxford holdout without losing DRIVE-C test.
+
+**Reporting:** a before/after table per step in this section and in `docs/evidence/tuning/rounds.json`.
+
+### 6c results so far: comparison on tuning data (budget 16 evaluations per arm)
+
+| Arm | DRIVE-C dev caught | False alarms | Oxford failed | Settings found |
+|---|---|---|---|---|
+| Baseline (shipped defaults) | 77/150 | 0 | 0 | `adaptive_k` 0 (fixed ratios) |
+| Agent + diagnostic tools | 101/150 | 0 | 0 | `adaptive_k` 3, floors 0.20 / 0.40 |
+| Agent, `evaluate` only | 102/150 | 0 | 0 | `adaptive_k` 3, floors 0.17 / 0.37 |
+| Random search, seeds 1 / 2 / 3 | 103 / 100 / 83 (mean 95) | 0 | 0 | seed 1: `adaptive_k` 2.15 |
+
+- **The self-calibrating detector (Idea 2) is the lever:** every arm found that it lifts DRIVE-C dev from 77 to about 101.
+- **The diagnostic tools (Idea 1) did not beat `evaluate` only or random search at this budget.**
+  - The tools agent's trace shows the intended loop: it called `paired_compare` on 4 fault types, then ablated `adaptive_k` and found that 3 works.
+  - It then repeated calls after its budget ran out.
+- **Fragility:** the `evaluate`-only floors sit on a knife edge. A dark floor of 0.17 gives 0 false alarms; 0.16 gives 31. The tools proposal has more margin: 0.15 gives 31, and 0.25 gives 95 caught.
+- **Run 1 had two bugs of ours**, kept as `docs/evidence/autopilot/*-run1.json`:
+  - the `evaluate`-only arm could call tools it was not offered
+  - settings had no descriptions, so neither agent tried `adaptive_k`, and both proposed the defaults
+  
+  Both bugs were fixed before the rerun above.
+
+Evidence: `docs/evidence/autopilot/` (full traces).
+
+### 6c validation (run once)
+
+| Candidate | Oxford fresh2 (**unbiased**): failed, detector FA/h, verifier FA/h | DRIVE-C test day (seen) | DRIVE-C test night | Clean night scenes alarming |
+|---|---|---|---|---|
+| **Shipped defaults** | 4/18, 238, **0.0** | **28/60** | 0/90 | 3/3 |
+| Shipped + night policy | 4/18, 238, n/a (identical detector) | 28/60 | **29/90** | **1/3** |
+| Agent proposal (`adaptive_k` 3) | 4/18, 271, **32.5** | 18/60 | 0/90 | 3/3 |
+| Agent proposal + night policy | n/a | 18/60 | 26/90 | 1/3 |
+| Random seed 1 | 5/18, 282, 10.8 | n/a | n/a | n/a |
+
+- **Self-calibration, as the agents tuned it, is rejected.** It catches nothing extra on unseen Oxford clips and adds verifier-checked false alarms (0 → 32.5/h). On DRIVE-C test, day footage drops from 28 to 18.
+  - **Mechanism:** the self-calibrated blur floor (about 33% detail loss) fires on the washed-out detail of glare. The fixed rule needs 65%.
+  - It overfit DRIVE-C dev, the same pattern as round 4. The code stays, off by default.
+- **The autopilot is a safety loop here, not an optimiser.** It found a change that looked better on tuning data (77 → 101). Validation exposed it, and the human-approval gate kept it out of the defaults. It did not beat random search.
+- **The night policy helps at night, with a stated cost.**
+  - Night: 0 → 29/90 caught, and clean night scenes alarming drop from 3 to 1.
+  - Oxford is unchanged.
+  - Cost: a camera dark from power-on (DRIVE-C "alone" protocol, underexposure + low light) is caught 4/100 times instead of 32/100.
+  - Shipping it is a product decision, left to the user.
+
+**Decisions after 6c validation:**
+- **Cleanup:** code that was tried and not adopted was removed: the Tenengrad and Laplacian ksize 3 operators, the aspect option, the accumulated obstruction score, and the low-light rule with its per-frame saturation and noise measurements. Recomputed measurements match the pre-cleanup cache exactly (maximum difference 0 over 40 frames on Graviton). The evidence files still record each attempt.
+- **Night policy: shipped (user decision).** `dark_at_start_alarm` is now off by default. Footage reports carry `dark_since_start`, and the UI tells the operator to verify the camera if the footage is not night.
+- **Targeted self-calibration attempt.** Validation put the failure in the blur half only; the brightness half added no false alarms on fresh2. Candidate:
+  - **Brightness:** self-calibrating (`adaptive_k` 3, darkness floor 0.2).
+  - **Blur:** never looser than the validated fixed rule (floor 1.05, the log of 1/0.35), so it can only get stricter on busy scenes.
+  - **Tuning data:** 95/150 (shipped 77); low light 11 → 24, underexposure 15 → 20.
+  - **Next:** validated once on **fresh3**, new Oxford seeds never inspected, plus DRIVE-C test (seen). It ships only if it beats the shipped defaults on fresh3.
+
+**Result of the targeted attempt.** The fresh3 numbers were measured on the Mac with the same OpenCV 5.0.0, because the upload to EC2 fell to 25 KB/s; earlier runs gave identical alarms on Mac and Graviton for this detector. DRIVE-C was measured on Graviton.
+
+| | Oxford fresh3 (**unbiased**): failed, detector FA/h, verifier FA/h | DRIVE-C dev | DRIVE-C test day (seen) | DRIVE-C test night (seen) |
+|---|---|---|---|---|
+| Shipped defaults (night policy on) | 4/18, 244, 0.0 | 77/150 | 28/60 | 29/90 |
+| Self-calibrating brightness, blur never looser | 4/18, 244, 0.0 (identical) | 95/150 | 35/60 | 15/90 |
+
+- **Not shipped.** The rule set beforehand required beating the shipped defaults on fresh3, and the candidate ties. Self-calibration stays in the code, off by default.
+- **"Blur never looser" removed the new false alarms**, so the failure mechanism found in 6c was the right one.
+- **Oxford's synthetic faults are strong enough** that the fixed rules already catch them, so self-calibration has nothing to add there.
+- **On DRIVE-C test the result is mixed.** Day footage gains 7 clips. Night loses 14, because a clean night scene (S08) raises a false obstruction alarm before the fault starts.
+- **Honest conclusion:** per-camera self-calibration is the right idea for varied real footage, but our data cannot show it helps. Showing that needs more, and more varied, real recordings.
+
 ## 7. Deployment, operations and other changes
 
 | | Before | After | Evidence |
 |---|---|---|---|
 | Public site (Lambda, arm64, OpenCV 5.0.0) | Old detector: the sky made glare fire constantly; History held Mac-measured runs | New detector + verifier + footage gate; History seeded from the **AWS-measured** database; QA round 4: no constant sky-glare alarm on a live replay; QA round 6: verifier reports "DNN engine: new" | QA rounds 4 and 6 |
+| Public site after joint tuning (2026-10-25) | Detail at 320 px, darkness alarm on night footage | Redeployed with detail at 640 px, `obstruction_s` 1.2, the night policy and the footage "dark since the first frame" note. The package was built on EC2 and uploaded to S3 with a one-object presigned URL, because the operator's uplink was about 29 KB/s. Data and History are unchanged. Lambda reports OpenCV 5.0.0 on aarch64, read-only. **QA round 8 (real uploads):**<br>- clean night S07: no alarm, with the "dark since the first frame" note<br>- clean night S06: one brief low-brightness alarm at 3.7 s. This is the documented remaining clean-night false alarm; S06 is not dark from its first frame<br>- clean day S02: no alarm<br>- blur fault clip: blur segment at 2.2–3.7 s<br>- live replay: no constant sky glare, glare only on the glare clip, sky obstruction dismissed in about 2 s<br>- History intact, no console errors, no em dashes<br>The stale "one recorded drive" text QA surfaced was fixed and redeployed | QA round 8 |
 | Observability | None | CloudWatch EMF metrics (`COOLPILOT_METRICS=1`) for replays, live sessions, experiments and footage, plus a `coolpilot` dashboard; first replay metrics confirmed in CloudWatch | QA round 4 |
 | Live camera input | None | Operator-configured `VideoCapture` sources (names only, never client URLs), reconnect with backoff, files paced to their frame rate. **Not tested on a real camera** | `tests/test_live.py` |
 | COOL | Not prepared | `docs/COOL.md` (facts, paths, evidence checklist), COOL-mode `remote_setup.sh`, generation-aware `launch.sh`, runtime detection with a test. **Not run on COOL** (account limitation) | `docs/COOL.md` |
@@ -213,6 +416,9 @@ Bugs found and fixed during this work (most by the QA agent):
 | OpenCV 4.13 vs 5.0 on Graviton | `docs/evidence/aws/dnn-4x.json`, `dnn-standard.json`, `profile-4x-vs-5x.txt` |
 | Build and tests on Graviton | `docs/evidence/aws/build-standard.txt`, `tests-standard.txt` |
 | DRIVE-C (independent) | `docs/evidence/aws/drivec.json` |
+| Night-fix attempt (no effect, reverted) | `docs/evidence/aws/drivec-nightfix.json` |
+| Joint tuning rounds (Oxford + DRIVE-C dev) | `docs/evidence/tuning/rounds.json`, `round*.json`, grids `grid*.json` |
+| Local DRIVE-C sample + randomized faults | `data/drivec_sample/`, `data/camera_health/drivec-sample/` (gitignored; rebuild with `scripts/generate_drivec_sample.py`) |
 
 ## Pending (this file will be updated)
 
@@ -223,4 +429,6 @@ Bugs found and fixed during this work (most by the QA agent):
 - [x] Recommendation 2: S3 → Lambda footage gate, alarm-delay curves in `verify_eval`
 - [x] Recommendation 2: DRIVE-C evaluation (independent dataset), on Graviton
 - [x] Alarm-delay curves (2 s / 10 s / 60 s), fresh held-out (`docs/evidence/delay-curves-fresh.json`; OpenCV 5.0 on Mac, whose none/rule arms matched Graviton exactly)
+- [x] Joint tuning rounds 0–4, validation (failed on DRIVE-C test), shipped setup re-validated (section 6b)
+- [x] Section 6c: self-calibrating detector + diagnostic autopilot, comparison, validation (night policy shipped; self-calibration not shipped)
 - [ ] Recommendation 3 (COOL): standard vs COOL on the same Graviton host, when the account is ready

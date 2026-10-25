@@ -1,0 +1,16 @@
+{
+ "source": "autopilot evaluate proposal (pending human approval)",
+ "thresholds": {
+  "adaptive_k": 3,
+  "adaptive_floor_dark": 0.17,
+  "adaptive_floor_blur": 0.37,
+  "adaptive_window_s": 10,
+  "dark_ratio": 0.65,
+  "blur_ratio": 0.35,
+  "obstruction_s": 1.2,
+  "obstruction_ratio": 0.35,
+  "glare_rise": 0.25,
+  "glare_tiles": 2,
+  "hysteresis": 0.3
+ }
+}

@@ -63,9 +63,19 @@ def fields(height, width, recipe=None, kind=None):
 
 
 def random_recipe(kind, duration_s, rng):
-    """One randomized fault for a clip of duration_s: onset, length 2-6 s, strength x0.7-1.3, position."""
-    length = float(rng.uniform(2.0, min(6.0, duration_s - 4.0)))
-    start = float(rng.uniform(1.5, duration_s - 1.5 - length))
+    """One randomized fault for a clip of duration_s: onset, length 2-6 s, strength x0.7-1.3, position.
+
+    Clips shorter than 10 s (e.g. DRIVE-C's 4.3 s) get a 1.0-2.0 s fault after a 1.3 s warm-up and at
+    least 0.8 s of recovery. Longer clips keep the original draw, so existing seeds reproduce exactly.
+    """
+    if duration_s < 10:
+        if duration_s < 4.0:
+            raise ValueError("Clips shorter than 4 s leave no room for warm-up, fault and recovery.")
+        length = float(rng.uniform(1.0, min(2.0, duration_s - 2.6)))
+        start = float(rng.uniform(1.3, duration_s - 0.8 - length))
+    else:
+        length = float(rng.uniform(2.0, min(6.0, duration_s - 4.0)))
+        start = float(rng.uniform(1.5, duration_s - 1.5 - length))
     recipe = {"start_s": round(start, 3), "end_s": round(start + length, 3), "scale": round(float(rng.uniform(0.7, 1.3)), 3)}
     if kind in ("glare", "obstruction"):
         cx, cy = PARAMETERS[kind]["centre_xy"]

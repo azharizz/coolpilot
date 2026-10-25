@@ -1,0 +1,10 @@
+{
+ "note": "defaults before joint tuning (with --detail-width 320)",
+ "thresholds": {
+  "dark_ratio": 0.55,
+  "blur_ratio": 0.35,
+  "obstruction_s": 0.5,
+  "blur_variance": 60,
+  "lowlight_dark_ratio": 0
+ }
+}

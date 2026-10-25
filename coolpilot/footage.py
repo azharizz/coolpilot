@@ -5,8 +5,9 @@ segments where the camera itself was the problem (black, frozen, blurred, dark, 
 obstruction). Unpaced: every frame is analysed once, as fast as the host allows. Obstruction
 suspicions go through the rule verifier (coolpilot.verify) before they are reported.
 
-Not a safety monitor. Calibrated on one recorded drive; other cameras, night, rain or real lens
-dirt are unvalidated. The caller deletes the file; nothing here stores it.
+Not a safety monitor. Calibrated on one Oxford drive and DRIVE-C dev scenes; rain and real lens dirt
+are unvalidated, and footage dark from its first frame is treated as night (a camera dark from power-on
+is not flagged). The caller deletes the file; nothing here stores it.
 """
 import base64
 import time
@@ -113,8 +114,11 @@ def screen_frames(frames, fps: float, total: int, emit=None, width: int = 640, t
     return {"type": "report", "frames": index, "fps": round(fps, 2), "duration_s": round(duration, 2),
             "resolution": list(reversed(frame_shape)) if frame_shape else None,
             "segments": segments, "verifier_decisions": decisions,
-            "flagged_seconds": round(min(flagged, duration), 2), "processing_s": round(wall, 2), "cpu_s": round(cpu_s, 2),
+            "flagged_seconds": round(min(flagged, duration), 2),
+            # Dark from its first frame: night driving, or a camera dark since power-on. Not raised as a fault.
+            "dark_since_start": monitor.dark_since_start and index > 0, "processing_s": round(wall, 2), "cpu_s": round(cpu_s, 2),
             "speed_x_realtime": round(duration / wall, 1) if wall else None,
             "opencv": cv2.__version__,
-            "scope": "Screens for camera-side problems only. Calibrated on one recorded drive with synthetic faults; "
-                     "not validated for other cameras, night, rain or real lens dirt, and never a safety judgement."}
+            "scope": "Screens for camera-side problems only. Calibrated on one Oxford drive and DRIVE-C dev scenes with synthetic faults. "
+                     "Footage dark from its first frame is treated as night, not a fault. Not validated for rain or real lens dirt, "
+                     "and never a safety judgement."}

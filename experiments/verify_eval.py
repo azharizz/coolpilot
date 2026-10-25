@@ -134,14 +134,16 @@ def main():
     ap.add_argument("--arms", nargs="+", default=["none", "rule"], choices=["none", "rule", "agent"])
     ap.add_argument("--width", type=int, default=640)
     ap.add_argument("--out", type=Path)
+    ap.add_argument("--params", type=Path, help="thresholds JSON; default = the frozen CameraThresholds defaults")
     args = ap.parse_args()
+    thresholds = CameraThresholds(**(json.loads(args.params.read_text())["thresholds"] if args.params else {}))
     dataset = load(args.dataset, verify=True)
     clips = [c for c in dataset["clips"] if c["split"] == args.split]
     cv2.setNumThreads(1)
     cached = []
     for clip in clips:
         capture = cv2.VideoCapture(clip["file"]); fps = capture.get(cv2.CAP_PROP_FPS) or 16; capture.release()
-        episodes, found = suspicions(clip, args.width, CameraThresholds())
+        episodes, found = suspicions(clip, args.width, thresholds)
         cached.append((clip, episodes, found, fps))
     print(f"{len(clips)} {args.split} clips, {sum(len(f) for *_, f, _ in cached)} obstruction suspicions", file=sys.stderr)
     report = {"dataset": args.dataset, "split": args.split, "opencv": cv2.__version__,

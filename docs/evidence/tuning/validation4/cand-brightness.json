@@ -1,0 +1,1 @@
+{"source": "targeted: self-calibrating brightness, blur never looser than fixed 0.35", "thresholds": {"adaptive_k": 3, "adaptive_floor_dark": 0.2, "adaptive_floor_blur": 1.05}}

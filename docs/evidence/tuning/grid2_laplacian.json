@@ -1,0 +1,1 @@
+{"obstruction_ratio": [0.35], "obstruction_s": [1.2, 1.6, 2.0], "dark_ratio": [0.75, 0.8, 0.85], "blur_quantile": [0.5, 0.35, 0.25], "blur_ratio": [0.35, 0.5], "blur_variance": [40, 60, 90]}

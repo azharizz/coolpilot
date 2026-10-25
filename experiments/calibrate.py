@@ -37,7 +37,7 @@ GRID = {
 LIMIT = {"max_detection_s": 2.0, "max_recovery_s": 2.0}
 
 
-def measure(clip, width):
+def measure(clip, width, **options):
     """Decode a clip once; return [(pts_s, measurements)] for every frame."""
     capture = cv2.VideoCapture(clip["file"])
     frames = []
@@ -46,7 +46,7 @@ def measure(clip, width):
             ok, frame = capture.read()
             if not ok:
                 break
-            frames.append((capture.get(cv2.CAP_PROP_POS_MSEC) / 1000, analyze(frame, width)))
+            frames.append((capture.get(cv2.CAP_PROP_POS_MSEC) / 1000, analyze(frame, width, **options)))
     finally:
         capture.release()
     return frames
@@ -86,6 +86,7 @@ def main():
     ap.add_argument("--params", type=Path, help="evaluate these thresholds (JSON from a previous sweep) instead of sweeping")
     ap.add_argument("--defaults", action="store_true", help="evaluate the current CameraThresholds defaults")
     ap.add_argument("--out", type=Path)
+    ap.add_argument("--detail-width", type=int, default=640, help="320 reproduces the detector before joint tuning")
     args = ap.parse_args()
     if args.split == "validation" and not (args.params or args.defaults):
         ap.error("Sweeping on the validation split would leak it into calibration. Use --params or --defaults.")
@@ -94,7 +95,7 @@ def main():
     if not clips:
         ap.error(f"No {args.split} clips in {args.dataset}.")
     cv2.setNumThreads(1)
-    cached = [(c, measure(c, args.width)) for c in clips]
+    cached = [(c, measure(c, args.width, detail_width=args.detail_width)) for c in clips]
     print(f"cached {sum(len(f) for _, f in cached)} frames from {len(clips)} {args.split} clips", file=sys.stderr)
     if args.params or args.defaults:
         chosen = json.loads(args.params.read_text())["thresholds"] if args.params else {}

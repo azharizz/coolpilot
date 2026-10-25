@@ -1,0 +1,210 @@
+{
+ "protocol": "Tuning data only: Oxford centre-camera tuning clips + DRIVE-C dev scenes S01-S05 (daytime). Detector only, no verifier. Constraint: Oxford tuning failed checks <= defaults (0/6). Validation (Oxford held-out cameras, DRIVE-C test S06-S10) runs once after the last round. Graviton t4g.small, OpenCV 5.0.0. Script: experiments/joint_calibrate.py",
+ "rounds": [
+  {
+   "round": 0,
+   "change": "baseline: current CameraThresholds defaults",
+   "file": "round0.json",
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 1,
+   "drivec_dev_passed": "39/150",
+   "drivec_dev_false_alarms": 62,
+   "per_class": {
+    "motion_blur": "15/25",
+    "glare_flare": "13/25",
+    "underexposure": "6/25",
+    "low_light": "2/25",
+    "defocus_blur": "0/25",
+    "lens_occlusion": "3/25"
+   }
+  },
+  {
+   "round": 1,
+   "change": "values only: 324 combos of obstruction_ratio, obstruction_s, scene_keep_ratio, blur_quantile (new), blur_ratio, dark_ratio",
+   "file": "round1.json",
+   "runtime_s": 1100,
+   "selected": {
+    "obstruction_s": 1.2,
+    "dark_ratio": 0.75
+   },
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 1,
+   "drivec_dev_passed": "82/150",
+   "drivec_dev_false_alarms": 0,
+   "per_class": {
+    "motion_blur": "25/25",
+    "glare_flare": "23/25",
+    "underexposure": "17/25",
+    "low_light": "17/25",
+    "defocus_blur": "0/25",
+    "lens_occlusion": "0/25"
+   },
+   "notes": "Both winners at grid edge. dark_ratio 0.75 risks shadow/tunnel false alarms (check on held-out). Longer obstruction_s also delays real occlusion past 2 s. Only 36/324 combos kept Oxford at 0/6."
+  },
+  {
+   "round": 2,
+   "change": "code: detail operator (Laplacian ksize 1 / ksize 3 / Tenengrad via KleidiCV Sobel path) and aspect-preserving resize; values: obstruction_s, dark_ratio, blur_quantile, blur_ratio, blur_variance (162 combos per variant)",
+   "files": [
+    "round2_laplacian_squashed.json",
+    "round2_laplacian_aspect.json",
+    "round2_laplacian3_aspect.json",
+    "round2_tenengrad_aspect.json"
+   ],
+   "runtime_s": 2560,
+   "variants": {
+    "laplacian_squashed": "90/150, 108/162 combos keep Oxford 0/6",
+    "laplacian_aspect": "90/150, identical",
+    "laplacian3_aspect": "90/150, only 36/162 keep Oxford 0/6",
+    "tenengrad_aspect": "79/150, no combo keeps Oxford 0/6 (motion blur 10/25)"
+   },
+   "selected": {
+    "variant": "laplacian_squashed (unchanged code)",
+    "dark_ratio": 0.8,
+    "blur_ratio": 0.5,
+    "blur_variance": 40
+   },
+   "oxford_failed": "0/6",
+   "oxford_false_alarms": 1,
+   "drivec_dev_passed": "90/150",
+   "drivec_dev_false_alarms": 0,
+   "per_class": {
+    "motion_blur": "25/25",
+    "glare_flare": "23/25",
+    "underexposure": "21/25",
+    "low_light": "21/25",
+    "defocus_blur": "0/25",
+    "lens_occlusion": "0/25"
+   },
+   "notes": "No code change helped; not adopted. +8 is dark_ratio alone (blur_ratio/blur_variance tie). dark_ratio now alarms on a 20% drop: highest overfitting risk, capped at 0.8 from here. Paired analysis (same frames clean vs corrupted): defocus invisible at 320 px (s5 0.76) but 0.40 at 640 and 0.12 at 1280; occlusion lowers up to 7 tiles and softens the rest, so the hard-coded 6-tile limit and scene_keep_ratio block it."
+  },
+  {
+   "round": 3,
+   "change": "code: obstruction_max_tiles setting (was hard-coded 6) + scene_keep_ratio in grid (3A, 320 px, 12 combos); detail measured at 640 px (3B, 432 combos)",
+   "files": [
+    "round3a_320.json",
+    "round3b log only: no candidate passed the strict guard"
+   ],
+   "runtime_s": 1630,
+   "result_3a": "90/150, identical to round 2: the tile limit was not the binding constraint",
+   "result_3b": "best 97/150 (defocus 0 -> 7/25), Oxford 1/6: only centre_obstruction fails (detected 0.44 s, clears early)",
+   "oxford_failed": "0/6 (3A) / 1/6 (3B)",
+   "drivec_dev_passed": "90/150 (3A) / 97/150 (3B)",
+   "drivec_dev_false_alarms": 0,
+   "notes": "Occlusion diagnosis: DRIVE-C's blob partly covers tiles, so each tile's ratio flickers around the limit and the continuous-low clock resets; at s5 the whole view softens and blur fires on and off, which suppresses obstruction.",
+   "decision_after_round": "User: one setup for all footage. Guard now ignores centre_obstruction (documented before this work as a sky coincidence: the clean reference flags the same tile at the same time); other 5 checks must pass and Oxford false alarms still count. Ties go to the candidate closest to the defaults."
+  },
+  {
+   "round": 4,
+   "change": "code: accumulated per-tile obstruction score (obstruction_leak), low-light rule (darker AND saturation or Immerkaer noise rise), detail at 640 px; guard excludes centre_obstruction; 288 combos",
+   "files": [
+    "round4_640.json",
+    "round4_final_candidate.json"
+   ],
+   "runtime_s": 1108,
+   "selected": {
+    "detail_width": 640,
+    "dark_ratio": 0.65,
+    "lowlight_dark_ratio": 0.9,
+    "lowlight_saturation_rise": 1.4,
+    "lowlight_noise_rise": 1.15,
+    "obstruction_s": 1.2,
+    "obstruction_max_tiles": 6,
+    "obstruction_leak": 0,
+    "blur_ratio": 0.5,
+    "blur_variance": 30
+   },
+   "oxford_failed": "0/5 guarded (centre_obstruction fails, excluded)",
+   "oxford_false_alarms": 1,
+   "drivec_dev_passed": "97/150",
+   "drivec_dev_false_alarms": 0,
+   "per_class": {
+    "motion_blur": "25/25",
+    "glare_flare": "23/25",
+    "underexposure": "18/25",
+    "low_light": "24/25",
+    "defocus_blur": "7/25",
+    "lens_occlusion": "0/25"
+   },
+   "notes": "Tie (97) with dark_ratio 0.8 and no low-light rule; the tie-break (closest to defaults) picked 0.8, overridden on purpose: specific evidence (saturation/noise) instead of a broad 20% darkening threshold, the goal stated before the round. Cost: 3 plain s2 underexposure clips (22% darker, indistinguishable from a cloud). Accumulated obstruction score not adopted: settings loose enough to catch DRIVE-C occlusion fire on the clean part first (-1.7 s, -1.5 s, -0.7 s), and s5 occlusion is reported as blur within 0.5 s. Remaining misses are at the signal limit (defocus s1-s3 >=0.97 of clean detail at 640; underexposure s1 0.89). Tuning stopped; settings frozen as CameraThresholds defaults."
+  }
+ ],
+ "frozen": "after round 4; validation run once on Oxford held-out (original + fresh) and DRIVE-C test, results in docs/evidence/tuning/validation/",
+ "validation_1": {
+  "settings": "round-4 freeze",
+  "files": "docs/evidence/tuning/validation/",
+  "oxford_holdout": {
+   "before": "5/18 failed, 283/h (detector), 10.9/h (verifier)",
+   "after": "5/18, 272/h, 10.9/h"
+  },
+  "oxford_fresh": {
+   "before": "11/36 failed, 232/h (detector), 0/h (verifier)",
+   "after": "10/36, 221/h, 0/h"
+  },
+  "drivec_test": {
+   "before": "day 13/60, night 0/90, clean day scenes alarming 1/2 (S10 obstruction)",
+   "after": "day 0/60, night 0/90, clean day scenes alarming 2/2"
+  },
+  "verdict": "FAILED on DRIVE-C test: overfit to the 5 dev scenes. Oxford held.",
+  "diagnosis": "One change at a time on the clean test scenes: S09 'blur' comes from blur_ratio 0.5 at the 640 scale (0.35: no alarm); S10 'underexposure' comes from the low-light rule (off: no alarm). From here DRIVE-C test counts as seen.",
+  "decision": "User: drop the two failed choices (low-light rule off, blur_ratio back to 0.35); keep detail at 640 and obstruction_s 1.2; no re-tuning on dev; re-validate once and label DRIVE-C test numbers 'after seeing test'."
+ },
+ "validation_2_shipped": {
+  "settings": "shipped defaults: round-4 freeze minus the low-light rule and blur_ratio 0.5",
+  "files": "docs/evidence/tuning/validation2/",
+  "oxford_holdout": "5/18 failed; 272/h detector, 10.9/h with verifier (before: 5/18, 283, 10.9)",
+  "oxford_fresh": "10/36 failed; 221/h detector, 0/h with verifier (before: 11/36, 232, 0)",
+  "drivec_dev": "77/150 with verifier (before 65/150); tuning data",
+  "drivec_test_seen": "day 28/60 (before 13/60), night 0/90 (before 0/90), clean day scenes alarming 0/2 (before 1/2). SEEN: the two fixes were chosen after looking at test.",
+  "verdict": "Oxford (unbiased): small real gain (+1 check on fresh, about 5% fewer detector false alarms; verifier results unchanged). DRIVE-C test improved but is not independent evidence."
+ },
+ "section_6c_comparison": {
+  "data": "tuning only (cache: Oxford tuning + DRIVE-C dev), budget 16 evaluations per arm, OpenCV 5.0.0 on Graviton",
+  "baseline_shipped": "77/150, 0 false alarms, Oxford 0 failed",
+  "agent_tools": "101/150, 0 FA, Oxford 0 (adaptive_k 3, floors 0.20/0.40); used paired_compare x4, explain_failure x1, ablate; then repeated calls after the budget ran out",
+  "agent_evaluate_only": "102/150, 0 FA, Oxford 0 (adaptive_k 3, floors 0.17/0.37); knife edge: floor 0.16 -> 31 false alarms",
+  "random_seeds_1_2_3": "103 / 100 / 83 (mean 95), 0 FA, Oxford 0",
+  "run1_bugs": "run 1 (files *-run1.json): the evaluate-only arm could call unoffered tools, and settings had no descriptions so neither agent tried adaptive_k; both proposed the defaults (77). Fixed, then rerun.",
+  "reading": "Self-calibration (Idea 2) is the lever on tuning data (77 -> ~101). Diagnostic tools (Idea 1) did not beat evaluate-only or random search at this budget."
+ },
+ "section_6c_validation": {
+  "files": "docs/evidence/tuning/validation3/",
+  "oxford_fresh2_unbiased": {
+   "shipped": "4/18 failed, 238/h detector, 0.0/h verifier",
+   "agent_tools_and_evaluate": "4/18, 271/h, 32.5/h (blur alarms during glare clips)",
+   "random1": "5/18, 282/h, 10.8/h",
+   "shipped_plus_night_policy": "4/18, 238/h (identical to shipped)"
+  },
+  "drivec_test_seen": {
+   "shipped": "day 28/60, night 0/90, clean night alarming 3/3",
+   "shipped_night": "day 28/60, night 29/90, clean night alarming 1/3",
+   "agent_tools": "day 18/60, night 0/90",
+   "agent_tools_night": "day 18/60, night 26/90"
+  },
+  "night_policy_cost": "camera dark from power-on (DRIVE-C 'alone' protocol, underexposure + low light): 32/100 caught -> 4/100",
+  "verdict": "Self-calibration as tuned overfit DRIVE-C dev: worse on unbiased Oxford fresh2 and on DRIVE-C test; rejected, off by default. Mechanism: the self-calibrated blur floor (about 33% detail loss) fires on glare's washed-out detail, where the fixed rule needs 65%. The approval gate kept it out. The night policy helps night (0 -> 29/90) at a stated cost; shipping it is the user's decision."
+ },
+ "night_policy_shipped": "User decision: dark_at_start_alarm = False is now the default. Footage reports carry dark_since_start and the UI says 'dark since the first frame ... verify'. Documented gap: a camera dark from power-on is not raised as a fault.",
+ "section_6c_targeted_attempt": {
+  "why": "Validation located the failure in the blur half only (self-calibrated blur floor fires on glare). Brightness half added no false alarms on fresh2.",
+  "candidate": {
+   "adaptive_k": 3,
+   "adaptive_floor_dark": 0.2,
+   "adaptive_floor_blur": 1.05,
+   "note": "1.05 = -ln(0.35): blur is never looser than the validated fixed rule, only stricter on busy scenes. No search; values from the agent's proposal plus the fixed blur rule."
+  },
+  "tuning_score": "95/150 DRIVE-C dev (shipped 77): low light 24, underexposure 20, defocus 3; 0 false alarms",
+  "validation": "fresh3: new Oxford seeds 5101/5202/5303, never inspected; plus DRIVE-C test (seen). Ships only if it beats the shipped defaults on fresh3, with user approval.",
+  "result": {
+   "files": "docs/evidence/tuning/validation4/ (fresh3 measured on the Mac with OpenCV 5.0.0 because the upload to EC2 fell to 25 KB/s; DRIVE-C on Graviton)",
+   "oxford_fresh3_unbiased": {
+    "shipped": "4/18, 244/h detector, 0.0/h verifier",
+    "candidate": "4/18, 244/h, 0.0/h (identical)"
+   },
+   "drivec_seen": {
+    "shipped_night": "dev 77/150, test day 28/60, test night 29/90",
+    "candidate": "dev 95/150, test day 35/60, test night 15/90 (clean night S08 raises obstruction before onset)"
+   },
+   "decision": "Not shipped: the pre-stated rule required beating the shipped defaults on fresh3, and it ties. Self-calibration stays in the code, off by default."
+  }
+ }
+}

@@ -1,0 +1,12 @@
+{
+ "source": "autopilot random seed 1 (best random)",
+ "thresholds": {
+  "adaptive_k": 2.15,
+  "adaptive_floor_blur": 0.51,
+  "adaptive_window_s": 9.89,
+  "obstruction_ratio": 0.43,
+  "glare_rise": 0.18,
+  "glare_tiles": 3,
+  "hysteresis": 0.35
+ }
+}

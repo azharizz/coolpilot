@@ -1,0 +1,85 @@
+42 validation clips, 41 obstruction suspicions
+{"arm": "none", "failed_fault_checks": "10/36", "pass_by_fault": {"blackout": "6/6", "blur": "6/6", "freeze": "6/6", "glare": "2/6", "obstruction": "0/6", "underexposure": "6/6"}, "passed_at_delay_s": {"2": "26/36", "10": "28/36", "60": "28/36"}, "false_alarms": 40, "false_alarms_per_hour": 221.3, "suspicions": 41, "dismissed": 0, "escalated": 0, "max_latency_s": 0.0}
+   left_s1101_glare         t=  4.5 tiles=[1] truth=none         -> confirm: No verification.
+   left_s1101_obstruction   t=  4.5 tiles=[1] truth=none         -> confirm: No verification.
+   left_s1101_reference     t=  4.5 tiles=[1] truth=none         -> confirm: No verification.
+   left_s1101_underexposure t=  4.5 tiles=[1] truth=none         -> confirm: No verification.
+   left_s1102_blackout      t=  4.5 tiles=[1] truth=none         -> confirm: No verification.
+   left_s1102_obstruction   t=  4.5 tiles=[1] truth=none         -> confirm: No verification.
+   left_s1102_reference     t=  4.5 tiles=[1] truth=none         -> confirm: No verification.
+   left_s1102_underexposure t=  4.5 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3301_blackout      t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3301_blur          t=13.91 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3301_blur          t=15.63 tiles=[2] truth=none         -> confirm: No verification.
+   rear_s3301_freeze        t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3301_glare         t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3301_glare         t=13.45 tiles=[1, 2] truth=glare        -> confirm: No verification.
+   rear_s3301_obstruction   t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3301_obstruction   t=15.63 tiles=[2] truth=none         -> confirm: No verification.
+   rear_s3301_reference     t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3301_reference     t=15.63 tiles=[2] truth=none         -> confirm: No verification.
+   rear_s3301_underexposure t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3302_blackout      t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3302_blur          t=15.54 tiles=[2] truth=none         -> confirm: No verification.
+   rear_s3302_freeze        t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3302_glare         t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3302_obstruction   t= 8.18 tiles=[1] truth=obstruction  -> confirm: No verification.
+   rear_s3302_obstruction   t=15.63 tiles=[2] truth=none         -> confirm: No verification.
+   rear_s3302_reference     t= 8.18 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3302_reference     t=15.63 tiles=[2] truth=none         -> confirm: No verification.
+   rear_s3302_underexposure t= 9.73 tiles=[1] truth=none         -> confirm: No verification.
+   rear_s3302_underexposure t=15.54 tiles=[2] truth=none         -> confirm: No verification.
+   right_s2201_blackout     t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2201_freeze       t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2201_glare        t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2201_obstruction  t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2201_reference    t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2201_underexposure t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2202_blackout     t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2202_blur         t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2202_freeze       t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2202_obstruction  t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2202_reference    t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+   right_s2202_underexposure t= 4.56 tiles=[1] truth=none         -> confirm: No verification.
+{"arm": "rule", "failed_fault_checks": "10/36", "pass_by_fault": {"blackout": "6/6", "blur": "6/6", "freeze": "6/6", "glare": "2/6", "obstruction": "0/6", "underexposure": "6/6"}, "passed_at_delay_s": {"2": "26/36", "10": "27/36", "60": "27/36"}, "false_alarms": 0, "false_alarms_per_hour": 0.0, "suspicions": 41, "dismissed": 41, "escalated": 0, "max_latency_s": 0.143}
+   left_s1101_glare         t=  4.5 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   left_s1101_obstruction   t=  4.5 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   left_s1101_reference     t=  4.5 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   left_s1101_underexposure t=  4.5 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   left_s1102_blackout      t=  4.5 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   left_s1102_obstruction   t=  4.5 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   left_s1102_reference     t=  4.5 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   left_s1102_underexposure t=  4.5 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_blackout      t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_blur          t=13.91 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_blur          t=15.63 tiles=[2] truth=none         -> dismiss: Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_freeze        t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_glare         t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_glare         t=13.45 tiles=[1, 2] truth=glare        -> dismiss: Suspected tiles [1, 2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is 
+   rear_s3301_obstruction   t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_obstruction   t=15.63 tiles=[2] truth=none         -> dismiss: Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_reference     t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_reference     t=15.63 tiles=[2] truth=none         -> dismiss: Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3301_underexposure t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_blackout      t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_blur          t=15.54 tiles=[2] truth=none         -> dismiss: Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_freeze        t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_glare         t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_obstruction   t= 8.18 tiles=[1] truth=obstruction  -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_obstruction   t=15.63 tiles=[2] truth=none         -> dismiss: Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_reference     t= 8.18 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_reference     t=15.63 tiles=[2] truth=none         -> dismiss: Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_underexposure t= 9.73 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   rear_s3302_underexposure t=15.54 tiles=[2] truth=none         -> dismiss: Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2201_blackout     t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2201_freeze       t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2201_glare        t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2201_obstruction  t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2201_reference    t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2201_underexposure t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2202_blackout     t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2202_blur         t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2202_freeze       t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2202_obstruction  t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2202_reference    t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the
+   right_s2202_underexposure t= 4.56 tiles=[1] truth=none         -> dismiss: Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the

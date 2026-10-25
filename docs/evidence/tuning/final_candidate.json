@@ -1,0 +1,3 @@
+{"obstruction_ratio": [0.35], "obstruction_s": [1.2], "obstruction_max_tiles": [6], "obstruction_leak": [0], "scene_keep_ratio": [0.85],
+ "dark_ratio": [0.65], "lowlight_dark_ratio": [0.9], "lowlight_saturation_rise": [1.4], "lowlight_noise_rise": [1.15],
+ "blur_quantile": [0.5], "blur_ratio": [0.5], "blur_variance": [30]}

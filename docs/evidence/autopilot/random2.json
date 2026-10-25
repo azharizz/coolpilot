@@ -1,0 +1,1164 @@
+{
+ "arm": "random",
+ "budget": 16,
+ "evaluations_used": 16,
+ "wall_s": 161.2,
+ "baseline": {
+  "settings": {},
+  "oxford_failed_checks": [],
+  "oxford_false_alarms": 1,
+  "drivec_dev_passed": 77,
+  "of": 150,
+  "drivec_false_alarms": 0,
+  "passed_by_class_of_25": {
+   "glare_flare": 23,
+   "motion_blur": 25,
+   "defocus_blur": 3,
+   "low_light": 11,
+   "underexposure": 15
+  },
+  "passed_by_scene_of_30": {
+   "S01": 17,
+   "S02": 16,
+   "S03": 13,
+   "S04": 15,
+   "S05": 16
+  },
+  "failing_clips_sample": [
+   "S01_defocus_blur_s1",
+   "S01_defocus_blur_s2",
+   "S01_defocus_blur_s3",
+   "S01_defocus_blur_s4",
+   "S01_lens_occlusion_s1",
+   "S01_lens_occlusion_s2",
+   "S01_lens_occlusion_s3",
+   "S01_lens_occlusion_s4",
+   "S01_lens_occlusion_s5",
+   "S01_low_light_s1",
+   "S01_low_light_s2",
+   "S01_underexposure_s1",
+   "S01_underexposure_s2",
+   "S02_defocus_blur_s1",
+   "S02_defocus_blur_s2",
+   "S02_defocus_blur_s3",
+   "S02_defocus_blur_s4",
+   "S02_lens_occlusion_s1",
+   "S02_lens_occlusion_s2",
+   "S02_lens_occlusion_s3",
+   "S02_lens_occlusion_s4",
+   "S02_lens_occlusion_s5",
+   "S02_low_light_s1",
+   "S02_low_light_s2"
+  ],
+  "budget_left": 15
+ },
+ "proposal": {
+  "settings": {
+   "adaptive_floor_blur": 0.41,
+   "adaptive_window_s": 21.89,
+   "dark_ratio": 0.81,
+   "blur_ratio": 0.56,
+   "obstruction_s": 1.94
+  },
+  "rationale": "Best of 16 seeded random settings by the shared ranking."
+ },
+ "proposal_score": {
+  "settings": {
+   "adaptive_floor_blur": 0.41,
+   "adaptive_window_s": 21.89,
+   "dark_ratio": 0.81,
+   "blur_ratio": 0.56,
+   "obstruction_s": 1.94
+  },
+  "oxford_failed_checks": [],
+  "oxford_false_alarms": 1,
+  "drivec_dev_passed": 100,
+  "of": 150,
+  "drivec_false_alarms": 0,
+  "passed_by_class_of_25": {
+   "glare_flare": 23,
+   "motion_blur": 25,
+   "defocus_blur": 8,
+   "low_light": 23,
+   "underexposure": 21
+  },
+  "passed_by_scene_of_30": {
+   "S01": 21,
+   "S02": 22,
+   "S03": 17,
+   "S04": 20,
+   "S05": 20
+  },
+  "failing_clips_sample": [
+   "S01_defocus_blur_s1",
+   "S01_defocus_blur_s2",
+   "S01_defocus_blur_s3",
+   "S01_lens_occlusion_s1",
+   "S01_lens_occlusion_s2",
+   "S01_lens_occlusion_s3",
+   "S01_lens_occlusion_s4",
+   "S01_lens_occlusion_s5",
+   "S01_underexposure_s1",
+   "S02_defocus_blur_s1",
+   "S02_defocus_blur_s2",
+   "S02_defocus_blur_s3",
+   "S02_lens_occlusion_s1",
+   "S02_lens_occlusion_s2",
+   "S02_lens_occlusion_s3",
+   "S02_lens_occlusion_s4",
+   "S02_lens_occlusion_s5",
+   "S03_glare_flare_s1",
+   "S03_glare_flare_s2",
+   "S03_defocus_blur_s1",
+   "S03_defocus_blur_s2",
+   "S03_defocus_blur_s3",
+   "S03_defocus_blur_s4",
+   "S03_lens_occlusion_s1"
+  ],
+  "budget_left": 0
+ },
+ "status": "pending_human_approval",
+ "trace": [
+  {
+   "step": "baseline",
+   "result": {
+    "settings": {},
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 77,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 23,
+     "motion_blur": 25,
+     "defocus_blur": 3,
+     "low_light": 11,
+     "underexposure": 15
+    },
+    "passed_by_scene_of_30": {
+     "S01": 17,
+     "S02": 16,
+     "S03": 13,
+     "S04": 15,
+     "S05": 16
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_defocus_blur_s4",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S02_low_light_s1",
+     "S02_low_light_s2"
+    ],
+    "budget_left": 15
+   }
+  },
+  {
+   "step": 1,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_floor_blur": 0.22,
+    "obstruction_s": 1.41,
+    "glare_tiles": 4
+   },
+   "result": {
+    "settings": {
+     "adaptive_floor_blur": 0.22,
+     "obstruction_s": 1.41,
+     "glare_tiles": 4
+    },
+    "oxford_failed_checks": [
+     "centre_glare:glare"
+    ],
+    "oxford_false_alarms": 2,
+    "drivec_dev_passed": 71,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 17,
+     "motion_blur": 25,
+     "defocus_blur": 3,
+     "low_light": 11,
+     "underexposure": 15
+    },
+    "passed_by_scene_of_30": {
+     "S01": 15,
+     "S02": 16,
+     "S03": 12,
+     "S04": 15,
+     "S05": 13
+    },
+    "failing_clips_sample": [
+     "S01_glare_flare_s1",
+     "S01_glare_flare_s2",
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_defocus_blur_s4",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5"
+    ],
+    "budget_left": 14
+   }
+  },
+  {
+   "step": 2,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_window_s": 28.26,
+    "obstruction_ratio": 0.48,
+    "glare_tiles": 2
+   },
+   "result": {
+    "settings": {
+     "adaptive_window_s": 28.26,
+     "obstruction_ratio": 0.48,
+     "glare_tiles": 2
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 79,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 23,
+     "motion_blur": 25,
+     "defocus_blur": 3,
+     "low_light": 11,
+     "underexposure": 15,
+     "lens_occlusion": 2
+    },
+    "passed_by_scene_of_30": {
+     "S01": 17,
+     "S02": 18,
+     "S03": 13,
+     "S04": 15,
+     "S05": 16
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_defocus_blur_s4",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S02_low_light_s1",
+     "S02_low_light_s2",
+     "S02_low_light_s3",
+     "S02_underexposure_s1"
+    ],
+    "budget_left": 13
+   }
+  },
+  {
+   "step": 3,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_k": 0.19,
+    "adaptive_floor_dark": 0.13,
+    "blur_ratio": 0.56
+   },
+   "result": {
+    "settings": {
+     "adaptive_k": 0.19,
+     "adaptive_floor_dark": 0.13,
+     "blur_ratio": 0.56
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 4,
+    "drivec_dev_passed": 66,
+    "of": 150,
+    "drivec_false_alarms": 62,
+    "passed_by_class_of_25": {
+     "glare_flare": 15,
+     "motion_blur": 15,
+     "defocus_blur": 6,
+     "low_light": 15,
+     "underexposure": 15
+    },
+    "passed_by_scene_of_30": {
+     "S01": 22,
+     "S02": 22,
+     "S04": 22
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S03_glare_flare_s1",
+     "S03_glare_flare_s2",
+     "S03_glare_flare_s3",
+     "S03_glare_flare_s4",
+     "S03_glare_flare_s5",
+     "S03_motion_blur_s1",
+     "S03_motion_blur_s2",
+     "S03_motion_blur_s3"
+    ],
+    "budget_left": 12
+   }
+  },
+  {
+   "step": 4,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_k": 7.85,
+    "adaptive_floor_blur": 1.16,
+    "dark_ratio": 0.64,
+    "blur_ratio": 0.57,
+    "glare_rise": 0.37,
+    "hysteresis": 0.65
+   },
+   "result": {
+    "settings": {
+     "adaptive_k": 7.85,
+     "adaptive_floor_blur": 1.16,
+     "dark_ratio": 0.64,
+     "blur_ratio": 0.57,
+     "glare_rise": 0.37,
+     "hysteresis": 0.65
+    },
+    "oxford_failed_checks": [
+     "centre_glare:glare"
+    ],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 62,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 22,
+     "motion_blur": 23,
+     "low_light": 5,
+     "underexposure": 12
+    },
+    "passed_by_scene_of_30": {
+     "S01": 15,
+     "S02": 12,
+     "S03": 8,
+     "S04": 15,
+     "S05": 12
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_defocus_blur_s5",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_low_light_s3",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_defocus_blur_s4",
+     "S02_defocus_blur_s5",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4"
+    ],
+    "budget_left": 11
+   }
+  },
+  {
+   "step": 5,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_floor_blur": 0.41,
+    "adaptive_window_s": 21.89,
+    "dark_ratio": 0.81,
+    "blur_ratio": 0.56,
+    "obstruction_s": 1.94
+   },
+   "result": {
+    "settings": {
+     "adaptive_floor_blur": 0.41,
+     "adaptive_window_s": 21.89,
+     "dark_ratio": 0.81,
+     "blur_ratio": 0.56,
+     "obstruction_s": 1.94
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 100,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 23,
+     "motion_blur": 25,
+     "defocus_blur": 8,
+     "low_light": 23,
+     "underexposure": 21
+    },
+    "passed_by_scene_of_30": {
+     "S01": 21,
+     "S02": 22,
+     "S03": 17,
+     "S04": 20,
+     "S05": 20
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_underexposure_s1",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S03_glare_flare_s1",
+     "S03_glare_flare_s2",
+     "S03_defocus_blur_s1",
+     "S03_defocus_blur_s2",
+     "S03_defocus_blur_s3",
+     "S03_defocus_blur_s4",
+     "S03_lens_occlusion_s1"
+    ],
+    "budget_left": 10
+   }
+  },
+  {
+   "step": 6,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_floor_dark": 0.16,
+    "blur_ratio": 0.53,
+    "glare_rise": 0.34,
+    "glare_tiles": 1,
+    "hysteresis": 0.38
+   },
+   "result": {
+    "settings": {
+     "adaptive_floor_dark": 0.16,
+     "blur_ratio": 0.53,
+     "glare_rise": 0.34,
+     "glare_tiles": 1,
+     "hysteresis": 0.38
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 3,
+    "drivec_dev_passed": 84,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 25,
+     "motion_blur": 25,
+     "defocus_blur": 8,
+     "low_light": 11,
+     "underexposure": 15
+    },
+    "passed_by_scene_of_30": {
+     "S01": 18,
+     "S02": 17,
+     "S03": 16,
+     "S04": 16,
+     "S05": 17
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S02_low_light_s1",
+     "S02_low_light_s2",
+     "S02_low_light_s3",
+     "S02_underexposure_s1"
+    ],
+    "budget_left": 9
+   }
+  },
+  {
+   "step": 7,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_floor_dark": 0.34,
+    "adaptive_window_s": 8.68,
+    "blur_ratio": 0.49,
+    "obstruction_s": 1.04,
+    "obstruction_ratio": 0.42,
+    "glare_rise": 0.39,
+    "glare_tiles": 1,
+    "hysteresis": 0.3
+   },
+   "result": {
+    "settings": {
+     "adaptive_floor_dark": 0.34,
+     "adaptive_window_s": 8.68,
+     "blur_ratio": 0.49,
+     "obstruction_s": 1.04,
+     "obstruction_ratio": 0.42,
+     "glare_rise": 0.39,
+     "glare_tiles": 1,
+     "hysteresis": 0.3
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 3,
+    "drivec_dev_passed": 66,
+    "of": 150,
+    "drivec_false_alarms": 31,
+    "passed_by_class_of_25": {
+     "glare_flare": 20,
+     "motion_blur": 20,
+     "defocus_blur": 5,
+     "low_light": 9,
+     "underexposure": 12
+    },
+    "passed_by_scene_of_30": {
+     "S01": 17,
+     "S03": 16,
+     "S04": 16,
+     "S05": 17
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_glare_flare_s1",
+     "S02_glare_flare_s2",
+     "S02_glare_flare_s3",
+     "S02_glare_flare_s4",
+     "S02_glare_flare_s5",
+     "S02_motion_blur_s1",
+     "S02_motion_blur_s2",
+     "S02_motion_blur_s3",
+     "S02_motion_blur_s4",
+     "S02_motion_blur_s5",
+     "S02_defocus_blur_s1"
+    ],
+    "budget_left": 8
+   }
+  },
+  {
+   "step": 8,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_window_s": 18.92,
+    "blur_ratio": 0.59,
+    "obstruction_s": 1.91,
+    "glare_tiles": 4,
+    "hysteresis": 0.56
+   },
+   "result": {
+    "settings": {
+     "adaptive_window_s": 18.92,
+     "blur_ratio": 0.59,
+     "obstruction_s": 1.91,
+     "glare_tiles": 4,
+     "hysteresis": 0.56
+    },
+    "oxford_failed_checks": [
+     "centre_glare:glare"
+    ],
+    "oxford_false_alarms": 2,
+    "drivec_dev_passed": 78,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 17,
+     "motion_blur": 25,
+     "defocus_blur": 10,
+     "low_light": 11,
+     "underexposure": 15
+    },
+    "passed_by_scene_of_30": {
+     "S01": 16,
+     "S02": 17,
+     "S03": 14,
+     "S04": 17,
+     "S05": 14
+    },
+    "failing_clips_sample": [
+     "S01_glare_flare_s1",
+     "S01_glare_flare_s2",
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S02_low_light_s1",
+     "S02_low_light_s2"
+    ],
+    "budget_left": 7
+   }
+  },
+  {
+   "step": 9,
+   "tool": "evaluate",
+   "args": {
+    "obstruction_s": 0.84,
+    "glare_rise": 0.18,
+    "glare_tiles": 2
+   },
+   "result": {
+    "settings": {
+     "obstruction_s": 0.84,
+     "glare_rise": 0.18,
+     "glare_tiles": 2
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 47,
+    "of": 150,
+    "drivec_false_alarms": 62,
+    "passed_by_class_of_25": {
+     "glare_flare": 15,
+     "motion_blur": 15,
+     "defocus_blur": 1,
+     "low_light": 7,
+     "underexposure": 9
+    },
+    "passed_by_scene_of_30": {
+     "S01": 17,
+     "S03": 15,
+     "S04": 15
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_glare_flare_s1",
+     "S02_glare_flare_s2",
+     "S02_glare_flare_s3",
+     "S02_glare_flare_s4",
+     "S02_glare_flare_s5",
+     "S02_motion_blur_s1",
+     "S02_motion_blur_s2",
+     "S02_motion_blur_s3",
+     "S02_motion_blur_s4",
+     "S02_motion_blur_s5",
+     "S02_defocus_blur_s1"
+    ],
+    "budget_left": 6
+   }
+  },
+  {
+   "step": 10,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_floor_dark": 0.23,
+    "adaptive_window_s": 10.07,
+    "glare_tiles": 2,
+    "hysteresis": 0.28
+   },
+   "result": {
+    "settings": {
+     "adaptive_floor_dark": 0.23,
+     "adaptive_window_s": 10.07,
+     "glare_tiles": 2,
+     "hysteresis": 0.28
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 77,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 23,
+     "motion_blur": 25,
+     "defocus_blur": 3,
+     "low_light": 11,
+     "underexposure": 15
+    },
+    "passed_by_scene_of_30": {
+     "S01": 17,
+     "S02": 16,
+     "S03": 13,
+     "S04": 15,
+     "S05": 16
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_defocus_blur_s4",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S02_low_light_s1",
+     "S02_low_light_s2"
+    ],
+    "budget_left": 5
+   }
+  },
+  {
+   "step": 11,
+   "tool": "evaluate",
+   "args": {
+    "blur_ratio": 0.38,
+    "obstruction_s": 1.39,
+    "hysteresis": 0.54
+   },
+   "result": {
+    "settings": {
+     "blur_ratio": 0.38,
+     "obstruction_s": 1.39,
+     "hysteresis": 0.54
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 78,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 23,
+     "motion_blur": 25,
+     "defocus_blur": 4,
+     "low_light": 11,
+     "underexposure": 15
+    },
+    "passed_by_scene_of_30": {
+     "S01": 17,
+     "S02": 16,
+     "S03": 13,
+     "S04": 16,
+     "S05": 16
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_defocus_blur_s4",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S02_low_light_s1",
+     "S02_low_light_s2"
+    ],
+    "budget_left": 4
+   }
+  },
+  {
+   "step": 12,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_floor_dark": 0.07,
+    "adaptive_floor_blur": 0.26,
+    "dark_ratio": 0.44,
+    "blur_ratio": 0.29,
+    "obstruction_s": 1.28,
+    "obstruction_ratio": 0.33,
+    "glare_tiles": 2
+   },
+   "result": {
+    "settings": {
+     "adaptive_floor_dark": 0.07,
+     "adaptive_floor_blur": 0.26,
+     "dark_ratio": 0.44,
+     "blur_ratio": 0.29,
+     "obstruction_s": 1.28,
+     "obstruction_ratio": 0.33,
+     "glare_tiles": 2
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 56,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 23,
+     "motion_blur": 25,
+     "underexposure": 7,
+     "defocus_blur": 1
+    },
+    "passed_by_scene_of_30": {
+     "S01": 12,
+     "S02": 12,
+     "S03": 9,
+     "S04": 11,
+     "S05": 12
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_defocus_blur_s5",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_low_light_s3",
+     "S01_low_light_s4",
+     "S01_low_light_s5",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S01_underexposure_s3",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_defocus_blur_s4",
+     "S02_defocus_blur_s5",
+     "S02_lens_occlusion_s1"
+    ],
+    "budget_left": 3
+   }
+  },
+  {
+   "step": 13,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_k": 4.09,
+    "adaptive_floor_blur": 0.69,
+    "dark_ratio": 0.44,
+    "obstruction_s": 1.28,
+    "glare_tiles": 3,
+    "hysteresis": 0.9
+   },
+   "result": {
+    "settings": {
+     "adaptive_k": 4.09,
+     "adaptive_floor_blur": 0.69,
+     "dark_ratio": 0.44,
+     "obstruction_s": 1.28,
+     "glare_tiles": 3,
+     "hysteresis": 0.9
+    },
+    "oxford_failed_checks": [
+     "centre_glare:glare"
+    ],
+    "oxford_false_alarms": 1,
+    "drivec_dev_passed": 88,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 22,
+     "motion_blur": 25,
+     "defocus_blur": 4,
+     "low_light": 19,
+     "underexposure": 18
+    },
+    "passed_by_scene_of_30": {
+     "S01": 20,
+     "S02": 18,
+     "S03": 13,
+     "S04": 20,
+     "S05": 17
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_defocus_blur_s4",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_underexposure_s1",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_defocus_blur_s4",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S02_low_light_s1",
+     "S02_low_light_s2",
+     "S02_underexposure_s1",
+     "S03_glare_flare_s1",
+     "S03_glare_flare_s2"
+    ],
+    "budget_left": 2
+   }
+  },
+  {
+   "step": 14,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_k": 0.84,
+    "adaptive_floor_dark": 0.48,
+    "dark_ratio": 0.69,
+    "blur_ratio": 0.56,
+    "obstruction_ratio": 0.26,
+    "glare_rise": 0.33,
+    "glare_tiles": 4,
+    "hysteresis": 0.66
+   },
+   "result": {
+    "settings": {
+     "adaptive_k": 0.84,
+     "adaptive_floor_dark": 0.48,
+     "dark_ratio": 0.69,
+     "blur_ratio": 0.56,
+     "obstruction_ratio": 0.26,
+     "glare_rise": 0.33,
+     "glare_tiles": 4,
+     "hysteresis": 0.66
+    },
+    "oxford_failed_checks": [
+     "centre_glare:glare"
+    ],
+    "oxford_false_alarms": 2,
+    "drivec_dev_passed": 61,
+    "of": 150,
+    "drivec_false_alarms": 31,
+    "passed_by_class_of_25": {
+     "glare_flare": 14,
+     "motion_blur": 20,
+     "defocus_blur": 9,
+     "low_light": 7,
+     "underexposure": 11
+    },
+    "passed_by_scene_of_30": {
+     "S01": 14,
+     "S02": 16,
+     "S04": 17,
+     "S05": 14
+    },
+    "failing_clips_sample": [
+     "S01_glare_flare_s1",
+     "S01_glare_flare_s2",
+     "S01_glare_flare_s3",
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_low_light_s1",
+     "S01_low_light_s2",
+     "S01_low_light_s3",
+     "S01_underexposure_s1",
+     "S01_underexposure_s2",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5"
+    ],
+    "budget_left": 1
+   }
+  },
+  {
+   "step": 15,
+   "tool": "evaluate",
+   "args": {
+    "adaptive_k": 3.71,
+    "adaptive_floor_blur": 0.27,
+    "adaptive_window_s": 5.17,
+    "glare_rise": 0.31
+   },
+   "result": {
+    "settings": {
+     "adaptive_k": 3.71,
+     "adaptive_floor_blur": 0.27,
+     "adaptive_window_s": 5.17,
+     "glare_rise": 0.31
+    },
+    "oxford_failed_checks": [],
+    "oxford_false_alarms": 4,
+    "drivec_dev_passed": 93,
+    "of": 150,
+    "drivec_false_alarms": 0,
+    "passed_by_class_of_25": {
+     "glare_flare": 22,
+     "motion_blur": 25,
+     "defocus_blur": 8,
+     "low_light": 19,
+     "underexposure": 19
+    },
+    "passed_by_scene_of_30": {
+     "S01": 21,
+     "S02": 19,
+     "S03": 14,
+     "S04": 21,
+     "S05": 18
+    },
+    "failing_clips_sample": [
+     "S01_defocus_blur_s1",
+     "S01_defocus_blur_s2",
+     "S01_defocus_blur_s3",
+     "S01_lens_occlusion_s1",
+     "S01_lens_occlusion_s2",
+     "S01_lens_occlusion_s3",
+     "S01_lens_occlusion_s4",
+     "S01_lens_occlusion_s5",
+     "S01_underexposure_s1",
+     "S02_defocus_blur_s1",
+     "S02_defocus_blur_s2",
+     "S02_defocus_blur_s3",
+     "S02_lens_occlusion_s1",
+     "S02_lens_occlusion_s2",
+     "S02_lens_occlusion_s3",
+     "S02_lens_occlusion_s4",
+     "S02_lens_occlusion_s5",
+     "S02_low_light_s1",
+     "S02_low_light_s2",
+     "S02_underexposure_s1",
+     "S03_glare_flare_s1",
+     "S03_glare_flare_s2",
+     "S03_glare_flare_s3",
+     "S03_defocus_blur_s1"
+    ],
+    "budget_left": 0
+   }
+  }
+ ]
+}

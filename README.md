@@ -130,7 +130,36 @@ python3 -m experiments.calibrate --out calib.json             # sweep detector t
 python3 -m experiments.calibrate --dataset oxford-camera-holdout --split validation --defaults   # frozen defaults on held-out
 ```
 
-`experiments/calibrate.py` refuses to sweep the validation split. Results, including what still fails, are in [docs/EVALUATION.md](docs/EVALUATION.md).
+`experiments/calibrate.py` refuses to sweep the validation split.
+
+Independent clips: `experiments/drivec_fetch.py` pulls selected DRIVE-C clips (CC BY 4.0, doi:10.5281/zenodo.19656444) from the 9 GB zip using HTTP range requests, and `experiments/drivec_eval.py` scores them with the frozen defaults on DRIVE-C's own dev/test split. For local testing, `scripts/generate_drivec_sample.py` turns DRIVE-C clean clips in `data/drivec_sample/original/` into `drivec-sample`: each original (hard-linked) plus six randomized faults. Clips under 10 s get 1–2 s faults after a 1.3 s warm-up. Results, including what still fails, are in [docs/EVALUATION.md](docs/EVALUATION.md).
+
+### Joint tuning, self-calibration and the diagnostic autopilot
+
+```bash
+python -m experiments.joint_calibrate --drivec ~/drivec/drivec_core_v1 --detail-width 640 --ignore-oxford-clip centre_obstruction \
+    --cache ~/cache.pkl --grid grid.json --out round.json      # Oxford tuning + DRIVE-C dev only; validation splits are never read
+python -m experiments.autopilot --cache ~/cache.pkl --arm tools --budget 16 --out autopilot.json   # needs NEBIUS_* in the environment
+python -m experiments.autopilot --approve autopilot.json      # a human approves before a proposal is validated or applied
+python3 scripts/build_holdout_dataset.py --name oxford-camera-holdout-fresh3 --validation data/camera_health_build_fresh3/*   # new never-inspected seeds
+```
+
+- `joint_calibrate` sweeps the detector on Oxford tuning clips plus DRIVE-C dev scenes.
+- `autopilot` gives an LLM agent OpenCV-measured diagnostic tools:
+  - `evaluate`: scores a setting on the tuning data
+  - `explain_failure`: a per-frame rule trace
+  - `paired_compare`: a fault clip against the same clean frames
+  - `ablate`: varies one setting at a time
+  - `propose`: writes a proposal that waits for human approval
+
+  The script also runs an `evaluate`-only arm and seeded random search at the same budget.
+- **Shipped from this work:**
+  - detail measured at 640 px (defocus becomes visible)
+  - obstruction must hold for 1.2 s
+  - the night policy (`dark_at_start_alarm` off: a camera dark since its first frame is its own normal, with "verify" shown in footage reports)
+- **Built and tested but not shipped:** self-calibrating limits (`adaptive_k`, off). They tied the defaults on never-inspected Oxford clips.
+- **The autopilot did not beat random search.** Its best proposal on tuning data failed unbiased validation, and the approval gate kept it out.
+- Full record: [docs/BEFORE_AFTER.md](docs/BEFORE_AFTER.md) section 6b–6c and `docs/evidence/{tuning,autopilot}/`.
 
 ## Second-stage verification (active perception, OpenCV 5 DNN)
 
@@ -161,7 +190,7 @@ To get the model: download `object_detection_nanodet_2022nov.onnx` and its `LICE
   3. A 1-day lifecycle rule removes anything left over, uploads are rate-limited per minute, and a `footage` EMF metric records duration and processing time.
 - **Locally:** the same flow uses a capped `PUT` to `data/uploads/`, deleted after analysis.
 
-The screen uses rules calibrated on one recorded drive. Other cameras, night, rain and real lens dirt are unvalidated, and a report is never a safety judgement.
+The screen uses rules calibrated on one Oxford drive plus DRIVE-C dev scenes. Night footage is treated as the camera's normal: footage that is dark from its first frame is not raised as a fault, and the report says "dark since the first frame, verify". So a camera that is dark from power-on is not flagged. Rain and real lens dirt are unvalidated, and a report is never a safety judgement.
 
 ## Live camera (monitor only, untested on real hardware)
 

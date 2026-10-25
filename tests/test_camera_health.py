@@ -22,10 +22,10 @@ class AnalyzerContract(unittest.TestCase):
         frame[:120, :160] = 255
         frame[-120:, -160:] = 0
         measured = analyze(frame, 640)
-        gray = cv2.resize(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), (320, 240), interpolation=cv2.INTER_AREA)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)   # detail is measured at 640x480
         laplacian = cv2.Laplacian(gray, cv2.CV_32F).astype(np.float64)
         for i, region in enumerate(measured["regions"]):
-            rows, cols = slice(i // 4 * 60, i // 4 * 60 + 60), slice(i % 4 * 80, i % 4 * 80 + 80)
+            rows, cols = slice(i // 4 * 120, i // 4 * 120 + 120), slice(i % 4 * 160, i % 4 * 160 + 160)
             self.assertAlmostEqual(region["mean"], gray[rows, cols].mean(), places=9)
             self.assertAlmostEqual(region["detail"], laplacian[rows, cols].var(), delta=1e-6 * max(1, region["detail"]))
             self.assertEqual(region["clipped"], np.mean(gray[rows, cols] >= 250))

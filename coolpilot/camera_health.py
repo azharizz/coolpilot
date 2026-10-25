@@ -15,23 +15,30 @@ OBSERVATIONS = {
 }
 
 
-def analyze(frame, width: int) -> dict:
+def analyze(frame, width: int, detail_width: int = 640) -> dict:
     height, original_width = frame.shape[:2]
+    # Detail is always measured at detail_width (640, chosen in joint tuning); a smaller analysis width
+    # would only be upscaled again, so it is raised to that scale rather than redefining calibration.
+    width = max(width, detail_width)
     image = cv2.resize(frame, (width, round(height * width / original_width)), interpolation=cv2.INTER_AREA)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # Compare detail at a common scale so a resolution change does not redefine calibration.
-    gray = cv2.resize(gray, (320, 240), interpolation=cv2.INTER_AREA)
+    # detail_width: the scale detail is measured at; defocus mostly removes fine detail, which a 320-wide
+    # image has lost already (DRIVE-C paired analysis). A fixed 4:3 grid keeps calibration source-independent.
+    w = detail_width
+    gray = cv2.resize(gray, (w, w * 3 // 4), interpolation=cv2.INTER_AREA)
     laplacian = cv2.Laplacian(gray, cv2.CV_32F)
+    th, tw = gray.shape[0] // 4, w // 4
     # Tile statistics stay inside OpenCV so an accelerated build (e.g. COOL) covers them too.
     bright = cv2.compare(gray, 250, cv2.CMP_GE)
     regions = []
     for y in range(4):
         for x in range(4):
-            rows, cols = slice(y * 60, (y + 1) * 60), slice(x * 80, (x + 1) * 80)
+            rows, cols = slice(y * th, (y + 1) * th), slice(x * tw, (x + 1) * tw)
             _, deviation = cv2.meanStdDev(laplacian[rows, cols])
             regions.append({"box": [x / 4, y / 4, 0.25, 0.25], "mean": cv2.mean(gray[rows, cols])[0],
                             "detail": float(deviation[0, 0]) ** 2,
-                            "clipped": cv2.countNonZero(bright[rows, cols]) / (60 * 80)})
+                            "clipped": cv2.countNonZero(bright[rows, cols]) / (th * tw)})
     return {"regions": regions, "black_fraction": cv2.countNonZero(cv2.compare(gray, 8, cv2.CMP_LT)) / gray.size,
             "thumbnail": cv2.resize(gray, (80, 60), interpolation=cv2.INTER_AREA)}
 
@@ -70,6 +77,10 @@ class Monitor:
         self.reference_clipped = None
         self.recent_detail = None
         self.low_since = None
+        self.spread = {"dark": 0.0, "blur": 0.0}   # this camera's normal swing of each log ratio while healthy
+        self.signals = None
+        self.spread_samples = 0
+        self.dark_since_start = True
         self.frozen_since = None
         self.reference_time_s = None
         self.started_s = None
@@ -97,29 +108,41 @@ class Monitor:
         blackout = measurements["black_fraction"] >= t.black_fraction
         if blackout:
             conditions.add("blackout")
-        if float(means.mean()) < t.dark_mean:
+        dark = float(means.mean()) < t.dark_mean
+        self.dark_since_start = self.dark_since_start and dark
+        # A camera dark since its first frame is ambiguous (night, or broken from power-on). With
+        # dark_at_start_alarm off it is treated as its own normal; the relative rules still apply.
+        absolute = t.dark_at_start_alarm or not self.dark_since_start
+        if dark and absolute:
             conditions.add("underexposure")
-        if np.mean(detail < t.blur_variance) >= 0.75:
+        if np.mean(detail < t.blur_variance) >= 0.75 and absolute:
             conditions.add("blur")
         affected = np.zeros(len(regions), dtype=bool)
         low = affected
         if self.reference_detail is not None:
             elapsed = time_s - self.reference_time_s
             self.reference_detail *= math.exp(-elapsed / t.reference_decay_s)
+            ratio = detail / np.maximum(self.recent_detail, 1e-6)
+            self.signals = {"dark": math.log(max(float(means.mean()), 1e-6) / max(float(self.reference_mean.mean()), 1e-6)),
+                            "blur": math.log(max(float(np.quantile(ratio, t.blur_quantile)), 1e-6))}
             if warm:
                 # Relative rules against this camera's own references. Hysteresis: an active alarm
                 # stays on until the signal is well back inside normal, so a fading fault is not
                 # declared recovered while it is still visible.
                 on = lambda kind, limit: 1 - (1 - limit) * t.hysteresis if kind in self.active else limit
-                if float(means.mean()) < on("underexposure", t.dark_ratio) * float(self.reference_mean.mean()):
+                # Self-calibrating limits: a drop must exceed adaptive_k times this camera's own normal swing,
+                # and at least a minimum effect. A busy scene widens its band; a calm one narrows it.
+                limit = lambda kind, fixed, floor: (math.exp(-max(t.adaptive_k * self.spread[kind], floor)) if t.adaptive_k else fixed)
+                dark_limit = limit("dark", t.dark_ratio, t.adaptive_floor_dark)
+                blur_limit = limit("blur", t.blur_ratio, t.adaptive_floor_blur)
+                if float(means.mean()) < on("underexposure", dark_limit) * float(self.reference_mean.mean()):
                     conditions.add("underexposure")
                 rise = clipped - self.reference_clipped >= (t.glare_rise * t.hysteresis if "glare" in self.active else t.glare_rise)
                 if int(rise.sum()) >= t.glare_tiles:   # one sky tile drifting against a frozen reference must not hold it on
                     conditions.add("glare")
                 # Detail is compared with its recent healthy average, not the all-time peak: a
                 # building that has passed must not make the open road look obstructed.
-                ratio = detail / np.maximum(self.recent_detail, 1e-6)
-                if float(np.median(ratio)) < on("blur", t.blur_ratio):
+                if float(np.quantile(ratio, t.blur_quantile)) < on("blur", blur_limit):
                     conditions.add("blur")
                 # Obstruction sits on the lens: the SAME tiles stay low while the rest of the view
                 # keeps its detail. A passing scene moves across tiles and resets this clock.
@@ -132,7 +155,7 @@ class Monitor:
                 self.low_since[low & np.isnan(self.low_since)] = time_s
                 affected = low & (time_s - np.nan_to_num(self.low_since, nan=time_s) >= t.obstruction_s)
                 others = ratio[~low]
-                if 1 <= int(affected.sum()) <= 6 and (not len(others) or float(np.median(others)) >= t.scene_keep_ratio):
+                if 1 <= int(affected.sum()) <= t.obstruction_max_tiles and (not len(others) or float(np.median(others)) >= t.scene_keep_ratio):
                     conditions.add("obstruction")
                 else:
                     affected[:] = False
@@ -174,6 +197,13 @@ class Monitor:
                     k = 1.0   # after a long fault the scene has moved on: re-learn from the current view
                 self.frozen_since = None
                 keep = np.ones(len(regions), dtype=bool)
+                if self.signals:
+                    # Learn the swing while healthy, warm-up included; a running mean until the window fills,
+                    # so a short recording still learns its own band.
+                    self.spread_samples += 1
+                    a = max(-math.expm1(-(time_s - self.reference_time_s) / t.adaptive_window_s), 1 / self.spread_samples)
+                    for kind, value in self.signals.items():
+                        self.spread[kind] += a * (abs(value) - self.spread[kind])
             elif local:
                 # A local suspicion only freezes the suspected tiles; the rest of the view keeps
                 # learning, so a scene-driven false alarm cannot sustain itself.

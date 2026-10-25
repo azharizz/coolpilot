@@ -6,7 +6,7 @@ type Segment = { type: string; observation: string; start_s: number; end_s: numb
 type Decision = { time_s: number; verdict: string; reason: string; tiles: number[]; engine?: string | null };
 type Report = { type: "report"; frames: number; fps: number; duration_s: number; resolution: number[] | null; segments: Segment[];
   verifier_decisions: Decision[]; flagged_seconds: number; processing_s: number; cpu_s: number; speed_x_realtime: number | null;
-  opencv: string; scope: string };
+  opencv: string; scope: string; dark_since_start?: boolean };
 type Slot = { id: string; upload: { method: "PUT" | "POST"; url: string; fields?: Record<string, string> }; max_bytes: number; max_seconds: number };
 
 const MAX_MB = 50;
@@ -79,7 +79,7 @@ export function Footage() {
     <PageHead title="Check footage" lead="Screen a short recording for camera-side problems before you label, train on or review it." />
     <div className="panel footage-panel">
       <p className="hint">At most {MAX_MB} MB and 60 s. The file is analysed once, then deleted; nothing is kept. Do not upload footage of people
-        who have not agreed to it. Results come from rules calibrated on one recorded drive and are not a safety judgement.</p>
+        who have not agreed to it. Results come from rules calibrated on one Oxford drive and DRIVE-C dev scenes and are not a safety judgement.</p>
       <fieldset disabled={busy} className="deck-settings">
         <label className="field">Video file
           <input type="file" accept="video/mp4,video/quicktime,video/x-msvideo,.mp4,.mov,.avi,.mkv" onChange={e => setFile(e.target.files?.[0] ?? null)} />
@@ -111,6 +111,7 @@ export function Footage() {
       </table></div> : <p>No camera-side problem flagged.</p>}
       {report.verifier_decisions.some(d => d.verdict === "dismiss") && <p className="hint">
         Dismissed suspicions: {report.verifier_decisions.filter(d => d.verdict === "dismiss").map(d => `${d.time_s} s`).join(", ")} (scene, not the lens).</p>}
+      {report.dark_since_start && <p className="hint">Dark since the first frame: night driving, or a camera that is dark from power-on. Not raised as a fault; verify the camera if this is not night footage.</p>}
       <p className="hint">{report.scope}</p>
       <p className="verify-actions">
         <button type="button" className="btn" onClick={() => download("footage-report.json", JSON.stringify(report, null, 1), "application/json")}>Download JSON</button>

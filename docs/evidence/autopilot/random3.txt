@@ -1,0 +1,31 @@
+{
+ "arm": "random",
+ "evaluations_used": 16,
+ "wall_s": 159.6,
+ "status": "pending_human_approval",
+ "baseline": {
+  "oxford_failed_checks": [],
+  "drivec_dev_passed": 77,
+  "drivec_false_alarms": 0
+ },
+ "proposal": {
+  "adaptive_floor_dark": 0.08,
+  "dark_ratio": 0.76,
+  "blur_ratio": 0.26,
+  "obstruction_s": 1.65,
+  "glare_rise": 0.3,
+  "glare_tiles": 3
+ },
+ "score": {
+  "oxford_failed_checks": [],
+  "drivec_dev_passed": 83,
+  "drivec_false_alarms": 0,
+  "passed_by_class_of_25": {
+   "glare_flare": 21,
+   "motion_blur": 25,
+   "low_light": 19,
+   "underexposure": 17,
+   "defocus_blur": 1
+  }
+ }
+}

@@ -1,0 +1,2021 @@
+{
+ "dataset": "oxford-camera-holdout-fresh",
+ "split": "validation",
+ "opencv": "5.0.0",
+ "arms": [
+  {
+   "arm": "none",
+   "failed_fault_checks": "10/36",
+   "pass_by_fault": {
+    "blackout": "6/6",
+    "blur": "6/6",
+    "freeze": "6/6",
+    "glare": "2/6",
+    "obstruction": "0/6",
+    "underexposure": "6/6"
+   },
+   "passed_at_delay_s": {
+    "2": "26/36",
+    "10": "28/36",
+    "60": "28/36"
+   },
+   "false_alarms": 40,
+   "false_alarms_per_hour": 221.3,
+   "suspicions": 41,
+   "dismissed": 0,
+   "escalated": 0,
+   "max_latency_s": 0.0,
+   "decisions": [
+    {
+     "clip": "left_s1101_glare",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1101_obstruction",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1101_reference",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1101_underexposure",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1102_blackout",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1102_obstruction",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1102_reference",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1102_underexposure",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_blackout",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_blur",
+     "time_s": 13.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_blur",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_freeze",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_glare",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_glare",
+     "time_s": 13.45,
+     "tiles": [
+      1,
+      2
+     ],
+     "truth_at_time": "glare",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_obstruction",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_obstruction",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_reference",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_reference",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_underexposure",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_blackout",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_blur",
+     "time_s": 15.54,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_freeze",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_glare",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_obstruction",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "obstruction",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_obstruction",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_reference",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_reference",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_underexposure",
+     "time_s": 9.73,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_underexposure",
+     "time_s": 15.54,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_blackout",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_freeze",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_glare",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_obstruction",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_reference",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_underexposure",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_blackout",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_blur",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_freeze",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_obstruction",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_reference",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_underexposure",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "confirm",
+     "reason": "No verification.",
+     "latency_s": 0.0,
+     "tool_calls": null
+    }
+   ],
+   "clips": [
+    {
+     "clip": "left_s1101_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ]
+    },
+    {
+     "clip": "left_s1101_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ]
+    },
+    {
+     "clip": "left_s1101_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ]
+    },
+    {
+     "clip": "left_s1101_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ]
+    },
+    {
+     "clip": "left_s1102_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ]
+    },
+    {
+     "clip": "left_s1102_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ]
+    },
+    {
+     "clip": "left_s1102_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ]
+    },
+    {
+     "clip": "left_s1102_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.5
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3301_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3301_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 13.91
+      },
+      {
+       "type": "obstruction",
+       "start_s": 15.63
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3301_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3301_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      },
+      {
+       "type": "obstruction",
+       "start_s": 13.45
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3301_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      },
+      {
+       "type": "obstruction",
+       "start_s": 15.63
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3301_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      },
+      {
+       "type": "obstruction",
+       "start_s": 15.63
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3301_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3302_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3302_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 15.54
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3302_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3302_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3302_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 15.63
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3302_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 8.18
+      },
+      {
+       "type": "obstruction",
+       "start_s": 15.63
+      }
+     ]
+    },
+    {
+     "clip": "rear_s3302_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 9.73
+      },
+      {
+       "type": "obstruction",
+       "start_s": 15.54
+      }
+     ]
+    },
+    {
+     "clip": "right_s2201_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2201_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2201_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2201_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2201_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2201_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2201_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2202_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2202_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2202_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2202_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2202_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2202_reference",
+     "checks": [],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    },
+    {
+     "clip": "right_s2202_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": [
+      {
+       "type": "obstruction",
+       "start_s": 4.56
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "arm": "rule",
+   "failed_fault_checks": "10/36",
+   "pass_by_fault": {
+    "blackout": "6/6",
+    "blur": "6/6",
+    "freeze": "6/6",
+    "glare": "2/6",
+    "obstruction": "0/6",
+    "underexposure": "6/6"
+   },
+   "passed_at_delay_s": {
+    "2": "26/36",
+    "10": "27/36",
+    "60": "27/36"
+   },
+   "false_alarms": 0,
+   "false_alarms_per_hour": 0.0,
+   "suspicions": 41,
+   "dismissed": 41,
+   "escalated": 0,
+   "max_latency_s": 0.173,
+   "decisions": [
+    {
+     "clip": "left_s1101_glare",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.173,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1101_obstruction",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1101_reference",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.117,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1101_underexposure",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.118,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1102_blackout",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.121,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1102_obstruction",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1102_reference",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.118,
+     "tool_calls": null
+    },
+    {
+     "clip": "left_s1102_underexposure",
+     "time_s": 4.5,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_blackout",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.128,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_blur",
+     "time_s": 13.91,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.127,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_blur",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.128,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_freeze",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.127,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_glare",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.127,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_glare",
+     "time_s": 13.45,
+     "tiles": [
+      1,
+      2
+     ],
+     "truth_at_time": "glare",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1, 2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.125,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_obstruction",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.125,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_obstruction",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_reference",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_reference",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.125,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3301_underexposure",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_blackout",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_blur",
+     "time_s": 15.54,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.124,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_freeze",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.124,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_glare",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_obstruction",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "obstruction",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.132,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_obstruction",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.125,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_reference",
+     "time_s": 8.18,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_reference",
+     "time_s": 15.63,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_underexposure",
+     "time_s": 9.73,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.126,
+     "tool_calls": null
+    },
+    {
+     "clip": "rear_s3302_underexposure",
+     "time_s": 15.54,
+     "tiles": [
+      2
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [2] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.129,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_blackout",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.115,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_freeze",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.117,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_glare",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.117,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_obstruction",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.118,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_reference",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2201_underexposure",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_blackout",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_blur",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.118,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_freeze",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.116,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_obstruction",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.115,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_reference",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.118,
+     "tool_calls": null
+    },
+    {
+     "clip": "right_s2202_underexposure",
+     "time_s": 4.56,
+     "tiles": [
+      1
+     ],
+     "truth_at_time": "none",
+     "verdict": "dismiss",
+     "reason": "Suspected tiles [1] show scene that cannot reveal lens loss (open sky now, or never detailed); the loss is the scene, not the lens.",
+     "latency_s": 0.137,
+     "tool_calls": null
+    }
+   ],
+   "clips": [
+    {
+     "clip": "left_s1101_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1101_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "left_s1102_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3301_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3301_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3301_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3301_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3301_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3301_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3301_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3302_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3302_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3302_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3302_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3302_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3302_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "rear_s3302_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2201_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2201_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2201_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2201_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2201_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2201_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2201_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2202_blackout",
+     "checks": [
+      {
+       "type": "blackout",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2202_blur",
+     "checks": [
+      {
+       "type": "blur",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2202_freeze",
+     "checks": [
+      {
+       "type": "freeze",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2202_glare",
+     "checks": [
+      {
+       "type": "glare",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2202_obstruction",
+     "checks": [
+      {
+       "type": "obstruction",
+       "passed": false
+      }
+     ],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2202_reference",
+     "checks": [],
+     "false_alarms": []
+    },
+    {
+     "clip": "right_s2202_underexposure",
+     "checks": [
+      {
+       "type": "underexposure",
+       "passed": true
+      }
+     ],
+     "false_alarms": []
+    }
+   ]
+  }
+ ]
+}

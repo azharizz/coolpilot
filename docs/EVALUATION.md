@@ -1,12 +1,14 @@
 # Evaluation
 
-What was measured, on what, and what still fails. Every number here comes from a file in this repository or from a run stored by the app. Last updated 2026-10-24. Synthetic faults on one recorded drive are **not** evidence of road safety.
+What was measured, on what, and what still fails. Every number here comes from a file in this repository or from a run stored by the app. Last updated 2026-10-25. Synthetic faults on one recorded drive are **not** evidence of road safety.
 
 ## Data
 
 - **Tuning:** the Oxford RobotCar sample's stereo centre camera, a clean reference plus six synthetic faults at fixed 4–10 s (blur, underexposure, glare, obstruction, blackout, freeze). 7 clips, about 19 s each.
 - **Validation (held out):** the same drive's stereo left, stereo right and mono rear cameras, each with a clean reference and the six faults at **randomized** onset, duration (2–6 s), strength (0.7–1.3×) and position. 21 clips, never used for calibration.
 - Camera-held-out within one drive: different sensors, viewpoints and Bayer patterns, but the same weather, route and time. It is not an independent drive.
+- **Further Oxford holdouts:** `oxford-camera-holdout-fresh` (42 clips), and `fresh2` and `fresh3` (21 clips each, generated on 2026-10-25 and never inspected before their single use). Same drive, new random seeds.
+- **DRIVE-C core v1** (CC BY 4.0): an independent benchmark of 10 Michigan scenes, 3 at night, with its own corruption code. Its dev scenes (S01–S05) were used for joint tuning on 2026-10-25. Its test scenes (S06–S10) have been **seen** since a failed validation, so their numbers no longer count as independent evidence.
 
 Reproduce: see "Held-out cameras" in the [README](../README.md).
 
@@ -67,7 +69,20 @@ All on EC2 t4g.small (Graviton2, 2 vCPU, unlimited credits, so no throttling) wi
 | Verifier arms, fresh held-out, unpaced | none 232/h · rule **0/h** · LLM agent 99.6/h (25 dismissed, 18 escalated to a human, median 2.9 s) |
 | OpenCV 5 new DNN engine vs 4.13 classic, NanoDet, same host | 71.9 ms vs 96.0 ms (1.34×), identical detections |
 | OpenCV 4.13 vs 5.0, our classic analysis, same host | 0.98× (no gain); decode 1.11×; alarms identical |
-| **DRIVE-C** (independent, no tuning) | day scenes 78/210 (37%) detected at onset; night scenes false-alarm on darkness (3/3 clean); defocus 0/50 |
+| **DRIVE-C**, before joint tuning (independent) | day scenes 78/210 (37%) detected at onset; night scenes false-alarm on darkness (3/3 clean); defocus 0/50 |
+| **Shipped after joint tuning** (2026-10-25) | Oxford fresh2 / fresh3 (never inspected): 4/18 failed each, **0 false alarms/h with the verifier**. DRIVE-C test day 13 → 28/60 and night 0 → 29/90 (both seen). Analysis +1.8 ms/frame for detail at 640 px |
+
+## Joint tuning, self-calibration and the autopilot (2026-10-25)
+
+Full record: [BEFORE_AFTER.md](BEFORE_AFTER.md) sections 6b–6c, evidence in `docs/evidence/tuning/` and `docs/evidence/autopilot/`.
+
+| Step | On tuning data | On unseen or seen validation | Outcome |
+|---|---|---|---|
+| Rounds 1–4: values, detail operator, detail scale, low-light rule, accumulated obstruction score | DRIVE-C dev 39 → 97/150 (detector only) | **Failed** on DRIVE-C test: day 13 → 0/60, because two choices made clean scenes alarm | The two choices were dropped. What ships: detail at 640 px, `obstruction_s` 1.2 |
+| Night policy (`dark_at_start_alarm` off) | n/a | DRIVE-C test night 0 → 29/90; clean night alarms 3 → 1; Oxford unchanged | **Shipped.** Cost: a camera dark from power-on goes from 32/100 to 4/100 caught |
+| Self-calibrating limits, tuned by the agents (`adaptive_k` 3) | 77 → 101/150 | Oxford fresh2: verifier false alarms 0 → 32.5/h (blur fires on glare) | Rejected by validation and the approval gate |
+| Self-calibrating brightness, blur never looser | 77 → 95/150 | Oxford fresh3: identical to shipped; DRIVE-C test day +7, night −14 | Not shipped (it ties on the unbiased test) |
+| Diagnostic autopilot vs `evaluate`-only agent vs random, budget 16 | 101 / 102 / 103, 100, 83 | n/a | The diagnostic tools did not beat random search; the loop and approval gate worked as designed |
 
 ## What the verifier does and does not show
 
@@ -78,9 +93,10 @@ All on EC2 t4g.small (Graviton2, 2 vCPU, unlimited credits, so no throttling) wi
 ## What still fails, plainly (current)
 
 - **Lens obstruction (translucent smudge):** 0 of 6 on fresh held-out and 0–1 of 10 on DRIVE-C. The trigger does not fire on real smudges, so verification cannot help. Cheap per-tile statistics cannot separate this smudge from scene change; a learned model on real soiled-lens data would be the next step.
-- **Glare:** 1 of 6 on fresh held-out, about half on DRIVE-C daytime.
-- **Night:** the darkness fallback fires on normal night driving (DRIVE-C, 3 of 3 night scenes). Night is out of scope today.
-- **Partial defocus:** DRIVE-C's depth-dependent defocus is missed at every severity; "blur" means whole-frame blur.
+- **Glare:** 1–2 of 3 per Oxford holdout, and 7 of 25 on DRIVE-C test day (seen).
+- **Night, partly addressed:** footage dark from its first frame is now treated as that camera's normal. On DRIVE-C test (seen), 29 of 90 night clips are caught and 1 of 3 clean night scenes still alarms. Trade-off: a camera dark from power-on is not flagged (4/100 caught instead of 32/100). The report says "dark since the first frame, verify".
+- **Defocus:** measuring detail at 640 px catches strong DRIVE-C dev defocus (3–7 of 25), but none on DRIVE-C test. Mild defocus keeps 97% of its detail even at 640 px.
 - **Mild under-exposure and low light:** caught only at the strongest DRIVE-C severities.
 - **Strict gate:** the 0 false alarms/h gate is met on fresh held-out only with the verifier, and no candidate passes every tuning gate, because the tuning "obstruction pass" was itself a sky coincidence.
+- **Tuning on five daytime dev scenes overfits.** Twice, choices that helped DRIVE-C dev failed on new data. The only changes that held have a measured mechanism.
 - **Evidence limits:** synthetic faults only; one Oxford drive plus DRIVE-C's ten scenes; no real lens dirt; never a road-safety claim.

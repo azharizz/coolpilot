@@ -1,0 +1,855 @@
+{
+ "dataset": "oxford-camera-holdout-fresh",
+ "split": "validation",
+ "thresholds": {
+  "blur_variance": 30,
+  "dark_mean": 35,
+  "black_fraction": 0.98,
+  "glare_fraction": 0.35,
+  "obstruction_ratio": 0.35,
+  "warmup_s": 1.0,
+  "reference_window_s": 3.0,
+  "glare_rise": 0.25,
+  "glare_tiles": 2,
+  "dark_ratio": 0.65,
+  "blur_ratio": 0.35,
+  "blur_quantile": 0.5,
+  "scene_keep_ratio": 0.85,
+  "obstruction_s": 1.2,
+  "obstruction_max_tiles": 6,
+  "obstruction_leak": 0,
+  "lowlight_dark_ratio": 0,
+  "lowlight_saturation_rise": 1.4,
+  "lowlight_noise_rise": 1.15,
+  "hysteresis": 0.3,
+  "obstruction_hysteresis": 0.8,
+  "freeze_difference": 0.3,
+  "reference_decay_s": 71.4,
+  "persistence_s": 0.3,
+  "recovery_s": 0.5,
+  "freeze_s": 1,
+  "feed_timeout_s": 1,
+  "backlog_s": 0.5
+ },
+ "result": {
+  "failed_fault_checks": 10,
+  "fault_checks": 36,
+  "false_alarms": 40,
+  "false_alarms_per_hour": 221.29019164664925,
+  "normal_seconds": 650.7292480000002,
+  "clips": [
+   {
+    "clip": "left_s1101_blackout",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "blackout",
+      "detected": true,
+      "detection_s": 0.31245900000000004,
+      "recovery_s": 0.562403999999999,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1101_blur",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "blur",
+      "detected": true,
+      "detection_s": 0.43744400000000017,
+      "recovery_s": 0.49991200000000013,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1101_freeze",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "freeze",
+      "detected": true,
+      "detection_s": 1.3748740000000002,
+      "recovery_s": 0.562403999999999,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1101_glare",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "glare",
+      "detected": true,
+      "detection_s": 0.49992899999999985,
+      "recovery_s": null,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.5
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1101_obstruction",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "obstruction",
+      "detected": false,
+      "detection_s": null,
+      "recovery_s": null,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.5
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1101_reference",
+    "camera": "stereo/left",
+    "checks": [],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.5
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1101_underexposure",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "underexposure",
+      "detected": true,
+      "detection_s": 0.4374199999999995,
+      "recovery_s": 0.49991899999999845,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.5
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1102_blackout",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "blackout",
+      "detected": true,
+      "detection_s": 0.31244599999999956,
+      "recovery_s": 0.5623979999999982,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.5
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1102_blur",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "blur",
+      "detected": true,
+      "detection_s": 0.3749609999999999,
+      "recovery_s": 0.5624029999999998,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1102_freeze",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "freeze",
+      "detected": true,
+      "detection_s": 1.3748599999999995,
+      "recovery_s": 0.5624019999999996,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1102_glare",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "glare",
+      "detected": true,
+      "detection_s": 0.6874559999999996,
+      "recovery_s": 2.499607,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1102_obstruction",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "obstruction",
+      "detected": false,
+      "detection_s": null,
+      "recovery_s": null,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.5
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1102_reference",
+    "camera": "stereo/left",
+    "checks": [],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.5
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "left_s1102_underexposure",
+    "camera": "stereo/left",
+    "checks": [
+     {
+      "type": "underexposure",
+      "detected": true,
+      "detection_s": 0.49991200000000013,
+      "recovery_s": 0.31248500000000057,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.5
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "rear_s3301_blackout",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "blackout",
+      "detected": true,
+      "detection_s": 0.36357199999999956,
+      "recovery_s": 0.5454199999999982,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3301_blur",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "blur",
+      "detected": true,
+      "detection_s": 0.4545589999999997,
+      "recovery_s": 0.4544359999999994,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 13.91
+     },
+     {
+      "type": "obstruction",
+      "start_s": 15.63
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3301_freeze",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "freeze",
+      "detected": true,
+      "detection_s": 1.454288,
+      "recovery_s": 0.5454219999999985,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3301_glare",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "glare",
+      "detected": false,
+      "detection_s": null,
+      "recovery_s": null,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     },
+     {
+      "type": "obstruction",
+      "start_s": 13.45
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3301_obstruction",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "obstruction",
+      "detected": false,
+      "detection_s": null,
+      "recovery_s": null,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     },
+     {
+      "type": "obstruction",
+      "start_s": 15.63
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3301_reference",
+    "camera": "mono_rear",
+    "checks": [],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     },
+     {
+      "type": "obstruction",
+      "start_s": 15.63
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3301_underexposure",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "underexposure",
+      "detected": true,
+      "detection_s": 0.45443499999999837,
+      "recovery_s": 0.45456000000000074,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3302_blackout",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "blackout",
+      "detected": true,
+      "detection_s": 0.3635730000000006,
+      "recovery_s": 0.5454220000000003,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3302_blur",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "blur",
+      "detected": true,
+      "detection_s": 0.4545609999999991,
+      "recovery_s": 0.545299,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 15.54
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3302_freeze",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "freeze",
+      "detected": true,
+      "detection_s": 1.4542909999999996,
+      "recovery_s": 0.5452939999999984,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3302_glare",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "glare",
+      "detected": true,
+      "detection_s": 0.6362809999999985,
+      "recovery_s": 0.45455899999999794,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3302_obstruction",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "obstruction",
+      "detected": true,
+      "detection_s": 2.363282,
+      "recovery_s": 1.636137999999999,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 15.63
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3302_reference",
+    "camera": "mono_rear",
+    "checks": [],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 8.18
+     },
+     {
+      "type": "obstruction",
+      "start_s": 15.63
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "rear_s3302_underexposure",
+    "camera": "mono_rear",
+    "checks": [
+     {
+      "type": "underexposure",
+      "detected": true,
+      "detection_s": 0.4545589999999997,
+      "recovery_s": 0.3635699999999993,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 9.73
+     },
+     {
+      "type": "obstruction",
+      "start_s": 15.54
+     }
+    ],
+    "end_s": 18.99726
+   },
+   {
+    "clip": "right_s2201_blackout",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "blackout",
+      "detected": true,
+      "detection_s": 0.31245299999999965,
+      "recovery_s": 0.562398,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2201_blur",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "blur",
+      "detected": true,
+      "detection_s": 0.4374629999999997,
+      "recovery_s": 0.5623960000000006,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2201_freeze",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "freeze",
+      "detected": true,
+      "detection_s": 1.3747569999999998,
+      "recovery_s": 0.5624710000000004,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2201_glare",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "glare",
+      "detected": true,
+      "detection_s": 0.4999090000000006,
+      "recovery_s": null,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2201_obstruction",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "obstruction",
+      "detected": false,
+      "detection_s": null,
+      "recovery_s": null,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2201_reference",
+    "camera": "stereo/right",
+    "checks": [],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2201_underexposure",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "underexposure",
+      "detected": true,
+      "detection_s": 0.4374709999999986,
+      "recovery_s": 0.43741300000000116,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2202_blackout",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "blackout",
+      "detected": true,
+      "detection_s": 0.3124439999999993,
+      "recovery_s": 0.5623909999999999,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2202_blur",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "blur",
+      "detected": true,
+      "detection_s": 0.43747199999999964,
+      "recovery_s": 0.4999090000000006,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2202_freeze",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "freeze",
+      "detected": true,
+      "detection_s": 1.3748299999999993,
+      "recovery_s": 0.5623909999999999,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2202_glare",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "glare",
+      "detected": true,
+      "detection_s": 0.6874279999999997,
+      "recovery_s": 1.937162999999999,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2202_obstruction",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "obstruction",
+      "detected": false,
+      "detection_s": null,
+      "recovery_s": null,
+      "premature_clear": false,
+      "passed": false
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2202_reference",
+    "camera": "stereo/right",
+    "checks": [],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   },
+   {
+    "clip": "right_s2202_underexposure",
+    "camera": "stereo/right",
+    "checks": [
+     {
+      "type": "underexposure",
+      "detected": true,
+      "detection_s": 0.4999299999999991,
+      "recovery_s": 0.562460999999999,
+      "premature_clear": false,
+      "passed": true
+     }
+    ],
+    "false_alarms": [
+     {
+      "type": "obstruction",
+      "start_s": 4.56
+     }
+    ],
+    "end_s": 19.059891
+   }
+  ]
+ }
+}

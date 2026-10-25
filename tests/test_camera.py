@@ -113,17 +113,17 @@ class CameraChecks(unittest.TestCase):
         self.assertNotIn("obstruction", conditions)
 
     @staticmethod
-    def frames(fn, seconds=19.0, rate=14):
-        """Synthetic tile measurements from fn(t, tile) -> (mean, detail, clipped)."""
+    def frames(fn, seconds=19.0, rate=14, frame=None):
+        """Synthetic tile measurements from fn(t, tile) -> (mean, detail, clipped); frame(t) -> extra fields."""
         for i in range(int(seconds * rate)):
             t = i / rate
             regions = [dict(zip(("mean", "detail", "clipped"), fn(t, j))) for j in range(16)]
             yield t, {"regions": regions, "black_fraction": float(np.mean([r["mean"] < 8 for r in regions])),
-                      "thumbnail": np.full((60, 80), i % 251, dtype=np.uint8)}
+                      "thumbnail": np.full((60, 80), i % 251, dtype=np.uint8), **(frame(t) if frame else {})}
 
-    def run_monitor(self, fn, **thresholds):
+    def run_monitor(self, fn, frame=None, **thresholds):
         monitor, seen = Monitor(CameraThresholds(**thresholds)), set()
-        for t, measured in self.frames(fn):
+        for t, measured in self.frames(fn, frame=frame):
             conditions, _ = monitor.appearance(measured, t)
             monitor.update(conditions, t, {})
             seen |= conditions
@@ -146,6 +146,27 @@ class CameraChecks(unittest.TestCase):
         # 130 -> 55 is clearly underexposed for this camera, yet above the absolute dark_mean of 35.
         _, seen = self.run_monitor(lambda t, j: (55.0 if 6 <= t < 10 else 130.0, 900.0, 0.0))
         self.assertIn("underexposure", seen)
+
+    def test_partial_blur_needs_a_lower_quantile(self):
+        # Depth-dependent defocus: 6 of 16 tiles lose detail, the median tile stays sharp.
+        partial = lambda t, j: (130.0, 50.0 if 6 <= t < 10 and j < 6 else 900.0, 0.0)
+        self.assertNotIn("blur", self.run_monitor(partial)[1])
+        self.assertIn("blur", self.run_monitor(partial, blur_quantile=0.25)[1])
+
+    def test_self_calibrating_limit_follows_each_cameras_own_swing(self):
+        # A busy scene swings +-25% in brightness every second; a calm one is steady. Same 30% drop at 12-15 s.
+        busy = lambda t, j: ((130.0 * (1.25 if int(t) % 2 else 0.8)) * (0.7 if 12 <= t < 15 else 1), 900.0, 0.0)
+        calm = lambda t, j: (130.0 * (0.7 if 12 <= t < 15 else 1), 900.0, 0.0)
+        fixed = dict(dark_ratio=0.75)
+        adaptive = dict(adaptive_k=3, adaptive_floor_dark=0.2)
+        self.assertIn("underexposure", self.run_monitor(busy, **fixed)[1])       # a fixed ratio fires on the busy scene's own swing
+        self.assertNotIn("underexposure", self.run_monitor(lambda t, j: ((130.0 * (1.25 if int(t) % 2 else 0.8)), 900.0, 0.0), **adaptive)[1])
+        self.assertIn("underexposure", self.run_monitor(calm, **adaptive)[1])     # the calm scene still alarms on a real drop
+
+    def test_dark_from_the_first_frame_can_be_this_cameras_normal(self):
+        night = lambda t, j: (20.0, 30.0, 0.0)
+        self.assertIn("underexposure", self.run_monitor(night, dark_at_start_alarm=True)[1])
+        self.assertEqual(self.run_monitor(night)[1] & {"underexposure", "blur"}, set())   # shipped default
 
     def test_blackout_explains_blur_and_freeze(self):
         black = lambda t, j: (0.0, 0.0, 0.0) if 6 <= t < 10 else (120.0, 900.0 + j, 0.0)

@@ -1,0 +1,606 @@
+S01_glare_flare_s1           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S01_glare_flare_s2           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S01_glare_flare_s3           expected=glare         onset=PASS after=['glare'] alone=[]
+S01_glare_flare_s4           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S01_glare_flare_s5           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S01_motion_blur_s1           expected=blur          onset=PASS after=['blur'] alone=[]
+S01_motion_blur_s2           expected=blur          onset=PASS after=['blur'] alone=[]
+S01_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=[]
+S01_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=[]
+S01_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=[]
+S01_defocus_blur_s1          expected=blur          onset=---- after=[] alone=[]
+S01_defocus_blur_s2          expected=blur          onset=---- after=[] alone=[]
+S01_defocus_blur_s3          expected=blur          onset=---- after=[] alone=[]
+S01_defocus_blur_s4          expected=blur          onset=---- after=[] alone=[]
+S01_defocus_blur_s5          expected=blur          onset=PASS after=['blur'] alone=[]
+S01_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=[]
+S01_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=[]
+S01_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=[]
+S01_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=[]
+S01_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=[]
+S01_low_light_s1             expected=underexposure onset=---- after=[] alone=[]
+S01_low_light_s2             expected=underexposure onset=---- after=[] alone=[]
+S01_low_light_s3             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S01_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S01_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S01_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S01_underexposure_s2         expected=underexposure onset=---- after=[] alone=[]
+S01_underexposure_s3         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S01_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S01_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S02_glare_flare_s1           expected=glare         onset=PASS after=['glare'] alone=[]
+S02_glare_flare_s2           expected=glare         onset=PASS after=['glare'] alone=[]
+S02_glare_flare_s3           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S02_glare_flare_s4           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S02_glare_flare_s5           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S02_motion_blur_s1           expected=blur          onset=PASS after=['blur'] alone=[]
+S02_motion_blur_s2           expected=blur          onset=PASS after=['blur'] alone=[]
+S02_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=[]
+S02_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S02_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S02_defocus_blur_s1          expected=blur          onset=---- after=[] alone=[]
+S02_defocus_blur_s2          expected=blur          onset=---- after=[] alone=[]
+S02_defocus_blur_s3          expected=blur          onset=---- after=[] alone=[]
+S02_defocus_blur_s4          expected=blur          onset=---- after=[] alone=[]
+S02_defocus_blur_s5          expected=blur          onset=PASS after=['blur'] alone=[]
+S02_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=[]
+S02_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=[]
+S02_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=[]
+S02_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=[]
+S02_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=[]
+S02_low_light_s1             expected=underexposure onset=---- after=[] alone=[]
+S02_low_light_s2             expected=underexposure onset=---- after=[] alone=[]
+S02_low_light_s3             expected=underexposure onset=---- after=[] alone=[]
+S02_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S02_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S02_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S02_underexposure_s2         expected=underexposure onset=---- after=[] alone=[]
+S02_underexposure_s3         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S02_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S02_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S03_glare_flare_s1           expected=glare         onset=---- after=[] alone=['glare']
+S03_glare_flare_s2           expected=glare         onset=---- after=[] alone=['glare']
+S03_glare_flare_s3           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S03_glare_flare_s4           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S03_glare_flare_s5           expected=glare         onset=PASS after=['glare'] alone=['glare', 'blur']
+S03_motion_blur_s1           expected=blur          onset=PASS after=['blur'] alone=[]
+S03_motion_blur_s2           expected=blur          onset=PASS after=['blur'] alone=[]
+S03_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=[]
+S03_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S03_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S03_defocus_blur_s1          expected=blur          onset=---- after=[] alone=[]
+S03_defocus_blur_s2          expected=blur          onset=---- after=[] alone=[]
+S03_defocus_blur_s3          expected=blur          onset=---- after=[] alone=[]
+S03_defocus_blur_s4          expected=blur          onset=---- after=[] alone=[]
+S03_defocus_blur_s5          expected=blur          onset=---- after=[] alone=[]
+S03_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=[]
+S03_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=[]
+S03_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=[]
+S03_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=[]
+S03_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=[]
+S03_low_light_s1             expected=underexposure onset=---- after=[] alone=[]
+S03_low_light_s2             expected=underexposure onset=---- after=[] alone=[]
+S03_low_light_s3             expected=underexposure onset=---- after=[] alone=[]
+S03_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S03_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S03_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S03_underexposure_s2         expected=underexposure onset=---- after=[] alone=[]
+S03_underexposure_s3         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S03_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S03_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S04_glare_flare_s1           expected=glare         onset=PASS after=['glare'] alone=[]
+S04_glare_flare_s2           expected=glare         onset=PASS after=['glare'] alone=[]
+S04_glare_flare_s3           expected=glare         onset=PASS after=['glare'] alone=[]
+S04_glare_flare_s4           expected=glare         onset=PASS after=['glare'] alone=[]
+S04_glare_flare_s5           expected=glare         onset=PASS after=['glare'] alone=[]
+S04_motion_blur_s1           expected=blur          onset=PASS after=['blur'] alone=[]
+S04_motion_blur_s2           expected=blur          onset=PASS after=['blur'] alone=[]
+S04_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=[]
+S04_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=[]
+S04_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S04_defocus_blur_s1          expected=blur          onset=---- after=[] alone=[]
+S04_defocus_blur_s2          expected=blur          onset=---- after=[] alone=[]
+S04_defocus_blur_s3          expected=blur          onset=---- after=[] alone=[]
+S04_defocus_blur_s4          expected=blur          onset=---- after=[] alone=[]
+S04_defocus_blur_s5          expected=blur          onset=---- after=[] alone=[]
+S04_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=[]
+S04_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=[]
+S04_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=[]
+S04_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=[]
+S04_lens_occlusion_s5        expected=obstruction   onset=---- after=['blur'] alone=[]
+S04_low_light_s1             expected=underexposure onset=---- after=[] alone=[]
+S04_low_light_s2             expected=underexposure onset=---- after=[] alone=[]
+S04_low_light_s3             expected=underexposure onset=---- after=[] alone=[]
+S04_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S04_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S04_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S04_underexposure_s2         expected=underexposure onset=---- after=[] alone=[]
+S04_underexposure_s3         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S04_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S04_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S05_glare_flare_s1           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S05_glare_flare_s2           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S05_glare_flare_s3           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S05_glare_flare_s4           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S05_glare_flare_s5           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S05_motion_blur_s1           expected=blur          onset=PASS after=['blur'] alone=[]
+S05_motion_blur_s2           expected=blur          onset=PASS after=['blur'] alone=[]
+S05_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=[]
+S05_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=[]
+S05_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S05_defocus_blur_s1          expected=blur          onset=---- after=[] alone=[]
+S05_defocus_blur_s2          expected=blur          onset=---- after=[] alone=[]
+S05_defocus_blur_s3          expected=blur          onset=---- after=[] alone=[]
+S05_defocus_blur_s4          expected=blur          onset=---- after=[] alone=[]
+S05_defocus_blur_s5          expected=blur          onset=PASS after=['blur'] alone=[]
+S05_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=[]
+S05_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=[]
+S05_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=[]
+S05_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=[]
+S05_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=[]
+S05_low_light_s1             expected=underexposure onset=---- after=[] alone=[]
+S05_low_light_s2             expected=underexposure onset=---- after=[] alone=[]
+S05_low_light_s3             expected=underexposure onset=---- after=[] alone=[]
+S05_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S05_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S05_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S05_underexposure_s2         expected=underexposure onset=---- after=[] alone=[]
+S05_underexposure_s3         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S05_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S05_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S06_glare_flare_s1           expected=glare         onset=---- after=[] alone=['underexposure']
+S06_glare_flare_s2           expected=glare         onset=---- after=[] alone=['underexposure']
+S06_glare_flare_s3           expected=glare         onset=---- after=[] alone=['underexposure']
+S06_glare_flare_s4           expected=glare         onset=---- after=[] alone=['underexposure']
+S06_glare_flare_s5           expected=glare         onset=---- after=[] alone=['underexposure']
+S06_motion_blur_s1           expected=blur          onset=---- after=[] alone=['underexposure']
+S06_motion_blur_s2           expected=blur          onset=---- after=[] alone=['underexposure']
+S06_motion_blur_s3           expected=blur          onset=---- after=[] alone=['underexposure']
+S06_motion_blur_s4           expected=blur          onset=---- after=[] alone=['underexposure']
+S06_motion_blur_s5           expected=blur          onset=---- after=[] alone=['underexposure']
+S06_defocus_blur_s1          expected=blur          onset=---- after=[] alone=['underexposure']
+S06_defocus_blur_s2          expected=blur          onset=---- after=[] alone=['underexposure']
+S06_defocus_blur_s3          expected=blur          onset=---- after=[] alone=['underexposure']
+S06_defocus_blur_s4          expected=blur          onset=---- after=[] alone=['underexposure']
+S06_defocus_blur_s5          expected=blur          onset=---- after=[] alone=['underexposure']
+S06_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=['underexposure']
+S06_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=['underexposure']
+S06_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=['underexposure']
+S06_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=['underexposure']
+S06_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=['underexposure']
+S06_low_light_s1             expected=underexposure onset=---- after=[] alone=[]
+S06_low_light_s2             expected=underexposure onset=---- after=[] alone=[]
+S06_low_light_s3             expected=underexposure onset=---- after=[] alone=[]
+S06_low_light_s4             expected=underexposure onset=---- after=['blackout'] alone=['blackout']
+S06_low_light_s5             expected=underexposure onset=---- after=[] alone=[]
+S06_underexposure_s1         expected=underexposure onset=---- after=[] alone=['underexposure']
+S06_underexposure_s2         expected=underexposure onset=---- after=[] alone=['underexposure']
+S06_underexposure_s3         expected=underexposure onset=---- after=[] alone=[]
+S06_underexposure_s4         expected=underexposure onset=---- after=[] alone=[]
+S06_underexposure_s5         expected=underexposure onset=---- after=[] alone=[]
+S07_glare_flare_s1           expected=glare         onset=---- after=['obstruction'] alone=[]
+S07_glare_flare_s2           expected=glare         onset=---- after=['obstruction'] alone=[]
+S07_glare_flare_s3           expected=glare         onset=---- after=['obstruction'] alone=[]
+S07_glare_flare_s4           expected=glare         onset=---- after=['obstruction'] alone=[]
+S07_glare_flare_s5           expected=glare         onset=---- after=['obstruction'] alone=['underexposure']
+S07_motion_blur_s1           expected=blur          onset=---- after=[] alone=[]
+S07_motion_blur_s2           expected=blur          onset=---- after=[] alone=[]
+S07_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=[]
+S07_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=[]
+S07_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=[]
+S07_defocus_blur_s1          expected=blur          onset=---- after=['obstruction'] alone=[]
+S07_defocus_blur_s2          expected=blur          onset=---- after=['obstruction'] alone=['obstruction']
+S07_defocus_blur_s3          expected=blur          onset=---- after=['obstruction'] alone=['obstruction']
+S07_defocus_blur_s4          expected=blur          onset=---- after=['obstruction'] alone=[]
+S07_defocus_blur_s5          expected=blur          onset=---- after=[] alone=[]
+S07_lens_occlusion_s1        expected=obstruction   onset=PASS after=['obstruction'] alone=[]
+S07_lens_occlusion_s2        expected=obstruction   onset=PASS after=['obstruction'] alone=[]
+S07_lens_occlusion_s3        expected=obstruction   onset=PASS after=['obstruction'] alone=[]
+S07_lens_occlusion_s4        expected=obstruction   onset=PASS after=['obstruction'] alone=[]
+S07_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=[]
+S07_low_light_s1             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S07_low_light_s2             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S07_low_light_s3             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S07_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S07_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S07_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S07_underexposure_s2         expected=underexposure onset=---- after=[] alone=[]
+S07_underexposure_s3         expected=underexposure onset=PASS after=['underexposure'] alone=['obstruction']
+S07_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=['obstruction']
+S07_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=['obstruction']
+S08_glare_flare_s1           expected=glare         onset=---- after=[] alone=[]
+S08_glare_flare_s2           expected=glare         onset=---- after=[] alone=[]
+S08_glare_flare_s3           expected=glare         onset=---- after=[] alone=[]
+S08_glare_flare_s4           expected=glare         onset=---- after=[] alone=[]
+S08_glare_flare_s5           expected=glare         onset=---- after=[] alone=[]
+S08_motion_blur_s1           expected=blur          onset=PASS after=['blur'] alone=[]
+S08_motion_blur_s2           expected=blur          onset=PASS after=['blur'] alone=['obstruction']
+S08_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=['obstruction']
+S08_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=[]
+S08_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=[]
+S08_defocus_blur_s1          expected=blur          onset=---- after=[] alone=[]
+S08_defocus_blur_s2          expected=blur          onset=---- after=[] alone=[]
+S08_defocus_blur_s3          expected=blur          onset=---- after=[] alone=[]
+S08_defocus_blur_s4          expected=blur          onset=---- after=[] alone=['obstruction']
+S08_defocus_blur_s5          expected=blur          onset=---- after=[] alone=['obstruction']
+S08_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=['obstruction']
+S08_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=[]
+S08_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=['obstruction']
+S08_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=[]
+S08_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=[]
+S08_low_light_s1             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S08_low_light_s2             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S08_low_light_s3             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S08_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S08_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S08_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S08_underexposure_s2         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S08_underexposure_s3         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S08_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=['obstruction']
+S08_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S09_glare_flare_s1           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S09_glare_flare_s2           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S09_glare_flare_s3           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S09_glare_flare_s4           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S09_glare_flare_s5           expected=glare         onset=PASS after=['glare'] alone=['glare']
+S09_motion_blur_s1           expected=blur          onset=PASS after=['blur'] alone=[]
+S09_motion_blur_s2           expected=blur          onset=PASS after=['blur'] alone=[]
+S09_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=[]
+S09_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=[]
+S09_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S09_defocus_blur_s1          expected=blur          onset=---- after=[] alone=[]
+S09_defocus_blur_s2          expected=blur          onset=---- after=[] alone=[]
+S09_defocus_blur_s3          expected=blur          onset=---- after=[] alone=[]
+S09_defocus_blur_s4          expected=blur          onset=---- after=[] alone=[]
+S09_defocus_blur_s5          expected=blur          onset=---- after=[] alone=[]
+S09_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=[]
+S09_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=[]
+S09_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=[]
+S09_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=[]
+S09_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=[]
+S09_low_light_s1             expected=underexposure onset=---- after=[] alone=[]
+S09_low_light_s2             expected=underexposure onset=---- after=[] alone=[]
+S09_low_light_s3             expected=underexposure onset=---- after=[] alone=[]
+S09_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S09_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S09_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S09_underexposure_s2         expected=underexposure onset=---- after=[] alone=[]
+S09_underexposure_s3         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S09_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S09_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S10_glare_flare_s1           expected=glare         onset=---- after=[] alone=[]
+S10_glare_flare_s2           expected=glare         onset=---- after=[] alone=[]
+S10_glare_flare_s3           expected=glare         onset=---- after=[] alone=[]
+S10_glare_flare_s4           expected=glare         onset=PASS after=['glare'] alone=[]
+S10_glare_flare_s5           expected=glare         onset=PASS after=['glare'] alone=[]
+S10_motion_blur_s1           expected=blur          onset=PASS after=['blur'] alone=[]
+S10_motion_blur_s2           expected=blur          onset=PASS after=['blur'] alone=[]
+S10_motion_blur_s3           expected=blur          onset=PASS after=['blur'] alone=[]
+S10_motion_blur_s4           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S10_motion_blur_s5           expected=blur          onset=PASS after=['blur'] alone=['blur']
+S10_defocus_blur_s1          expected=blur          onset=---- after=[] alone=[]
+S10_defocus_blur_s2          expected=blur          onset=---- after=[] alone=[]
+S10_defocus_blur_s3          expected=blur          onset=---- after=[] alone=[]
+S10_defocus_blur_s4          expected=blur          onset=---- after=[] alone=[]
+S10_defocus_blur_s5          expected=blur          onset=---- after=[] alone=[]
+S10_lens_occlusion_s1        expected=obstruction   onset=---- after=[] alone=[]
+S10_lens_occlusion_s2        expected=obstruction   onset=---- after=[] alone=[]
+S10_lens_occlusion_s3        expected=obstruction   onset=---- after=[] alone=[]
+S10_lens_occlusion_s4        expected=obstruction   onset=---- after=[] alone=[]
+S10_lens_occlusion_s5        expected=obstruction   onset=---- after=[] alone=[]
+S10_low_light_s1             expected=underexposure onset=---- after=[] alone=[]
+S10_low_light_s2             expected=underexposure onset=---- after=[] alone=[]
+S10_low_light_s3             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S10_low_light_s4             expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S10_low_light_s5             expected=underexposure onset=PASS after=['underexposure'] alone=['underexposure']
+S10_underexposure_s1         expected=underexposure onset=---- after=[] alone=[]
+S10_underexposure_s2         expected=underexposure onset=---- after=[] alone=[]
+S10_underexposure_s3         expected=underexposure onset=PASS after=['blur', 'underexposure'] alone=[]
+S10_underexposure_s4         expected=underexposure onset=PASS after=['underexposure'] alone=[]
+S10_underexposure_s5         expected=underexposure onset=PASS after=['underexposure'] alone=['underexposure']
+{
+ "dataset": "DRIVE-C core v1 (CC BY 4.0, doi:10.5281/zenodo.19656444)",
+ "opencv": "5.0.0",
+ "thresholds": {
+  "blur_variance": 30,
+  "dark_mean": 35,
+  "black_fraction": 0.98,
+  "glare_fraction": 0.35,
+  "obstruction_ratio": 0.35,
+  "warmup_s": 1.0,
+  "reference_window_s": 3.0,
+  "glare_rise": 0.25,
+  "glare_tiles": 2,
+  "dark_ratio": 0.65,
+  "blur_ratio": 0.35,
+  "blur_quantile": 0.5,
+  "scene_keep_ratio": 0.85,
+  "obstruction_s": 1.2,
+  "obstruction_max_tiles": 6,
+  "obstruction_leak": 0,
+  "lowlight_dark_ratio": 0,
+  "lowlight_saturation_rise": 1.4,
+  "lowlight_noise_rise": 1.15,
+  "adaptive_k": 0,
+  "adaptive_floor_dark": 0.2,
+  "adaptive_floor_blur": 0.4,
+  "adaptive_window_s": 10,
+  "dark_at_start_alarm": false,
+  "hysteresis": 0.3,
+  "obstruction_hysteresis": 0.8,
+  "freeze_difference": 0.3,
+  "reference_decay_s": 71.4,
+  "persistence_s": 0.3,
+  "recovery_s": 0.5,
+  "freeze_s": 1,
+  "feed_timeout_s": 1,
+  "backlog_s": 0.5
+ },
+ "clean_clips_with_alarm": 1,
+ "clean_clips": 10,
+ "by_split": {
+  "dev": {
+   "our_classes_onset_pass": "77/150",
+   "clean_clips_with_alarm": "0/5",
+   "joined_clips_alarming_before_onset": "0/150",
+   "night_scenes": []
+  },
+  "test": {
+   "our_classes_onset_pass": "57/150",
+   "clean_clips_with_alarm": "1/5",
+   "joined_clips_alarming_before_onset": "30/150",
+   "night_scenes": [
+    "S06_video_003_clean.mp4",
+    "S07_video_006_clean.mp4",
+    "S08_video_007_clean.mp4"
+   ]
+  }
+ },
+ "summary": {
+  "defocus_blur/s1": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "obstruction": 1
+   }
+  },
+  "defocus_blur/s2": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "obstruction": 1
+   }
+  },
+  "defocus_blur/s3": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "obstruction": 1
+   }
+  },
+  "defocus_blur/s4": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "obstruction": 1
+   }
+  },
+  "defocus_blur/s5": {
+   "n": 10,
+   "onset_pass": 3,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 3
+   }
+  },
+  "glare_flare/s1": {
+   "n": 10,
+   "onset_pass": 5,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "glare": 5,
+    "obstruction": 1
+   }
+  },
+  "glare_flare/s2": {
+   "n": 10,
+   "onset_pass": 5,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "glare": 5,
+    "obstruction": 1
+   }
+  },
+  "glare_flare/s3": {
+   "n": 10,
+   "onset_pass": 6,
+   "alone_alarm": 4,
+   "fired_after_join": {
+    "glare": 6,
+    "obstruction": 1
+   }
+  },
+  "glare_flare/s4": {
+   "n": 10,
+   "onset_pass": 7,
+   "alone_alarm": 5,
+   "fired_after_join": {
+    "glare": 7,
+    "obstruction": 1
+   }
+  },
+  "glare_flare/s5": {
+   "n": 10,
+   "onset_pass": 7,
+   "alone_alarm": 5,
+   "fired_after_join": {
+    "glare": 7,
+    "obstruction": 1
+   }
+  },
+  "lens_occlusion/s1": {
+   "n": 10,
+   "onset_pass": 1,
+   "alone_alarm": 1,
+   "fired_after_join": {
+    "obstruction": 1
+   }
+  },
+  "lens_occlusion/s2": {
+   "n": 10,
+   "onset_pass": 1,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "obstruction": 1
+   }
+  },
+  "lens_occlusion/s3": {
+   "n": 10,
+   "onset_pass": 1,
+   "alone_alarm": 1,
+   "fired_after_join": {
+    "obstruction": 1
+   }
+  },
+  "lens_occlusion/s4": {
+   "n": 10,
+   "onset_pass": 1,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "obstruction": 1
+   }
+  },
+  "lens_occlusion/s5": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 1
+   }
+  },
+  "low_light/s1": {
+   "n": 10,
+   "onset_pass": 2,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "underexposure": 2
+   }
+  },
+  "low_light/s2": {
+   "n": 10,
+   "onset_pass": 2,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "underexposure": 2
+   }
+  },
+  "low_light/s3": {
+   "n": 10,
+   "onset_pass": 4,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "underexposure": 4
+   }
+  },
+  "low_light/s4": {
+   "n": 10,
+   "onset_pass": 9,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "underexposure": 9,
+    "blackout": 1
+   }
+  },
+  "low_light/s5": {
+   "n": 10,
+   "onset_pass": 9,
+   "alone_alarm": 1,
+   "fired_after_join": {
+    "underexposure": 9
+   }
+  },
+  "motion_blur/s1": {
+   "n": 10,
+   "onset_pass": 8,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 8
+   }
+  },
+  "motion_blur/s2": {
+   "n": 10,
+   "onset_pass": 8,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 8
+   }
+  },
+  "motion_blur/s3": {
+   "n": 10,
+   "onset_pass": 9,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "blur": 9
+   }
+  },
+  "motion_blur/s4": {
+   "n": 10,
+   "onset_pass": 9,
+   "alone_alarm": 3,
+   "fired_after_join": {
+    "blur": 9
+   }
+  },
+  "motion_blur/s5": {
+   "n": 10,
+   "onset_pass": 9,
+   "alone_alarm": 6,
+   "fired_after_join": {
+    "blur": 9
+   }
+  },
+  "underexposure/s1": {
+   "n": 10,
+   "onset_pass": 0,
+   "alone_alarm": 1,
+   "fired_after_join": {}
+  },
+  "underexposure/s2": {
+   "n": 10,
+   "onset_pass": 1,
+   "alone_alarm": 1,
+   "fired_after_join": {
+    "underexposure": 1
+   }
+  },
+  "underexposure/s3": {
+   "n": 10,
+   "onset_pass": 9,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "underexposure": 9,
+    "blur": 1
+   }
+  },
+  "underexposure/s4": {
+   "n": 10,
+   "onset_pass": 9,
+   "alone_alarm": 0,
+   "fired_after_join": {
+    "underexposure": 9
+   }
+  },
+  "underexposure/s5": {
+   "n": 10,
+   "onset_pass": 9,
+   "alone_alarm": 1,
+   "fired_after_join": {
+    "underexposure": 9
+   }
+  }
+ }
+}
