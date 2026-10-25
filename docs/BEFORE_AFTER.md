@@ -417,6 +417,7 @@ Bugs found and fixed during this work (most by the QA agent):
 | Build and tests on Graviton | `docs/evidence/aws/build-standard.txt`, `tests-standard.txt` |
 | DRIVE-C (independent) | `docs/evidence/aws/drivec.json` |
 | Night-fix attempt (no effect, reverted) | `docs/evidence/aws/drivec-nightfix.json` |
+| Agent workflow diagram and traces (Agentic Vision evidence) | `docs/AGENT_WORKFLOW.md` |
 | Joint tuning rounds (Oxford + DRIVE-C dev) | `docs/evidence/tuning/rounds.json`, `round*.json`, grids `grid*.json` |
 | Local DRIVE-C sample + randomized faults | `data/drivec_sample/`, `data/camera_health/drivec-sample/` (gitignored; rebuild with `scripts/generate_drivec_sample.py`) |
 

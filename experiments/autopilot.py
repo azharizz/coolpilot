@@ -170,6 +170,8 @@ def call(session, name, args, offered):
     if name == "ablate":
         rows = []
         for value in args["values"][:5]:
+            if session.used >= session.budget:   # return what was measured instead of discarding it
+                return {"setting": args["name"], "results": rows, "stopped": "evaluation budget exhausted; call propose", "budget_left": 0}
             r = session.score({**args["settings"], args["name"]: value})
             rows.append({"value": value, **{k: r[k] for k in ("oxford_failed_checks", "drivec_dev_passed", "drivec_false_alarms", "passed_by_class_of_25")}})
         return {"setting": args["name"], "results": rows, "budget_left": session.budget - session.used}

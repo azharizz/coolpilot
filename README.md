@@ -160,6 +160,7 @@ python3 scripts/build_holdout_dataset.py --name oxford-camera-holdout-fresh3 --v
 - **Built and tested but not shipped:** self-calibrating limits (`adaptive_k`, off). They tied the defaults on never-inspected Oxford clips.
 - **The autopilot did not beat random search.** Its best proposal on tuning data failed unbiased validation, and the approval gate kept it out.
 - Full record: [docs/BEFORE_AFTER.md](docs/BEFORE_AFTER.md) section 6b–6c and `docs/evidence/{tuning,autopilot}/`.
+- Agent workflow diagram and step-by-step traces (verifier and autopilot): [docs/AGENT_WORKFLOW.md](docs/AGENT_WORKFLOW.md).
 
 ## Second-stage verification (active perception, OpenCV 5 DNN)
 
