@@ -1,0 +1,10 @@
+{
+ "opencv": "5.0.0",
+ "engine": "new",
+ "machine": "aarch64",
+ "threads": 8,
+ "frames": 40,
+ "median_ms": 14.7,
+ "p95_ms": 14.9,
+ "detections_per_frame": 4.92
+}

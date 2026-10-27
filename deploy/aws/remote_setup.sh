@@ -17,8 +17,10 @@ if [ "$LABEL" = cool ]; then
   PY="$COOL_VENV/bin/python"; DEPS="$HOME/deps-cool"
   grep -viE '^(opencv|numpy)' requirements.txt > "$HOME/requirements-cool.txt"
   "$PY" -m pip install -q --disable-pip-version-check --upgrade --target "$DEPS" -r "$HOME/requirements-cool.txt"
-  export PYTHONPATH="$DEPS" LD_LIBRARY_PATH="$COOL_ROOT/cpp_sdk/lib:${LD_LIBRARY_PATH:-}" COOLPILOT_COOL_ROOT="$COOL_ROOT"
-  ENVLINES="Environment=PYTHONPATH=$DEPS
+  # The vendor cv2 and numpy live in $COOL_ROOT/python_3.x/site-packages, not in the venv itself (measured on the AMI).
+  SITE="$COOL_ROOT/$(basename "$COOL_VENV")/site-packages"
+  export PYTHONPATH="$SITE:$DEPS" LD_LIBRARY_PATH="$COOL_ROOT/cpp_sdk/lib:${LD_LIBRARY_PATH:-}" COOLPILOT_COOL_ROOT="$COOL_ROOT"
+  ENVLINES="Environment=PYTHONPATH=$SITE:$DEPS
 Environment=LD_LIBRARY_PATH=$COOL_ROOT/cpp_sdk/lib
 Environment=COOLPILOT_COOL_ROOT=$COOL_ROOT"
 else

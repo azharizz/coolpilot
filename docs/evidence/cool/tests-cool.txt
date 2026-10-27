@@ -1,0 +1,11 @@
+/home/ubuntu/deps-cool/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+.......................................................[ WARN:0@13.544] global cap_gstreamer.cpp:1436 open OpenCV | GStreamer warning: Error opening bin: no source element for URI "/tmp/tmp6g19up2d/absent.mp4"
+[ WARN:0@13.544] global cap_gstreamer.cpp:1173 isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[ WARN:0@14.046] global cap_gstreamer.cpp:1436 open OpenCV | GStreamer warning: Error opening bin: no source element for URI "/tmp/tmp6g19up2d/absent.mp4"
+[ WARN:0@14.046] global cap_gstreamer.cpp:1173 isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+.......
+----------------------------------------------------------------------
+Ran 62 tests in 14.665s
+
+OK

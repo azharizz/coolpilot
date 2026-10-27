@@ -1,0 +1,1 @@
+{"build": "standard", "opencv": "5.0.0", "distribution": "OpenCV", "machine": "x86_64", "streams": 8, "completed": 8, "frames_per_s_total": 483.6, "frames_per_s_per_stream": 60.5, "analysis_p95_ms": 20.0, "cpu_utilisation": 0.986, "source_fps": 14.26, "realtime_cameras": 33}

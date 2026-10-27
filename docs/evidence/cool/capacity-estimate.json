@@ -1,0 +1,32 @@
+{
+ "instance": "c6g.2xlarge (Graviton2 Neoverse-N1, 8 vCPU)",
+ "price_usd_per_h": 0.272,
+ "source_fps": 14.26,
+ "method": "ESTIMATE from measured single-stream, 1-thread CPU (decode + OpenCV analysis + alarm logic), assuming linear scaling to all vCPUs; not a measured capacity test",
+ "builds": {
+  "wheel412": {
+   "label": "standard OpenCV 4.12 wheel",
+   "cpu_ms_per_frame": 13.063,
+   "analysis_p95_ms": 2.909,
+   "cpu_per_camera": 0.1863,
+   "estimated_cameras": 42,
+   "usd_per_1000_camera_hours": 6.48
+  },
+  "cool": {
+   "label": "COOL 4.12 (KleidiCV, ARMPL, TBB)",
+   "cpu_ms_per_frame": 13.338,
+   "analysis_p95_ms": 2.812,
+   "cpu_per_camera": 0.1902,
+   "estimated_cameras": 42,
+   "usd_per_1000_camera_hours": 6.48
+  },
+  "standard": {
+   "label": "standard OpenCV 5.0.0 wheel",
+   "cpu_ms_per_frame": 9.295,
+   "analysis_p95_ms": 2.474,
+   "cpu_per_camera": 0.1326,
+   "estimated_cameras": 60,
+   "usd_per_1000_camera_hours": 4.53
+  }
+ }
+}

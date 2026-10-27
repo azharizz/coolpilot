@@ -1,0 +1,14 @@
+A: OpenCV 4.12.0 (Linux/aarch64)
+B: COOL 4.12.0 (Linux/aarch64)
+Videos: stereo_centre.mp4, stereo_left.mp4, stereo_right.mp4
+
+stage                A cpu s   B cpu s     A/B  share of A
+decode                 4.981     5.151   0.97x         23%
+opencv_analysis        4.943     4.908   1.01x         22%
+python_alarms          0.665     0.752   0.88x          3%
+flow_candidate        11.427    11.141   1.03x         52%
+other                  0.031     0.032   0.96x          0%
+total                 22.102    21.925   1.01x        100%
+
+Alarms identical: True (0 differences)
+Measurements within tolerance: True {'mean': 0.0, 'detail_relative': 0.0, 'clipped': 0.0, 'black_fraction': 0.0}

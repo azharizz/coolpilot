@@ -18,6 +18,7 @@ Last updated: 2026-10-25 03:25 UTC. Graviton verification and DRIVE-C evaluation
 | Tests | 37 at the first QA check of this work (3 failing mid-change) | 61 passing locally (OpenCV 4.13) and on Graviton (OpenCV 5.0.0) |
 | Independent data (DRIVE-C, no tuning) | not tested | day scenes: **78/210 (37%)** of our fault classes caught at onset (motion blur and strong under-exposure transfer; defocus 0/50); **night scenes false-alarm on darkness** (3/3) |
 | Joint tuning (Oxford + DRIVE-C dev), section 6b–6c | n/a | shipped: detail at 640 px, `obstruction_s` 1.2, night policy. DRIVE-C test (seen) day **13 → 28/60**, night **0 → 29/90**; never-inspected Oxford fresh2/fresh3: 4/18 failed, **0 false alarms/h with the verifier**. Self-calibration and the diagnostic autopilot are built and tested; neither beat the shipped defaults or random search on unbiased data |
+| COOL (Recommendation 3) | not run | **Measured on COOL** (c6g.2xlarge, COOL 4.12 with KleidiCV, ARMPL and TBB). COOL executed the workload (62 tests, identical alarms to the 4.12 wheel) but gave no speedup: 1.01× at 1 thread, 0.90× at 8 threads. **Measured capacity** with 8 parallel streams: COOL 27 cameras at $10.07, standard 5.0 on Graviton 30 cameras at **$9.07**, standard 5.0 on x86 c7i 33 cameras at $10.82, all per 1,000 camera-hours. NanoDet: 5.0 68.9 ms vs COOL 98 ms. The autopilot picks standard 5.0 on Graviton. See `docs/COOL.md` |
 | Product surface | dashboard + replay | + **Check footage**: upload a clip → S3 → Graviton Lambda → segment report, file deleted after |
 
 ## 1. Detector (per-camera relative rules)
@@ -418,6 +419,7 @@ Bugs found and fixed during this work (most by the QA agent):
 | DRIVE-C (independent) | `docs/evidence/aws/drivec.json` |
 | Night-fix attempt (no effect, reverted) | `docs/evidence/aws/drivec-nightfix.json` |
 | Agent workflow diagram and traces (Agentic Vision evidence) | `docs/AGENT_WORKFLOW.md` |
+| COOL vs standard OpenCV on the same Graviton host, capacity estimate | `docs/COOL.md`, `docs/evidence/cool/` |
 | Joint tuning rounds (Oxford + DRIVE-C dev) | `docs/evidence/tuning/rounds.json`, `round*.json`, grids `grid*.json` |
 | Local DRIVE-C sample + randomized faults | `data/drivec_sample/`, `data/camera_health/drivec-sample/` (gitignored; rebuild with `scripts/generate_drivec_sample.py`) |
 
@@ -432,4 +434,4 @@ Bugs found and fixed during this work (most by the QA agent):
 - [x] Alarm-delay curves (2 s / 10 s / 60 s), fresh held-out (`docs/evidence/delay-curves-fresh.json`; OpenCV 5.0 on Mac, whose none/rule arms matched Graviton exactly)
 - [x] Joint tuning rounds 0–4, validation (failed on DRIVE-C test), shipped setup re-validated (section 6b)
 - [x] Section 6c: self-calibrating detector + diagnostic autopilot, comparison, validation (night policy shipped; self-calibration not shipped)
-- [ ] Recommendation 3 (COOL): standard vs COOL on the same Graviton host, when the account is ready
+- [x] Recommendation 3 (COOL): standard vs COOL on the same Graviton host (`docs/COOL.md`, `docs/evidence/cool/`)

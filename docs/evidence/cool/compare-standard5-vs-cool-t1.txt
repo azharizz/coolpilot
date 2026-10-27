@@ -1,0 +1,16 @@
+A: OpenCV 5.0.0 (Linux/aarch64)
+B: COOL 4.12.0 (Linux/aarch64)
+Videos: stereo_centre.mp4, stereo_left.mp4, stereo_right.mp4
+
+stage                A cpu s   B cpu s     A/B  share of A
+decode                 2.200     5.151   0.43x         11%
+opencv_analysis        4.632     4.908   0.94x         23%
+python_alarms          0.689     0.752   0.92x          3%
+flow_candidate        12.157    11.141   1.09x         62%
+other                  0.036     0.032   1.11x          0%
+total                 19.760    21.925   0.90x        100%
+
+Alarms identical: False (2 differences)
+Measurements within tolerance: False {'mean': 1.9984374999999943, 'detail_relative': 0.035163057263240136, 'clipped': 0.02729166666666666, 'black_fraction': 0.005416666666666667}
+   stereo_centre.mp4 frame 128: ['obstruction'] vs []
+   stereo_centre.mp4: alarm episodes differ
